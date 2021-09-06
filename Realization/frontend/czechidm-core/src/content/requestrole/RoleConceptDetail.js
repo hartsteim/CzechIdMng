@@ -150,7 +150,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
     // TODO: move selectedRole, _identityRoleAttributeDefinition, _identityRoleFormInstance to state and get them directly from callback above
     this.setState({ selectedRole }, () => {
       if (this.refs.roleSystem) {
-        this.refs.roleSystem.setValue(null);
+     //   this.refs.roleSystem.setValue(null);
       }
     });
     //
@@ -207,6 +207,13 @@ export class RoleConceptDetail extends Basic.AbstractContent {
       _showSystems = true;
     }
 
+    if (_showSystems && selectedRole && selectedRole.prefilledSystemInCrossDomains
+      && entity && !entity.roleSystem && Utils.Entity.isNew(entity) && added) {
+      entity.roleSystem = selectedRole.prefilledSystemInCrossDomains;
+    }
+    console.log('Class: RoleConceptDetail, Function: render, Line 214 selectedRole, _showSystems, entity.roleSystem(): '
+    , selectedRole, _showSystems, entity.roleSystem);
+
     let selectedRoleId = null;
     if (selectedRole) {
       selectedRoleId = selectedRole.id;
@@ -257,7 +264,8 @@ export class RoleConceptDetail extends Basic.AbstractContent {
           ref="role"
           forceSearchParameters={new SearchParameters('can-be-requested')
             .setFilter('environment', environment)
-            .setFilter('includeCrossDomainsSystemsCount', 'true')}
+            .setFilter('includeCrossDomainsSystemsCount', 'true')
+          }
         />
         <Advanced.EntitySelectBox
           ref="roleSystem"

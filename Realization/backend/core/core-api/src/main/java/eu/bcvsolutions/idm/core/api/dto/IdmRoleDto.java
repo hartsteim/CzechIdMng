@@ -55,6 +55,8 @@ public class IdmRoleDto extends FormableDto implements Disableable, Codeable, Ex
     private long childrenCount;
     // Count of role-systems for this role, which are in cross-domain groups.
     private long systemsInCrossDomains;
+    // Prefilled role-system which is in cross-domain groups and identity has account for that system.
+    private UUID prefilledSystemInCrossDomains;
 
     public IdmRoleDto() {
 	}
@@ -226,5 +228,19 @@ public class IdmRoleDto extends FormableDto implements Disableable, Codeable, Ex
 	 */
 	public long getSystemsInCrossDomains() {
 		return systemsInCrossDomains;
+	}
+
+	/**
+	 *  Prefilled role-system which is in cross-domain groups and identity has account for that system.
+	 */
+	public UUID getPrefilledSystemInCrossDomains() {
+		return prefilledSystemInCrossDomains;
+	}
+
+	/**
+	 *  Prefilled role-system which is in cross-domain groups and identity has account for that system.
+	 */
+	public void setPrefilledSystemInCrossDomains(UUID prefilledSystemInCrossDomains) {
+		this.prefilledSystemInCrossDomains = prefilledSystemInCrossDomains;
 	}
 }

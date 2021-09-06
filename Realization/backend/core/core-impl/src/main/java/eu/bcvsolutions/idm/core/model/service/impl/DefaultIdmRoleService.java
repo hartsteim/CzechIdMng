@@ -8,6 +8,7 @@ import eu.bcvsolutions.idm.core.api.domain.RoleType;
 import eu.bcvsolutions.idm.core.api.dto.IdmIdentityDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmRoleDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmRoleFormAttributeDto;
+import eu.bcvsolutions.idm.core.api.dto.IdmRoleSystemDto;
 import eu.bcvsolutions.idm.core.api.dto.filter.BaseFilter;
 import eu.bcvsolutions.idm.core.api.dto.filter.IdmIdentityFilter;
 import eu.bcvsolutions.idm.core.api.dto.filter.IdmRoleCatalogueRoleFilter;
@@ -195,6 +196,11 @@ public class DefaultIdmRoleService
 				// Permission: User can read role -> can read connected systems.
 				long count = roleSystemService.count(idmRoleSystemFilter);
 				roleDto.setSystemsInCrossDomains(count);
+				List<IdmRoleSystemDto> roleSystems = roleSystemService.find(idmRoleSystemFilter, null).getContent();
+				IdmRoleSystemDto roleSystemDto = roleSystems.stream().findFirst().orElse(null);
+				if (roleSystemDto != null) {
+					roleDto.setPrefilledSystemInCrossDomains(roleSystemDto.getId());
+				}
 			}
 		}
 
