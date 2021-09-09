@@ -13,6 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.UnexpectedRollbackException;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 
 import com.google.common.collect.ImmutableMap;
@@ -63,6 +69,9 @@ public class ClearDirtyStateForContractSliceTaskExecutor extends AbstractSchedul
 	private ContractSliceManager contractSliceManager;
 	@Autowired
 	private EntityManager entityManager;
+	@Autowired
+	private PlatformTransactionManager platformTransactionManager;
+	private boolean requireNewTransaction = false;
 	
 	@Override
 	public String getName() {
@@ -153,9 +162,29 @@ public class ClearDirtyStateForContractSliceTaskExecutor extends AbstractSchedul
 		for (IdmEntityStateDto dirtyState : deleteDirtyStates) {
 			Assert.notNull(dirtyState, "State (dirty) is required.");
 			Assert.notNull(dirtyState.getId(), "State identifier (dirty) is required.");
-			processItemToDelete(dirtyState);
+			if (!requireNewTransaction()) {
+				processItemToDelete(dirtyState);
+			} else {
+				TransactionTemplate template = new TransactionTemplate(platformTransactionManager);
+				template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+				//
+				try {
+					template.execute(new TransactionCallbackWithoutResult() {
+
+						@Override
+						public void doInTransactionWithoutResult(TransactionStatus status) {
+							processItemToDelete(dirtyState);
+						}
+					});
+				} catch (UnexpectedRollbackException ex ) {
+					// Just log for sure ... exception solved in new transaction, but this lower transaction is marked as roll-back.
+					LOG.debug("LRT process [{}] failed for delete of state [{}].",
+							getClass().getSimpleName(), dirtyState, ex);
+				}
+			}
 			counter++;
 
+			
 			// flush and clear session - if LRT is wrapped in parent transaction, we need to
 			// clear it (same behavior as in stateful tasks)
 			if (getHibernateSession().isOpen()) {
@@ -176,6 +205,14 @@ public class ClearDirtyStateForContractSliceTaskExecutor extends AbstractSchedul
     public boolean isRecoverable() {
     	return true;
     }
+    
+	public boolean requireNewTransaction() {
+		return requireNewTransaction;
+	}
+	
+	public void setRequireNewTransaction(boolean requireNewTransaction) {
+		this.requireNewTransaction = requireNewTransaction;
+	}
 
 	/**
 	 * Process state for new or updated slices
@@ -187,7 +224,27 @@ public class ClearDirtyStateForContractSliceTaskExecutor extends AbstractSchedul
 	private boolean processState(boolean canContinue, IdmEntityStateDto dirtyState) {
 		Assert.notNull(dirtyState, "State (dirty) is required.");
 		Assert.notNull(dirtyState.getId(), "State identifier (dirty) is required.");
-		processItem(dirtyState);
+
+		if (!requireNewTransaction()) {
+			processItem(dirtyState);
+		} else {
+			TransactionTemplate template = new TransactionTemplate(platformTransactionManager);
+			template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+			//
+			try {
+				template.execute(new TransactionCallbackWithoutResult() {
+
+					@Override
+					public void doInTransactionWithoutResult(TransactionStatus status) {
+						processItem(dirtyState);
+					}
+				});
+			} catch (UnexpectedRollbackException ex ) {
+				// Just log for sure ... exception solved in new transaction, but this lower transaction is marked as roll-back.
+				LOG.debug("LRT process [{}] failed for state [{}].",
+						getClass().getSimpleName(), dirtyState, ex);
+			}
+		}
 		counter++;
 
 		// flush and clear session - if LRT is wrapped in parent transaction, we need to

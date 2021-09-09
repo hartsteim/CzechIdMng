@@ -688,6 +688,7 @@ public class ContractSliceSynchronizationExecutor extends AbstractSynchronizatio
 	 */
 	private SysSyncLogDto executeClearDirtyStateForContractSlice(SysSyncLogDto log) {
 		ClearDirtyStateForContractSliceTaskExecutor executor = new ClearDirtyStateForContractSliceTaskExecutor();
+		executor.setRequireNewTransaction(true);
 
 		log.addToLog(MessageFormat.format(
 				"After success sync have to be run clear dirty state for contract slices. We start him (synchronously) now [{0}].",
