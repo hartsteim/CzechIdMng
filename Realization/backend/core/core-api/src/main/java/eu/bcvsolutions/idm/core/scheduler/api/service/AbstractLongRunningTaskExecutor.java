@@ -71,7 +71,7 @@ public abstract class AbstractLongRunningTaskExecutor<V> implements
 	private String beanName; // spring bean name - used as processor id
 	private ParameterConverter parameterConverter;	
 	private UUID longRunningTaskId;
-	private IdmEntityEventDto startTaskEvent = null;
+	public IdmEntityEventDto startTaskEvent = null;
 	protected Long count = null;
 	protected Long counter = null;
 	private Optional<V> result = null;
@@ -268,27 +268,23 @@ public abstract class AbstractLongRunningTaskExecutor<V> implements
 			//
 			V result = process();
 			//
-			lock.lock();
-			try {
-				this.result = Optional.ofNullable(result);
-				// end long running task => waiting only if needed
-				if (this.startTaskEvent != null) {
-					LOG.trace("Long running tast [{}] start event [{}] completed.",
-							longRunningTaskId, this.startTaskEvent.getId());
-					//
-					entityEventManager.completeEvent(this.startTaskEvent);
-				}
-				// notify end will or was called instead already
-				if (!entityEventManager.deregisterAsynchronousTask(this)) {
-					IdmLongRunningTaskDto task = longRunningTaskService.get(longRunningTaskId);
-					task.setRunning(false); // => not running, but not ended see LongRunningTaskEndProcessor
-					longRunningTaskService.save(task);
-					//
-					return null;
-				}
-			} finally {
-				lock.unlock();
+			this.result = Optional.ofNullable(result);
+			// end long running task => waiting only if needed
+			if (this.startTaskEvent != null) {
+				LOG.trace("Long running tast [{}] start event [{}] completed.",
+						longRunningTaskId, this.startTaskEvent.getId());
+				//
+				entityEventManager.completeEvent(this.startTaskEvent);
 			}
+			// notify end will or was called instead already
+			if (!entityEventManager.deregisterAsynchronousTask(this)) {
+				IdmLongRunningTaskDto task = longRunningTaskService.get(longRunningTaskId);
+				task.setRunning(false); // => not running, but not ended see LongRunningTaskEndProcessor
+				longRunningTaskService.save(task);
+				//
+				return null;
+			}
+
 			return end(result, null);
 		} catch (Exception ex) {
 			return end(null, ex);
@@ -349,17 +345,25 @@ public abstract class AbstractLongRunningTaskExecutor<V> implements
 		}
 		// after update state is send notification with information about end of LRT
 		task = longRunningTaskService.save(task);
-		//
-		// end start event
-		if (this.startTaskEvent != null) {
-			this.startTaskEvent.setResult(new OperationResultDto.Builder(OperationState.EXECUTED).build());
-			entityEventManager.saveEvent(this.startTaskEvent);
-		}
+
+
 		// publish event - LRT ended
 		// TODO: result is not persisted - propagate him in event?
 		entityEventManager.publishEvent(new LongRunningTaskEvent(LongRunningTaskEventType.END, task));
 		//
 		return result;
+	}
+
+	@Override
+	public Boolean finishEvent() {
+		// end start event
+		if (this.startTaskEvent != null) {
+			this.startTaskEvent.setResult(new OperationResultDto.Builder(OperationState.EXECUTED).build());
+			entityEventManager.saveEvent(this.startTaskEvent);
+			return true;
+		}
+		//
+		return false;
 	}
 	
 	/**
@@ -479,9 +483,8 @@ public abstract class AbstractLongRunningTaskExecutor<V> implements
 	
 	/**
 	 * Sets executor's state properties (count..) to long running task instance
-	 * 
-	 * @param longRunningTask
-	 * @param taskExecutor
+	 *
+	 * @param task
 	 */
 	private void setStateProperties(IdmLongRunningTaskDto task) {
 		task.setCount(getCount());

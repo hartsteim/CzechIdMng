@@ -21,6 +21,7 @@ import eu.bcvsolutions.idm.core.api.event.EntityEvent;
 import eu.bcvsolutions.idm.core.security.api.domain.IdmBasePermission;
 import eu.bcvsolutions.idm.core.security.api.service.AuthorizableService;
 import eu.bcvsolutions.idm.core.security.api.service.ExceptionProcessable;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for role request.
@@ -76,7 +77,10 @@ public interface IdmRoleRequestService extends
 	 */
 	@Deprecated
 	IdmRoleRequestDto startRequestInternal(UUID requestId, boolean checkRight, boolean immediate);
-	
+
+	@Transactional
+	IdmRoleRequestDto startRequestInternal(EntityEvent<IdmRoleRequestDto> requestEvent, EntityEvent<?> parentEvent);
+
 	/**
 	 * Internal start request. 
 	 * 

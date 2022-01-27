@@ -167,4 +167,6 @@ public interface LongRunningTaskExecutor<V> extends Callable<V>, Configurable {
 	 * @return
 	 */
 	<DTO extends AbstractDto> IdmProcessedTaskItemDto logItemProcessed(DTO item, OperationResult opResult);
+
+	public Boolean finishEvent();
 }

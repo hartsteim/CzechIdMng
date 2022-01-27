@@ -12,10 +12,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Function;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1531,35 +1534,54 @@ public class DefaultEntityEventManager implements EntityEventManager {
 	/**
 	 * Complete event - check all event in the same transaction is completely processed.
 	 * 
-	 * @param <E>
-	 * @param event
+	 * @param eventId
+	 * @param transactionId
 	 * @return
 	 */
 	private void completeEvent(UUID eventId, UUID transactionId) {
 		LOG.trace("Event [{}] with transaction id [{}] completed.", eventId, transactionId);
 		//
+		final List<LongRunningTaskExecutor<?>> lrtsWithSameTransactionId = removeCacheAndCheckIsLast(eventId, transactionId);
+
+		if (lrtsWithSameTransactionId != null) {
+			LOG.info("Event [{}] with transaction id [{}] is processed completely.", eventId, transactionId);
+			// Event was last with same transaction Id
+			lrtsWithSameTransactionId.forEach(lrt -> {
+				executeLocked(() -> notifiedLrts.put(lrt.getLongRunningTaskId(), Boolean.TRUE));
+				publishEvent(new NotifyLongRunningTaskEvent(lrt));
+				executeLocked(lrt::finishEvent);
+			});
+		}
+	}
+
+	private List<LongRunningTaskExecutor<?>> removeCacheAndCheckIsLast(UUID eventId, UUID transactionId) {
 		lock.lock();
 		try {
-			if (removeEventCache(eventId, transactionId)) {	
-				LOG.info("Event [{}] with transaction id [{}] is processed completely.", eventId, transactionId);
-				if (lrts.containsKey(transactionId) 
-						&& lrts.get(transactionId).stream().allMatch(lrt -> lrt.getResult() != null)) {
-					List<LongRunningTaskExecutor<?>> longRunningTaskExecutors = lrts.remove(transactionId);
-					//
-					longRunningTaskExecutors
-						.stream()
-						.forEach(lrt -> {
-							notifiedLrts.put(lrt.getLongRunningTaskId(), Boolean.TRUE);
-							//
-							publishEvent(new NotifyLongRunningTaskEvent(lrt));
-						});
-				}
+			if (removeEventCache(eventId, transactionId) &&
+					lrts.containsKey(transactionId)
+					&& lrts.get(transactionId).stream().allMatch(lrt -> lrt.getResult() != null)
+			) {
+				return lrts.remove(transactionId);
 			}
 		} finally {
 			lock.unlock();
 		}
+		// not last
+		return null;
 	}
-	
+
+	private void executeLocked(Callable<?> toExecute) {
+		lock.lock();
+		try {
+			toExecute.call();
+		} catch (Exception e) {
+			// todo decide whether this is needed. Change to Runnable?
+			e.printStackTrace();
+		} finally {
+			lock.unlock();
+		}
+	}
+
 	/**
 	 * Include event in transaction processing.
 	 * 
