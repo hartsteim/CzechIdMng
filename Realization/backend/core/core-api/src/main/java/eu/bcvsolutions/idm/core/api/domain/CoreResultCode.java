@@ -422,7 +422,8 @@ public enum CoreResultCode implements ResultCode {
 	MONITORING_DEMO_ADMIN_NOT_FOUND(HttpStatus.OK, "Demo admin user not found.", NotificationLevel.SUCCESS),
 	MONITORING_ENTITY_EVENT_ERROR(HttpStatus.CONFLICT, "Entity event queue contains [%s] errors.", NotificationLevel.ERROR),
 	MONITORING_LONG_RUNNING_TASK_ERROR(HttpStatus.CONFLICT, "Long running task queue contains [%s] errors.", NotificationLevel.ERROR),
-	MONITORING_LOGGING_EVENT_ERROR(HttpStatus.CONFLICT, "Logging events contains [%s] errors.", NotificationLevel.ERROR);
+	MONITORING_LOGGING_EVENT_ERROR(HttpStatus.CONFLICT, "Logging events contains [%s] errors.", NotificationLevel.ERROR),
+	MONITORING_EVENT_LOCK_QUEUE(HttpStatus.FOUND, "[%s] threads wait for entity event lock", NotificationLevel.SUCCESS);
 	
 	private final HttpStatus status;
 	private final String message;

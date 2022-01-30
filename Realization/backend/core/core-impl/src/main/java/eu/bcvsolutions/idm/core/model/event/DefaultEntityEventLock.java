@@ -26,5 +26,11 @@ public class DefaultEntityEventLock implements EntityEventLock {
 	@Override
 	public void lock() {
 		LOCK.lock();
-	}	
+	}
+
+	@Override
+	public int getQueueLength() {
+		return LOCK.getQueueLength();
+	}
+
 }

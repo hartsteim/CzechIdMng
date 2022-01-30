@@ -1,5 +1,7 @@
 package eu.bcvsolutions.idm.core.api.event;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Start / complete asynchronous event in synchronized blocks.
  * Synchronized block is needed from LRT task too (=> public, but prevent to use it manually).
@@ -20,4 +22,11 @@ public interface EntityEventLock {
 	 * Synchronized block is needed from LRT task too (=> public, but prevent to use it manually).
 	 */
 	void lock();
+
+	/**
+	 * Note that this method returns only estimate. For more info, see {@link ReentrantLock#getQueueLength()}
+	 *
+	 * @return Number of threads waiting for this lock
+	 */
+	int getQueueLength();
 }

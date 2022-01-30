@@ -7491,6 +7491,16 @@
           }
         }
       },
+      "core-entity-event-lock-thread-queue-monitoring-evaluator": {
+        "label": "Kontrola počtu vláken čekajících na zámek na frontě událostí",
+        "help": "Zobrazí varování, pokud počet čekajících vláken na frontě událostí překročí daný limit.",
+        "attributes": {
+          "threshold": {
+            "label": "Limit počtu čekajících vláken",
+            "help": "Varování bude zobrazeno, pokud počet vláken čekajících na zámek překročí zadaný počet."
+          }
+        }
+      },
       "core-entity-event-monitoring-evaluator": {
         "label": "Kontrola chyb ve frontě událostí",
         "help": "Zobrazí varování, pokud se ve frontě událostí vyskytuje chyba.",
@@ -7502,8 +7512,8 @@
         }
       },
       "core-long-running-task-monitoring-evaluator": {
-        "label": "Kontrola chyb v agendě dlouhotrvajích úloh",
-        "help": "Zobrazí varování, pokud se v provedených dlouhotrvajích úlohách vyskytuje chyba.",
+        "label": "Kontrola chyb v agendě dlouhotrvajících úloh",
+        "help": "Zobrazí varování, pokud se v provedených dlouhotrvajících úlohách vyskytuje chyba.",
         "attributes": {
           "numberofdays": {
             "label": "Počet dní",
@@ -8829,6 +8839,10 @@
     "MONITORING_ENTITY_EVENT_ERROR": {
       "title": "Chyba ve frontě událostí",
       "message": "Ve frontě událostí se vyskytují chyby [{{count}}]."
+    },
+    "MONITORING_EVENT_LOCK_QUEUE": {
+      "title": "Příliš mnoho vláken čeká na zámek nad frontou událostí",
+      "message": "[{{count}}] vláken čeká na zámek nad frontou událostí."
     },
     "MONITORING_LONG_RUNNING_TASK_ERROR": {
       "title": "Chyba ve frontě dlouhotrvajících úloh",

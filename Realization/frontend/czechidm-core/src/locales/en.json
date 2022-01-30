@@ -7438,6 +7438,16 @@
           }
         }
       },
+      "core-entity-event-lock-thread-queue-monitoring-evaluator": {
+        "label": "Check numnber of threads waiting for entity event lock.",
+        "help": "Warning about number of threads waiting for lock on entity event queue",
+        "attributes": {
+          "threshold": {
+            "label": "Waiting thread threshold",
+            "help": "Warning will be shown, if number of waiting threads surpasses given threshold."
+          }
+        }
+      },
       "core-entity-event-monitoring-evaluator": {
         "label": "Check errors in event queue",
         "help": "Warning about errors in event queue.",
@@ -8776,6 +8786,10 @@
     "MONITORING_ENTITY_EVENT_ERROR": {
       "title": "Error in event queue",
       "message": "Event queue contains errors [{{count}}]."
+    },
+    "MONITORING_EVENT_LOCK_QUEUE": {
+      "title": "Too many threads is waiting for entity event lock",
+      "message": "[{{count}}] threads is waiting for entity event lock"
     },
     "MONITORING_LONG_RUNNING_TASK_ERROR": {
       "title": "Error in long running tasks",
