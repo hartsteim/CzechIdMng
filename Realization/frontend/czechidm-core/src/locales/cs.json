@@ -8841,7 +8841,7 @@
       "message": "Ve frontě událostí se vyskytují chyby [{{count}}]."
     },
     "MONITORING_EVENT_LOCK_QUEUE": {
-      "title": "Příliš mnoho vláken čeká na zámek nad frontou událostí",
+      "title": "Počet vláken čekajících na zámek nad frontou událostí",
       "message": "[{{count}}] vláken čeká na zámek nad frontou událostí."
     },
     "MONITORING_LONG_RUNNING_TASK_ERROR": {

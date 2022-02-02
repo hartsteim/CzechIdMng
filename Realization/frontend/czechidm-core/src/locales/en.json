@@ -8788,7 +8788,7 @@
       "message": "Event queue contains errors [{{count}}]."
     },
     "MONITORING_EVENT_LOCK_QUEUE": {
-      "title": "Too many threads is waiting for entity event lock",
+      "title": "Number of threads waiting for entity event lock",
       "message": "[{{count}}] threads is waiting for entity event lock"
     },
     "MONITORING_LONG_RUNNING_TASK_ERROR": {
