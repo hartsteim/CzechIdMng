@@ -28,10 +28,10 @@ import javax.persistence.Table;
 import java.util.List;
 
 /**
- * Warning about too many records in database table.
+ * Warning about number of threads accessing {@link EntityEventLock#lock()}
  *
- * @author Radek Tomiška
- * @since 11.1.0
+ * @author Peter Štrunc <peter.strunc@bcvsolutions.eu>
+ * @since 12.1.0
  */
 @Component(EntityEventLockQueueMonitoringEvaluator.NAME)
 @Description("Warning about too many records in database table.")
