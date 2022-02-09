@@ -23,6 +23,7 @@ import javax.sql.DataSource;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -117,6 +118,7 @@ public class DefaultSysProvisioningOperationService
 	@Autowired private SysSystemEntityService systemEntityService;
 	@Autowired private ProvisioningConfiguration provisioningConfiguration;
 	@Autowired private SysProvisioningAttributeService provisioningAttributeService;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 	@Autowired private IdmFlywayMigrationStrategy flywayMigrationStrategy;
 	@Autowired private DataSource dataSource;

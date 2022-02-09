@@ -129,6 +129,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -178,6 +179,7 @@ public abstract class AbstractSynchronizationExecutor<DTO extends AbstractDto>
 	protected FormService formService;
 	@Autowired
 	protected EntityEventManager entityEventManager;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 	@Autowired

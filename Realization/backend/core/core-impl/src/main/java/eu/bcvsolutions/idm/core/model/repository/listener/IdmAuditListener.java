@@ -22,6 +22,7 @@ import eu.bcvsolutions.idm.core.api.utils.AutowireHelper;
 import eu.bcvsolutions.idm.core.audit.entity.IdmAudit;
 import eu.bcvsolutions.idm.core.security.api.domain.AbstractAuthentication;
 import eu.bcvsolutions.idm.core.security.api.service.SecurityService;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Creates records to global idm audit (searching through all entities, etc.)
@@ -38,6 +39,7 @@ public class IdmAuditListener implements EntityTrackingRevisionListener {
 	private IdmAuditService auditService;
 	@Autowired
 	private SecurityService securityService;
+	@Qualifier("entityManager")
 	@PersistenceContext
 	private EntityManager entityManger;
 

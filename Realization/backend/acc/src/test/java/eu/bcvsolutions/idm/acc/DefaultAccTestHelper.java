@@ -19,6 +19,7 @@ import javax.persistence.Query;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -87,7 +88,8 @@ import joptsimple.internal.Strings;
 @Primary
 @Component("accTestHelper")
 public class DefaultAccTestHelper extends eu.bcvsolutions.idm.test.api.DefaultTestHelper implements TestHelper {
-	
+
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;	
 	@Autowired private SysSystemService systemService;
 	@Autowired private SysSystemMappingService systemMappingService;

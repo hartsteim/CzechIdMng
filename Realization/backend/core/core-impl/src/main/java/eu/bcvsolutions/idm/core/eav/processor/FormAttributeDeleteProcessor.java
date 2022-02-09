@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Description;
 import org.springframework.plugin.core.OrderAwarePluginRegistry;
 import org.springframework.plugin.core.PluginRegistry;
@@ -44,6 +45,7 @@ public class FormAttributeDeleteProcessor
 	private final PluginRegistry<FormValueService<?>, Class<?>> formValueServices;
 	//
 	@Autowired private IdmFormAttributeService service;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 	
 	@Autowired

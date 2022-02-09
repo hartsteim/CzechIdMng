@@ -163,7 +163,6 @@ public class IdmDbAppender extends AppenderBase<ILoggingEvent> {
 		dto.setTraceLine(traceLine);
 		dto.setId(baseIndex);
 		final IdmLoggingEventExceptionDto save = loggingEventExceptionService.save(dto);
-		System.out.println(save);
 	}
 
 

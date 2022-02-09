@@ -12,6 +12,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -79,6 +80,7 @@ public abstract class AbstractBulkAction<DTO extends AbstractDto, F extends Base
 	private ObjectMapper mapper;
 	@Autowired
 	private PlatformTransactionManager platformTransactionManager;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 

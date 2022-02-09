@@ -5,6 +5,7 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
@@ -26,12 +27,12 @@ import eu.bcvsolutions.idm.core.api.repository.ExtendedJpaRepositoryFactoryBean;
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = { 
 		FlywayAutoConfiguration.class, // see {@link IdmFlywayAutoConfiguration} class 
-		SecurityAutoConfiguration.class
+		SecurityAutoConfiguration.class,
+		DataSourceAutoConfiguration.class
 		})
 @EnableCaching
 @EnableScheduling
 @EnablePluginRegistries({ ModuleDescriptor.class })
-@EnableJpaRepositories(repositoryFactoryBeanClass = ExtendedJpaRepositoryFactoryBean.class)
 public class IdmApplication extends SpringBootServletInitializer {
 	
 	@Override

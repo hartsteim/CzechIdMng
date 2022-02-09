@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Description;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -70,6 +71,7 @@ public class TreeNodeDeleteProcessor extends CoreEventProcessor<IdmTreeNodeDto> 
 	@Autowired private IdmContractPositionService contractPositionService;
 	@Autowired private IdmAutomaticRoleRequestService roleRequestService;
 	@Autowired private EntityStateManager entityStateManager;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 	@Autowired private LongRunningTaskManager longRunningTaskManager;
 	

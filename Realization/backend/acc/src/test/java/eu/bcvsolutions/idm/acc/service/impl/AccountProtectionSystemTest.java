@@ -32,6 +32,7 @@ import eu.bcvsolutions.idm.core.api.service.IdmIdentityRoleService;
 import eu.bcvsolutions.idm.core.api.service.IdmIdentityService;
 import eu.bcvsolutions.idm.core.api.service.IdmRoleService;
 import eu.bcvsolutions.idm.test.api.AbstractIntegrationTest;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Protection account system
@@ -51,6 +52,7 @@ public class AccountProtectionSystemTest extends AbstractIntegrationTest {
 	private AccAccountService accountService;
 	@Autowired
 	private SysSystemMappingService systemMappingService;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 	@Autowired

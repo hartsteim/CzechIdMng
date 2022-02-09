@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import eu.bcvsolutions.idm.core.model.repository.filter.MonitoringIgnorableFilterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,6 +199,7 @@ public class IdmServiceConfiguration {
 	@Autowired private ApplicationContext context;
 	@Qualifier(SchedulerConfiguration.TASK_EXECUTOR_NAME)
 	@Autowired private Executor executor;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 	//
 	// Spring Data repositories through interfaces - they are constructed automatically

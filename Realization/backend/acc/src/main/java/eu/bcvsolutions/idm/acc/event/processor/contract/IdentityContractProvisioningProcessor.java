@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,7 @@ public class IdentityContractProvisioningProcessor extends AbstractIdentityContr
 	//	
 	@Autowired private EntityEventManager entityEventManager;	
 	@Autowired private ProvisioningService provisioningService;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 	
 	public IdentityContractProvisioningProcessor() {

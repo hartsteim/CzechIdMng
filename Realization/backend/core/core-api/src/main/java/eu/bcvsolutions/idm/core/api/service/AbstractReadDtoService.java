@@ -26,6 +26,7 @@ import org.hibernate.query.criteria.internal.predicate.ExistsPredicate;
 import org.hibernate.query.criteria.internal.predicate.InPredicate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.GenericTypeResolver;
@@ -90,6 +91,7 @@ public abstract class AbstractReadDtoService<DTO extends BaseDto, E extends Base
 	protected ModelMapper modelMapper;
 	@Autowired
 	private ApplicationContext context;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 	@Autowired

@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +57,7 @@ public class DefaultAccAccountServiceTest extends AbstractIntegrationTest {
 	private AccAccountService accountService;
 	@Autowired
 	private SysSchemaAttributeService schemaAttributeService;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 	@Autowired

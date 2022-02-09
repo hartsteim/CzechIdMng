@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,7 @@ public class AuthorizationPolicyDeletePermissionsChangeProcessor extends CoreEve
 	//
 	@Autowired private IdmIdentityService identityService;
 	@Autowired private TokenManager tokenManager;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 
 	public AuthorizationPolicyDeletePermissionsChangeProcessor() {

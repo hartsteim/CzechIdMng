@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import org.apache.logging.log4j.util.Strings;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -111,6 +112,7 @@ public class DefaultImportManager implements ImportManager {
 	private LongRunningTaskManager longRunningTaskManager;
 	@Autowired
 	private FormService formService;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 

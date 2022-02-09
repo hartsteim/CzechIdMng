@@ -45,13 +45,13 @@
 	        <includeCallerData>true</includeCallerData>
 	    </appender>
 	
-		<logger name="eu.bcvsolutions" level="WARN">
+		<logger name="eu.bcvsolutions" level="INFO">
 			<appender-ref ref="DB_ASYNC" />
 		</logger>
-		<logger name="org.springframework" level="WARN"/>
-		<logger name="org.springframework.web" level="WARN"/>
-		<logger name="org.hibernate.SQL" level="WARN"/>
-		<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="WARN"/>
+		<logger name="org.springframework" level="ERROR"/>
+		<logger name="org.springframework.web" level="ERROR"/>
+		<logger name="org.hibernate.envers" level="TRACE"/>
+		<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="ERROR"/>
 		<logger name="AUDIT" level="ERROR"/>
     </springProfile>
     

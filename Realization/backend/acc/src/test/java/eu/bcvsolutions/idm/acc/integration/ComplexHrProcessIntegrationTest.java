@@ -30,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -232,6 +233,7 @@ public class ComplexHrProcessIntegrationTest extends AbstractIntegrationTest {
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ComplexHrProcessIntegrationTest.class);
 
 	@Autowired private ApplicationContext applicationContext;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 	@Autowired private SysSystemService systemService;
 	@Autowired private IdmTreeNodeService treeNodeService;

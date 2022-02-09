@@ -46,6 +46,7 @@ import org.hibernate.envers.query.criteria.MatchMode;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -97,8 +98,9 @@ public class DefaultAuditService extends AbstractReadWriteDtoService<IdmAuditDto
 		implements IdmAuditService {
 	
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(DefaultAuditService.class);
-	
-	@PersistenceContext
+
+	@Qualifier("entityManager")
+	@PersistenceContext()
 	private EntityManager entityManager;
 	private final IdmAuditRepository auditRepository;
 	@LazyCollection(LazyCollectionOption.TRUE)

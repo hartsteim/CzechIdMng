@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import org.hibernate.Session;
 import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -61,6 +62,7 @@ public class ClearDirtyStateForContractSliceTaskExecutor extends AbstractSchedul
 	private IdmContractSliceService contractSliceService;
 	@Autowired
 	private ContractSliceManager contractSliceManager;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 	

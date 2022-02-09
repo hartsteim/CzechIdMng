@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -63,6 +64,7 @@ public class MappingContextTest extends AbstractIntegrationTest {
 	private SysSystemAttributeMappingService attributeMappingService;
 	@Autowired
 	private SysSchemaAttributeService schemaAttributeService;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 	@Autowired

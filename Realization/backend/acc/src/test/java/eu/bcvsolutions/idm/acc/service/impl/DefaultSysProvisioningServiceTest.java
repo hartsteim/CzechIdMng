@@ -18,6 +18,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -135,6 +136,7 @@ public class DefaultSysProvisioningServiceTest extends AbstractIntegrationTest {
 	@Autowired private SysSystemMappingService systemEntityHandlingService;
 	@Autowired private SysSystemAttributeMappingService systemAttributeMappingService;
 	@Autowired private SysSchemaAttributeService schemaAttributeService;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 	@Autowired private IdmPasswordPolicyService passwordPolicyService;
 	@Autowired private IdmTreeNodeService treeNodeService;

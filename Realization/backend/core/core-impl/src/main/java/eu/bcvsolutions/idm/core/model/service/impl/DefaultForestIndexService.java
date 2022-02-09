@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -34,8 +35,8 @@ public class DefaultForestIndexService extends AbstractForestIndexService<IdmFor
 	
 	@Autowired
 	public DefaultForestIndexService(
-			IdmForestIndexEntityRepository repository, 
-			EntityManager entityManager,
+			IdmForestIndexEntityRepository repository,
+			@Qualifier("entityManager") EntityManager entityManager,
 			ConfigurationService configurationService) {
 		super(repository, entityManager);
 		//

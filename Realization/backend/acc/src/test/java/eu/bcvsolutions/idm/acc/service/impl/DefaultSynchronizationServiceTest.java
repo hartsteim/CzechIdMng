@@ -17,6 +17,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.test.annotation.Rollback;
@@ -128,6 +129,7 @@ public class DefaultSynchronizationServiceTest extends AbstractIntegrationTest {
 	private SysSyncItemLogService syncItemLogService;
 	@Autowired
 	private SysSyncActionLogService syncActionLogService;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 	@Autowired

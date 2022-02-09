@@ -16,6 +16,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -70,6 +71,7 @@ public abstract class AbstractSchedulableStatefulExecutor<DTO extends AbstractDt
 	//
 	@Autowired private IdmProcessedTaskItemService itemService;
 	@Autowired private PlatformTransactionManager platformTransactionManager;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 
 	@Override

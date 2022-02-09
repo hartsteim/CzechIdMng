@@ -81,6 +81,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.plugin.core.OrderAwarePluginRegistry;
@@ -114,6 +115,7 @@ public class DefaultRoleSynchronizationExecutorTest extends AbstractBulkActionTe
 	private SysSyncConfigService syncConfigService;
 	@Autowired
 	private SysSyncLogService syncLogService;
+	@Qualifier("entityManager")
 	@Autowired
 	private EntityManager entityManager;
 	@Autowired

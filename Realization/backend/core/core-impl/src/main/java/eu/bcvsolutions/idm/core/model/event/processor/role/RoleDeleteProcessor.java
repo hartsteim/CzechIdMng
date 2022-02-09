@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -98,6 +99,7 @@ public class RoleDeleteProcessor
 	@Autowired private IdmIncompatibleRoleService incompatibleRoleService;
 	@Autowired private IdmRoleFormAttributeService roleFormAttributeService;
 	@Autowired private LongRunningTaskManager longRunningTaskManager;
+	@Qualifier("entityManager")
 	@Autowired private EntityManager entityManager;
 	@Autowired private EntityStateManager entityStateManager;
 	
