@@ -59,19 +59,23 @@ class Login extends Basic.AbstractContent {
 
   componentDidMount() {
     super.componentDidMount();
+    console.log("componentDidMount 1")
     const { userContext, casEnabled, location } = this.props;
     const { nocas } = this.state;
     const _casEnabled = casEnabled && !nocas;
     //
     if (!_casEnabled) {
+      console.log("componentDidMount 2")
       const data = {};
       if (userContext.isExpired) {
         data.username = userContext.username;
+        console.log("componentDidMount 3")
       }
       this.refs.form.setData(data);
     }
     //
     if (!SecurityManager.isAuthenticated(userContext) && !userContext.isTryRemoteLogin) {
+      console.log("componentDidMount 4")
       this.context.store.dispatch(securityManager.receiveLogin(
         _.merge({}, userContext, {
           isTryRemoteLogin: true
@@ -80,11 +84,14 @@ class Login extends Basic.AbstractContent {
       window.location.reload(); // so the change of remote login will make effect
     }
     if (!SecurityManager.isAuthenticated(userContext) && userContext.isTryRemoteLogin) {
+      console.log("componentDidMount 4")
       this.context.store.dispatch(securityManager.remoteLogin((result, error) => {
         if (result) {
+          console.log("componentDidMount 5")
           // ok - result = true
           this._tryRedirectLoggedUser();
         } else if (error && error.statusEnum && error.statusEnum === 'MUST_CHANGE_IDM_PASSWORD') {
+          console.log("componentDidMount 5")
           // remember target url
           this._rememberUrl(userContext, location);
           // partialy ok - password has to be changed
@@ -96,6 +103,7 @@ class Login extends Basic.AbstractContent {
             this.context.history.replace(`/password/change`);
           });
         } else if (error && error.statusEnum && error.statusEnum === 'TWO_FACTOR_AUTH_REQIURED') { // look out - remember url cannot be overiden
+          console.log("componentDidMount 6")
           // partialy ok - two factor is required
           this.setState({
             showTwoFactor: true,
@@ -111,6 +119,7 @@ class Login extends Basic.AbstractContent {
             }
           });
         } else if (_casEnabled) {
+          console.log("componentDidMount 7")
           // remember target url
           this._rememberUrl(userContext, location);
           // redirect to cas login request
@@ -121,6 +130,7 @@ class Login extends Basic.AbstractContent {
         }
       }, userContext.tokenCIDMST));
     } else {
+      console.log("componentDidMount 8")
       // redirect, if identity is logged => redirect to dashboard (#UNSAFE_componentWillReceiveProps is not called on the start)
       this._tryRedirectLoggedUser();
     }
@@ -153,10 +163,12 @@ class Login extends Basic.AbstractContent {
   }
 
   handleLogin(event) {
+    console.log("handleLogin 1")
     if (event) {
       event.preventDefault();
     }
     if (!this.refs.form.isFormValid()) {
+      console.log("handleLogin 2")
       return;
     }
     const { userContext, location } = this.props;
@@ -166,14 +178,17 @@ class Login extends Basic.AbstractContent {
     //
     // check userame is the same, after expiration =>   clear target path, if not
     if (userContext.isExpired && username !== userContext.username) {
+      console.log("handleLogin 3")
       this.context.store.dispatch(securityManager.receiveLogin(
         _.merge({}, userContext, { loginTargetPath: null })
       ));
     }
     //
     this.context.store.dispatch(securityManager.login(username, password, (result, error) => {
+      console.log("handleLogin 4")
       if (error && error.statusEnum) {
         if (error.statusEnum === 'MUST_CHANGE_IDM_PASSWORD') {
+          console.log("handleLogin 5")
           // remember target url
           this._rememberUrl(userContext, location);
           //
@@ -181,6 +196,7 @@ class Login extends Basic.AbstractContent {
           this.context.history.replace(`/password/change?username=${ username }`);
         }
         if (error.statusEnum === 'TWO_FACTOR_AUTH_REQIURED') {
+          console.log("handleLogin 6")
           this.setState({
             showTwoFactor: true,
             token: error.parameters.token,
@@ -197,10 +213,12 @@ class Login extends Basic.AbstractContent {
   }
 
   handleTwoFactor(event) {
+    console.log("handleTwoFactor 1")
     if (event) {
       event.preventDefault();
     }
     if (!this.refs.form.isFormValid()) {
+      console.log("handleTwoFactor 2")
       return;
     }
     const formData = this.refs.form.getData();

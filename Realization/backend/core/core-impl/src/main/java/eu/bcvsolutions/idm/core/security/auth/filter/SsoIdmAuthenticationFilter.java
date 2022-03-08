@@ -27,7 +27,9 @@ import eu.bcvsolutions.idm.core.security.api.dto.LoginDto;
 import eu.bcvsolutions.idm.core.security.api.exception.IdentityDisabledException;
 import eu.bcvsolutions.idm.core.security.api.exception.IdentityNotFoundException;
 import eu.bcvsolutions.idm.core.security.api.exception.IdmAuthenticationException;
+import eu.bcvsolutions.idm.core.security.api.exception.TwoFactorAuthenticationRequiredException;
 import eu.bcvsolutions.idm.core.security.api.filter.AbstractAuthenticationFilter;
+import eu.bcvsolutions.idm.core.security.api.service.CasValidationService;
 import eu.bcvsolutions.idm.core.security.api.service.GrantedAuthoritiesFactory;
 import eu.bcvsolutions.idm.core.security.api.service.JwtAuthenticationService;
 
@@ -71,6 +73,7 @@ public class SsoIdmAuthenticationFilter extends AbstractAuthenticationFilter {
 	@Autowired private LookupService lookupService;
 	@Autowired private JwtAuthenticationService jwtAuthenticationService;
 	@Autowired private GrantedAuthoritiesFactory grantedAuthoritiesFactory;
+	@Autowired private AuthenticationExceptionContext ctx;
 
 	@Override
 	public String getName() {
@@ -134,9 +137,15 @@ public class SsoIdmAuthenticationFilter extends AbstractAuthenticationFilter {
 			//
 			return fullLoginDto != null;
 			
+		} catch (TwoFactorAuthenticationRequiredException ex) { // must change password exception is never thrown
+			LOG.warn("Authentication exception raised during SSO authentication: [{}].", ex.getMessage());
+			// publish additional authentication requirement
+			ctx.setCodeEx(ex);
+			throw ex;
 		} catch (IdmAuthenticationException e) {
 			LOG.warn("Authentication exception raised during SSO authentication: [{}].", e.getMessage());
-		}
+			ctx.setAuthEx(e);
+		} 
 
 		return false;
 	}
