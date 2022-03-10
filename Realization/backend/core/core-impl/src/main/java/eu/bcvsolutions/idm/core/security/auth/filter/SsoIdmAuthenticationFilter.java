@@ -29,7 +29,6 @@ import eu.bcvsolutions.idm.core.security.api.exception.IdentityNotFoundException
 import eu.bcvsolutions.idm.core.security.api.exception.IdmAuthenticationException;
 import eu.bcvsolutions.idm.core.security.api.exception.TwoFactorAuthenticationRequiredException;
 import eu.bcvsolutions.idm.core.security.api.filter.AbstractAuthenticationFilter;
-import eu.bcvsolutions.idm.core.security.api.service.CasValidationService;
 import eu.bcvsolutions.idm.core.security.api.service.GrantedAuthoritiesFactory;
 import eu.bcvsolutions.idm.core.security.api.service.JwtAuthenticationService;
 

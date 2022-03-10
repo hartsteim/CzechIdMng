@@ -139,15 +139,70 @@ class Login extends Basic.AbstractContent {
   _tryRedirectLoggedUser() {
     // Redirection to requested page before login.
     const { userContext, location } = this.props;
-    if (!SecurityManager.isAuthenticated(userContext)) {
+    let authenticated = !SecurityManager.isAuthenticated(userContext, (error) => {
+      if (error && error.statusEnum && error.statusEnum === 'TWO_FACTOR_AUTH_REQIURED') { // look out - remember url cannot be overiden
+        console.log("componentDidMount 6")
+        // partialy ok - two factor is required
+        this.setState({
+          showTwoFactor: true,
+          token: _casEnabled ? userContext.tokenCIDMST : error.parameters.token
+        }, () => {
+          this.context.store.dispatch(securityManager.receiveLogin(
+            _.merge({}, userContext, {
+              isTryRemoteLogin: true // cancel two factor => try remote login again
+            })
+          ));
+          if (this.refs.verificationCode) {
+            this.refs.verificationCode.focus();
+          }
+        });
+    };
+    });
+    if (!authenticated) {
       return;
     }
     // If current url is login, then redirect to main page.
     const loginTargetPath = userContext.loginTargetPath || location.pathname;
     if (loginTargetPath === '/login') {
-      this.context.history.replace('/');
+      this.context.history.replace('/', (error) => {
+        if (error && error.statusEnum && error.statusEnum === 'TWO_FACTOR_AUTH_REQIURED') { // look out - remember url cannot be overiden
+          console.log("componentDidMount 6")
+          // partialy ok - two factor is required
+          this.setState({
+            showTwoFactor: true,
+            token: _casEnabled ? userContext.tokenCIDMST : error.parameters.token
+          }, () => {
+            this.context.store.dispatch(securityManager.receiveLogin(
+              _.merge({}, userContext, {
+                isTryRemoteLogin: true // cancel two factor => try remote login again
+              })
+            ));
+            if (this.refs.verificationCode) {
+              this.refs.verificationCode.focus();
+            }
+          });
+      };
+      });
     } else {
-      this.context.history.replace(loginTargetPath);
+      this.context.history.replace(loginTargetPath, (error) => {
+        if (error && error.statusEnum && error.statusEnum === 'TWO_FACTOR_AUTH_REQIURED') { // look out - remember url cannot be overiden
+          console.log("componentDidMount 6")
+          // partialy ok - two factor is required
+          this.setState({
+            showTwoFactor: true,
+            token: _casEnabled ? userContext.tokenCIDMST : error.parameters.token
+          }, () => {
+            this.context.store.dispatch(securityManager.receiveLogin(
+              _.merge({}, userContext, {
+                isTryRemoteLogin: true // cancel two factor => try remote login again
+              })
+            ));
+            if (this.refs.verificationCode) {
+              this.refs.verificationCode.focus();
+            }
+          });
+      };
+      });
     }
   }
 
