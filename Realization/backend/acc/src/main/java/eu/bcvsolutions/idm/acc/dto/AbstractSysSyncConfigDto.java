@@ -62,7 +62,7 @@ public abstract class AbstractSysSyncConfigDto extends AbstractDto {
 	@Embedded(dtoClass = SysSystemMappingDto.class)
 	private UUID systemMapping;
 	private SynchronizationLinkedActionType linkedAction = SynchronizationLinkedActionType.UPDATE_ENTITY;
-	private SynchronizationUnlinkedActionType unlinkedAction = SynchronizationUnlinkedActionType.LINK_AND_UPDATE_ACCOUNT;
+	private SynchronizationUnlinkedActionType unlinkedAction = SynchronizationUnlinkedActionType.LINK_AND_UPDATE_ENTITY;
 	private SynchronizationMissingEntityActionType missingEntityAction = SynchronizationMissingEntityActionType.CREATE_ENTITY;
 	private ReconciliationMissingAccountActionType missingAccountAction = ReconciliationMissingAccountActionType.IGNORE;
 	private String linkedActionWfKey;
