@@ -75,6 +75,7 @@ import eu.bcvsolutions.idm.core.api.utils.DtoUtils;
  * {@link SystemEntityType#IDENTITY} only.
  * 
  * @author Vít Švanda
+ * @author Peter Štrunc <github.com/peter-strunc>
  *
  */
 @Service
@@ -515,9 +516,8 @@ public class DefaultAccAccountManagementService implements AccAccountManagementS
 												 ) {
 
 		identityRoles.forEach(identityRole -> {
-			UUID role = identityRole.getRole();
 			SysRoleSystemFilter roleSystemFilter = new SysRoleSystemFilter();
-			roleSystemFilter.setRoleId(role);
+			roleSystemFilter.setRoleId(identityRole.getRole());
 			List<SysRoleSystemDto> roleSystems = roleSystemService.find(roleSystemFilter, null).getContent();
 
 			// Is role valid in this moment or
@@ -527,91 +527,104 @@ public class DefaultAccAccountManagementService implements AccAccountManagementS
 					.filter(roleSystem -> (identityRole.isValid()
 							|| (roleSystem.isForwardAccountManagemen() && identityRole.isValidNowOrInFuture())))
 					// Create account only if role-systems supports creation by default (not for cross-domains).
-					.filter(roleSystem -> {
-						boolean canBeCreated = roleSystem.isCreateAccountByDefault();
-						if (canBeCreated) {
-							SysSystemGroupSystemFilter systemGroupSystemFilter = new SysSystemGroupSystemFilter();
-							systemGroupSystemFilter.setCrossDomainsGroupsForRoleSystemId(roleSystem.getId());
-							if (systemGroupSystemService.count(systemGroupSystemFilter) >= 1) {
-								// This role-system overriding a merge attribute which is using in
-								// active cross-domain group. -> Account will be not created.
-								canBeCreated = false;
-							}
-						}
-
-						if (!canBeCreated) {
-							// We need to made provisioning for skipped identity-role/accounts (because Cross-domains).
-							// We have to find all identity-accounts for identity and system.
-							AccIdentityAccountFilter identityAccountFilter = new AccIdentityAccountFilter();
-							identityAccountFilter.setSystemId(roleSystem.getSystem());
-							identityAccountFilter.setIdentityId(identity.getId());
-							AccIdentityAccountDto identityAccountDto = identityAccountService.find(identityAccountFilter, null)
-									.getContent()
-									.stream()
-									.filter(identityAccount -> {
-										SysRoleSystemDto roleSystemFromIdentityAccount = lookupService.lookupEmbeddedDto(identityAccount, AccIdentityAccount_.roleSystem);
-										return roleSystemFromIdentityAccount != null
-												&& roleSystem.getSystemMapping().equals(roleSystemFromIdentityAccount.getSystemMapping());
-									}
-							).findFirst().orElse(null);
-							if (identityAccountDto != null && additionalAccountsForProvisioning != null) {
-								additionalAccountsForProvisioning.add(identityAccountDto.getAccount());
-							}
-						}
-						return canBeCreated;
-						
-					})
-					.forEach(roleSystem -> {
-						String uid = generateUID(identity, roleSystem);
-						// Check on change of UID is not executed if all given identity-roles are new
-						if (!onlyCreateNew) {
-							// Check identity-account for that role-system on change the definition of UID
-							checkOnChangeUID(uid, roleSystem, identityAccountList, identityAccountsToDelete);
-						}
-
-						// Try to find identity-account for this identity-role. If exists and doesn't in
-						// list of identity-account to delete, then we are done.
-						AccIdentityAccountDto existsIdentityAccount = findAlreadyExistsIdentityAccount(
-								identityAccountList, identityAccountsToDelete, identityRole, roleSystem);
-
-						if (existsIdentityAccount != null) {
-							if(existsIdentityAccount.getRoleSystem() == null) {
-								// IdentityAccount already exist, but doesn't have relation on RoleSystem. This
-								// could happen if system mapping was deleted and recreated or if was role use
-								// as sync default role, but without mapping on this system.
-								
-								// We have to create missing relation, so we will set and save RoleSystem.
-								existsIdentityAccount.setRoleSystem(roleSystem.getId());
-								identityAccountService.save(existsIdentityAccount);
-							}
-							return;
-						}
-
-						// For this system we need to create new (or found exists) account
-						AccAccountDto account = createAccountByRoleSystem(uid, identity, roleSystem,
-								identityAccountsToCreate);
-						if (account == null) {
-							return;
-						}
-
-						// Prevent to create the same identity account
-						if (identityAccountList.stream().filter(identityAccount -> {
-							return identityAccount.getAccount().equals(account.getId())
-									&& identityRole.getId().equals(identityAccount.getIdentityRole())
-									&& roleSystem.getId().equals(identityAccount.getRoleSystem());
-						}).count() == 0) {
-							AccIdentityAccountDto identityAccount = new AccIdentityAccountDto();
-							identityAccount.setAccount(account.getId());
-							identityAccount.setIdentity(identity.getId());
-							identityAccount.setIdentityRole(identityRole.getId());
-							identityAccount.setRoleSystem(roleSystem.getId());
-							identityAccount.setOwnership(true);
-							identityAccount.getEmbedded().put(AccIdentityAccount_.account.getName(), account);
-
-							identityAccountsToCreate.add(identityAccount);
-						}
-					});
+					.filter(roleSystem -> supportsAccountCreation(roleSystem, identity, additionalAccountsForProvisioning))
+					.forEach(roleSystem ->
+							resolveIdentityAccountForCreate(identity, identityAccountList, identityAccountsToCreate,
+							identityAccountsToDelete, onlyCreateNew, roleSystem, identityRole)
+					);
 		});
+	}
+
+	private void resolveIdentityAccountForCreate(IdmIdentityDto identity,
+												 List<AccIdentityAccountDto> identityAccountList,
+												 List<AccIdentityAccountDto> identityAccountsToCreate,
+												 List<AccIdentityAccountDto> identityAccountsToDelete,
+												 boolean onlyCreateNew,
+												 SysRoleSystemDto roleSystem,
+												 IdmIdentityRoleDto identityRole)  {
+		String uid = generateUID(identity, roleSystem);
+		// Check on change of UID is not executed if all given identity-roles are new
+		if (!onlyCreateNew) {
+			// Check identity-account for that role-system on change the definition of UID
+			checkOnChangeUID(uid, roleSystem, identityAccountList, identityAccountsToDelete);
+		}
+
+		// Try to find identity-account for this identity-role. If exists and doesn't in
+		// list of identity-account to delete, then we are done.
+		AccIdentityAccountDto existsIdentityAccount = findAlreadyExistsIdentityAccount(
+				identityAccountList, identityAccountsToDelete, identityRole, roleSystem);
+
+		if (existsIdentityAccount != null) {
+			if(existsIdentityAccount.getRoleSystem() == null) {
+				// IdentityAccount already exist, but doesn't have relation on RoleSystem. This
+				// could happen if system mapping was deleted and recreated or if was role use
+				// as sync default role, but without mapping on this system.
+
+				// We have to create missing relation, so we will set and save RoleSystem.
+				existsIdentityAccount.setRoleSystem(roleSystem.getId());
+				identityAccountService.save(existsIdentityAccount);
+			}
+			return;
+		}
+
+		// For this system we need to create new (or found exists) account
+		AccAccountDto account = createAccountByRoleSystem(uid, identity, roleSystem,
+				identityAccountsToCreate);
+		if (account == null) {
+			return;
+		}
+
+		// Prevent to create the same identity account
+		if (identityAccountList.stream().filter(identityAccount -> {
+			return identityAccount.getAccount().equals(account.getId())
+					&& identityRole.getId().equals(identityAccount.getIdentityRole())
+					&& roleSystem.getId().equals(identityAccount.getRoleSystem());
+		}).count() == 0) {
+			AccIdentityAccountDto identityAccount = new AccIdentityAccountDto();
+			identityAccount.setAccount(account.getId());
+			identityAccount.setIdentity(identity.getId());
+			identityAccount.setIdentityRole(identityRole.getId());
+			identityAccount.setRoleSystem(roleSystem.getId());
+			identityAccount.setOwnership(true);
+			identityAccount.getEmbedded().put(AccIdentityAccount_.account.getName(), account);
+
+			identityAccountsToCreate.add(identityAccount);
+		}
+	}
+
+	private boolean supportsAccountCreation(SysRoleSystemDto roleSystem, IdmIdentityDto identity, List<UUID> additionalAccountsForProvisioning)  {
+		boolean canBeCreated = roleSystem.isCreateAccountByDefault();
+		if (canBeCreated) {
+			SysSystemGroupSystemFilter systemGroupSystemFilter = new SysSystemGroupSystemFilter();
+			systemGroupSystemFilter.setCrossDomainsGroupsForRoleSystemId(roleSystem.getId());
+			if (systemGroupSystemService.count(systemGroupSystemFilter) >= 1) {
+				// This role-system overriding a merge attribute which is using in
+				// active cross-domain group. -> Account will not be created.
+				canBeCreated = false;
+			}
+		}
+
+		if (!canBeCreated) {
+			// We need to do provisioning for skipped identity-role/accounts (because Cross-domains).
+			// We have to find all identity-accounts for identity and system.
+			AccIdentityAccountFilter identityAccountFilter = new AccIdentityAccountFilter();
+			identityAccountFilter.setSystemId(roleSystem.getSystem());
+			identityAccountFilter.setIdentityId(identity.getId());
+			AccIdentityAccountDto identityAccountDto = identityAccountService.find(identityAccountFilter, null)
+					.getContent()
+					.stream()
+					.filter(accIdentityAccountDto -> accIdentityAccountDto.getRoleSystem() != null)
+					.filter(identityAccount -> {
+								SysRoleSystemDto roleSystemFromIdentityAccount = lookupService.lookupEmbeddedDto(identityAccount, AccIdentityAccount_.roleSystem);
+								return roleSystemFromIdentityAccount != null
+										&& roleSystem.getSystemMapping().equals(roleSystemFromIdentityAccount.getSystemMapping());
+							}
+					).findFirst().orElse(null);
+			if (identityAccountDto != null && additionalAccountsForProvisioning != null) {
+				additionalAccountsForProvisioning.add(identityAccountDto.getAccount());
+			}
+		}
+		return canBeCreated;
 	}
 	
 	/**

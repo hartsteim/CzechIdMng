@@ -6,6 +6,10 @@ import javax.persistence.EntityManager;
 
 import java.time.ZonedDateTime;
 import java.time.LocalDate;
+
+import eu.bcvsolutions.idm.acc.dto.*;
+import eu.bcvsolutions.idm.core.api.domain.ConceptRoleRequestOperation;
+import eu.bcvsolutions.idm.core.api.dto.*;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,18 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import eu.bcvsolutions.idm.acc.TestHelper;
 import eu.bcvsolutions.idm.acc.domain.SystemEntityType;
 import eu.bcvsolutions.idm.acc.domain.SystemOperationType;
-import eu.bcvsolutions.idm.acc.dto.AccAccountDto;
-import eu.bcvsolutions.idm.acc.dto.AccIdentityAccountDto;
-import eu.bcvsolutions.idm.acc.dto.SysSystemDto;
-import eu.bcvsolutions.idm.acc.dto.SysSystemMappingDto;
 import eu.bcvsolutions.idm.acc.dto.filter.AccIdentityAccountFilter;
 import eu.bcvsolutions.idm.acc.entity.TestResource;
 import eu.bcvsolutions.idm.acc.service.api.AccAccountService;
 import eu.bcvsolutions.idm.acc.service.api.AccIdentityAccountService;
 import eu.bcvsolutions.idm.acc.service.api.SysSystemMappingService;
-import eu.bcvsolutions.idm.core.api.dto.IdmIdentityDto;
-import eu.bcvsolutions.idm.core.api.dto.IdmIdentityRoleDto;
-import eu.bcvsolutions.idm.core.api.dto.IdmRoleDto;
 import eu.bcvsolutions.idm.core.api.exception.ResultCodeException;
 import eu.bcvsolutions.idm.core.api.service.IdmIdentityRoleService;
 import eu.bcvsolutions.idm.core.api.service.IdmIdentityService;
@@ -59,6 +56,8 @@ public class AccountProtectionSystemTest extends AbstractIntegrationTest {
 	private IdmIdentityRoleService identityRoleService;
 	@Autowired
 	private AccIdentityAccountService identityAccountService;
+	@Autowired
+	private DefaultSysRoleSystemService roleSystemService;
 
 	@Before
 	public void init() {
@@ -260,6 +259,55 @@ public class AccountProtectionSystemTest extends AbstractIntegrationTest {
 
 		// We again assign same role
 		identityRole = helper.createIdentityRole(identity, roleOne);
+
+		// Account must be unprotected
+		account = accountService.getAccount(identity.getUsername(), system.getId());
+		Assert.assertNotNull(account);
+		Assert.assertFalse(account.isInProtection());
+		createdAccount = helper.findResource(account.getUid());
+		Assert.assertNotNull(createdAccount);
+		Assert.assertEquals(identity.getFirstName(), createdAccount.getFirstname());
+	}
+
+	@Test
+	public void accountWithProtectionRetryBusinessRoleTest() {
+
+		IdmIdentityDto identity = helper.createIdentity();
+		SysSystemDto system = initSystem();
+		IdmRoleDto roleTop = helper.createRole();
+		IdmRoleDto roleSubNotGrantingAcc = helper.createRole();
+		final SysRoleSystemDto roleSystem = helper.createRoleSystem(roleSubNotGrantingAcc, system);
+		roleSystem.setCreateAccountByDefault(false);
+		roleSystemService.save(roleSystem);
+
+		IdmRoleDto roleSub = roleService.getByCode(ROLE_ONE);
+
+		helper.createRoleComposition(roleTop, roleSub);
+		helper.createRoleComposition(roleTop, roleSubNotGrantingAcc);
+
+		// Set system to protected mode
+		SysSystemMappingDto mapping = helper.getDefaultMapping(system);
+		mapping.setProtectionInterval(null);
+		mapping.setProtectionEnabled(true);
+		mapping = systemMappingService.save(mapping);
+
+		final IdmIdentityContractDto primeContract = helper.getPrimeContract(identity);
+		final IdmRoleRequestDto idmRoleRequestDto = helper.assignRoles(primeContract, roleTop);
+
+		final IdmRoleRequestDto roleRequest = helper.createRoleRequest(identity, ConceptRoleRequestOperation.REMOVE, roleTop);
+		// Remove role from identity
+		helper.executeRequest(roleRequest, true, true);
+
+		AccAccountDto account = accountService.getAccount(identity.getUsername(), system.getId());
+		Assert.assertNotNull(account);
+		Assert.assertTrue(account.isInProtection());
+		Assert.assertNull(account.getEndOfProtection());
+		TestResource createdAccount = helper.findResource(account.getUid());
+		Assert.assertNotNull(createdAccount);
+		Assert.assertEquals(identity.getFirstName(), createdAccount.getFirstname());
+
+		// We again assign same role
+		helper.assignRoles(primeContract, roleTop);
 
 		// Account must be unprotected
 		account = accountService.getAccount(identity.getUsername(), system.getId());
