@@ -110,6 +110,7 @@ If you’d like an enhancement to be made to CzechIdM, pull requests are most we
 ### IDE
 
 * [Atom](https://wiki.czechidm.com/devel/documentation/quickstart/dev/ide/atom)
+* [VS Code](https://wiki.czechidm.com/devel/documentation/quickstart/dev/ide/vscode)
 
 ## Documentation
 
@@ -121,7 +122,7 @@ If you’d like an enhancement to be made to CzechIdM, pull requests are most we
 
 ## Our Development Process
 
-1. Clone or Fork the repo and create your branch from `CzechIdMng`.
+1. Clone or Fork the repo and create your branch from `CzechIdMng` (branch `develop`).
 
 2. If you've added code that should be tested, add tests.
 
@@ -131,9 +132,25 @@ If you’d like an enhancement to be made to CzechIdM, pull requests are most we
 
 5. Do not commit anything to the `dist` or `target` folder.
  
-6. Create pull request to develop. Select a reviewer and assign them as the assignee of the PR. As a comment, add a link to the related Redmine page. In the Redmine page, add a link to the PR.
+6. Create a pull request to the `develop` branch. Select a reviewer and assign them as the assignee of the PR. As a comment, add a link to the related Redmine page. In the Redmine page, add a link to the PR.
  
-7. After review is finished, the PR can be merged to develop.
+7. After the review is finished, the PR can be merged to the `develop` branch. (This is typically done by the reviewer.)
+
+### Hotfix
+
+Preparing and releasing hotfixes is a responsibility of a maintainer.
+
+1. Clone or Fork the repo and create your branch from `CzechIdMng`. As a base for your branch, use the immediatelly preceding tag. For example, if you want to release hotfix version 10.7.5, the base for your branch should be the tag 10.7.4. Name the branch `10.7.5-hotfix`. Commit and push this (empty) branch.
+
+2. Create a new branch based on the `10.7.5-hotfix` branch. Add your code following the same rules as above.
+
+3. Create a pull request to the `10.7.5-hotfix` branch. Select a reviewer and assign them as the assignee of the PR. As a comment, add a link to the related Redmine page. In the Redmine page, add a link to the PR.
+
+4. After the review is finished, the PR can be merged to the 10.7.5-hotfix branch. (This is typically done by the reviewer.)
+
+5. If you want to add the code to the current version, repeat the same steps but use the branch `develop` which already exists. In the PR, refer to the original PR.
+
+6. Ensure that the version 10.7.5 is released from the branch `10.7.5-hotfix`.
 
 ## License
 
