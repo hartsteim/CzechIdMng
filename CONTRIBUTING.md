@@ -131,10 +131,12 @@ If you’d like an enhancement to be made to CzechIdM, pull requests are most we
 4. Make sure your code lints.
 
 5. Do not commit anything to the `dist` or `target` folder.
+
+6. Add information about the change to the changelog.
  
-6. Create a pull request to the `develop` branch. Select a reviewer and assign them as the assignee of the PR. As a comment, add a link to the related Redmine page. In the Redmine page, add a link to the PR.
+7. Create a pull request to the `develop` branch. Select a reviewer and assign them as the assignee of the PR. As a comment, add a link to the related Redmine page. In the Redmine page, add a link to the PR.
  
-7. After the review is finished, the PR can be merged to the `develop` branch. (This is typically done by the reviewer.)
+8. After the review is finished, the PR can be merged to the `develop` branch. (This is typically done by the reviewer.)
 
 ### Hotfix
 
@@ -146,11 +148,13 @@ Preparing and releasing hotfixes is a responsibility of a maintainer.
 
 3. Create a pull request to the `10.7.5-hotfix` branch. Select a reviewer and assign them as the assignee of the PR. As a comment, add a link to the related Redmine page. In the Redmine page, add a link to the PR.
 
-4. After the review is finished, the PR can be merged to the 10.7.5-hotfix branch. (This is typically done by the reviewer.)
+4. Add information about the change to the changelog.
 
-5. If you want to add the code to the current version, repeat the same steps but use the branch `develop` which already exists. In the PR, refer to the original PR.
+5. After the review is finished, the PR can be merged to the 10.7.5-hotfix branch. (This is typically done by the reviewer.)
 
-6. Ensure that the version 10.7.5 is released from the branch `10.7.5-hotfix`.
+6. If you want to add the code to the current version, repeat the same steps but use the branch `develop` which already exists. In the PR, refer to the original PR.
+
+7. Ensure that the version 10.7.5 is released from the branch `10.7.5-hotfix`.
 
 ## License
 
