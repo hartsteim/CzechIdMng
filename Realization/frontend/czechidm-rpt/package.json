@@ -1,6 +1,6 @@
 {
   "name": "czechidm-rpt",
-  "version": "10.8.4",
+  "version": "10.8.5",
   "description": "Report module. Contains support for reports.",
   "main": "index.js",
   "scripts": {

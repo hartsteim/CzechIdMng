@@ -1,6 +1,6 @@
 {
   "name": "czechidm-example",
-  "version": "10.8.4",
+  "version": "10.8.5",
   "description": "Example module for CzechIdM devstack. This module can be duplicated and rename for create new optional CzechIdM module.",
   "main": "index.js",
   "scripts": {
