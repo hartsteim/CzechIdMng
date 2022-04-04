@@ -138,6 +138,8 @@ If you’d like an enhancement to be made to CzechIdM, pull requests are most we
  
 8. After the review is finished, the PR can be merged to the `develop` branch. (This is typically done by the reviewer.)
 
+9. Once the PR is merged to the `develop` branch, delete the source branch.
+
 ### Hotfix
 
 Preparing and releasing hotfixes is a responsibility of a maintainer.
@@ -155,6 +157,8 @@ Preparing and releasing hotfixes is a responsibility of a maintainer.
 6. If you want to add the code to the current version, repeat the same steps but use the branch `develop` which already exists. In the PR, refer to the original PR.
 
 7. Ensure that the version 10.7.5 is released from the branch `10.7.5-hotfix`.
+
+8. Once the PR is merged to the `10.7.5-hotfix` branch, delete the source branch.
 
 ## License
 
