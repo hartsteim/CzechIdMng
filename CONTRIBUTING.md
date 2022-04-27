@@ -132,7 +132,7 @@ If you’d like an enhancement to be made to CzechIdM, pull requests are most we
 
 5. Do not commit anything to the `dist` or `target` folder.
 
-6. Add information about the change to the changelog.
+6. Add information about the change to the changelog unless it is a minor change.
  
 7. Create a pull request to the `develop` branch. Select a reviewer and assign them as the assignee of the PR. As a comment, add a link to the related Redmine page. In the Redmine page, add a link to the PR.
  
@@ -150,7 +150,7 @@ Preparing and releasing hotfixes is a responsibility of a maintainer.
 
 3. Create a pull request to the `10.7.5-hotfix` branch. Select a reviewer and assign them as the assignee of the PR. As a comment, add a link to the related Redmine page. In the Redmine page, add a link to the PR.
 
-4. Add information about the change to the changelog.
+4. Add information about the change to the changelog unless it is a minor change.
 
 5. After the review is finished, the PR can be merged to the 10.7.5-hotfix branch. (This is typically done by the reviewer.)
 
