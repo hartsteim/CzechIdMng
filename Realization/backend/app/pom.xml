@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>eu.bcvsolutions.idm</groupId>
 		<artifactId>idm-parent</artifactId>
-		<version>11.2.5</version>
+		<version>11.2.6</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 

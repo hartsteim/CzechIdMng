@@ -1,6 +1,6 @@
 {
   "name": "czechidm-app",
-  "version": "11.2.5",
+  "version": "11.2.6",
   "description": "Main application module for czechidm.",
   "main": "index.html",
   "keywords": [
