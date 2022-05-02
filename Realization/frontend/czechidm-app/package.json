@@ -74,7 +74,7 @@
     "lodash": "4.17.21",
     "log4js": "0.6.36",
     "material-ui-color-picker": "3.5.1",
-    "moment": "2.24.0",
+    "moment": "2.29.2",
     "normalize.less": "1.0.0",
     "object-assign": "4.1.0",
     "path-to-regexp": "3.1.0",
