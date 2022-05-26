@@ -469,6 +469,22 @@ export class IdentityRoleTable extends Advanced.AbstractTableContent {
             rendered={ _.includes(columns, 'directRole') }/>
 
           <Advanced.Column
+            property="description"
+            header={this.i18n('entity.Role.description')}
+            face="text"
+            width={ 200 }
+            cell={ ({ rowIndex, data }) => data[rowIndex]._embedded.role.description }
+            rendered={ _.includes(columns, 'description') }/>
+
+          <Advanced.Column
+            property="priority"
+            header={this.i18n('entity.Role.priority')}
+            face="text"
+            width={ 15 }
+            cell={ ({ rowIndex, data }) => data[rowIndex]._embedded.role.priority }
+            rendered={ _.includes(columns, 'priority') }/>
+
+          <Advanced.Column
             property="automaticRole"
             header={ <Basic.Icon value="component:automatic-role"/> }
             title={ this.i18n('entity.IdentityRole.automaticRole.help') }
@@ -668,7 +684,9 @@ IdentityRoleTable.defaultProps = {
     'validTill',
     'directRole',
     'automaticRole',
-    'incompatibleRoles'
+    'incompatibleRoles',
+    'description',
+    'priority'
   ]),
   forceSearchParameters: null,
   showAddButton: true,
