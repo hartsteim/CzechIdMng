@@ -6911,6 +6911,15 @@
         "label": "Aktivovat nastavení monitoringu",
         "help": "Aktivuje vybraná nastavení monitoringu.",
         "icon": "fa:check-square-o"
+      },
+      "core-adding-role-catalogue-bulk-action": {
+        "label": "Přidělení rolí do katalogu",
+        "icon": "component:role-catalogue",
+        "attributes": {
+          "role-catalogue": {
+            "label": "Katalog rolí"
+          }
+        }
       }
     },
     "authorization-evaluator": {

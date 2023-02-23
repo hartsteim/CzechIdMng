@@ -6858,6 +6858,15 @@
         "label": "Activate monitoring settings",
         "help": "Activate selected monitoring settings.",
         "icon": "fa:check-square-o"
+      },
+      "core-adding-role-catalogue-bulk-action": {
+        "label": "Add role to catalogue",
+        "icon": "component:role-catalogue",
+        "attributes": {
+          "role-catalogue": {
+            "label": "Role catalogue"
+          }
+        }
       }
     },
     "authorization-evaluator": {
