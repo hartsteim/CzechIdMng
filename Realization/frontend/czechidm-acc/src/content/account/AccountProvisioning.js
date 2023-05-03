@@ -54,7 +54,7 @@ class AccountProvisioning extends Advanced.AbstractTableContent {
         <Basic.ContentHeader text={ this.i18n('acc:content.provisioningOperations.header', { escape: false }) }/>
 
         <ProvisioningOperations
-          uiKey="identity-provisioning-operation-table"
+          uiKey="account-provisioning-operation-table"
           forceSearchParameters={ forceSearchParameters }
           columns={ columns }
           showDeleteAllButton={ false }/>

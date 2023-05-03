@@ -1,7 +1,18 @@
 package eu.bcvsolutions.idm.acc.bulk.action.impl;
 
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.google.common.collect.ImmutableSet;
+
 import eu.bcvsolutions.idm.acc.TestHelper;
+import eu.bcvsolutions.idm.acc.domain.SystemOperationType;
 import eu.bcvsolutions.idm.acc.dto.SysSystemAttributeMappingDto;
 import eu.bcvsolutions.idm.acc.dto.SysSystemDto;
 import eu.bcvsolutions.idm.acc.dto.SysSystemMappingDto;
@@ -13,15 +24,6 @@ import eu.bcvsolutions.idm.core.api.bulk.action.dto.IdmBulkActionDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmIdentityDto;
 import eu.bcvsolutions.idm.core.security.api.domain.IdmBasePermission;
 import eu.bcvsolutions.idm.test.api.AbstractBulkActionTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static org.junit.Assert.*;
 
 /**
@@ -102,6 +104,38 @@ public class SystemMappingDuplicateBulkActionTest extends AbstractBulkActionTest
 		compareCloningResult(origMapping, mappings);
 	}
 
+	@Test
+	public void testConnectedMapping() {
+		SysSystemDto system = helper.createTestResourceSystem(true, getHelper().createName());
+
+		SysSystemMappingFilter filter = new SysSystemMappingFilter();
+		filter.setSystemId(system.getId());
+		List<SysSystemMappingDto> mappings = mappingService.find(filter, null).getContent();
+
+		// Contains only one created system mapping
+		assertEquals(1, mappings.size());
+
+		// Add connected mapping
+		SysSystemMappingDto origMapping = mappings.get(0);
+		SysSystemMappingDto connectedMapping = helper.createMapping(system);
+		connectedMapping.setOperationType(SystemOperationType.SYNCHRONIZATION);
+		mappingService.save(connectedMapping);
+		origMapping.setConnectedSystemMappingId(connectedMapping.getId());
+		mappingService.save(origMapping);
+		//
+		IdmBulkActionDto bulkAction = this.findBulkAction(SysSystemMapping.class,
+				SystemMappingDuplicateBulkAction.NAME);
+		bulkAction.setIdentifiers(ImmutableSet.of(origMapping.getId()));
+		IdmBulkActionDto processAction = bulkActionManager.processAction(bulkAction);
+		checkResultLrt(processAction, 1l, null, null);
+
+		// Some new cloned mappings were created
+		mappings = mappingService.find(filter, null).getContent();
+		assertTrue(mappings.size() > 1);
+
+		compareCloningResult(origMapping, mappings);
+	}
+
 	private void compareCloningResult(SysSystemMappingDto origMapping, List<SysSystemMappingDto> otherMappings) {
 		List<SysSystemMappingDto> clonedMappings = otherMappings //
 				.stream() //
@@ -127,5 +161,8 @@ public class SystemMappingDuplicateBulkActionTest extends AbstractBulkActionTest
 		List<SysSystemAttributeMappingDto> attrMappingOrig = attrMappingService.findBySystemMapping(clonedMapping);
 		List<SysSystemAttributeMappingDto> attrMappingCloned = attrMappingService.findBySystemMapping(origMapping);
 		assertEquals(attrMappingCloned.size(), attrMappingOrig.size());
+
+		// Check that connected mapping was removed
+		assertNull(clonedMapping.getConnectedSystemMappingId());
 	}
 }

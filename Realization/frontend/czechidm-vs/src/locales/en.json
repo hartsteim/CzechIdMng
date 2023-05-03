@@ -222,6 +222,11 @@
     }
   },
   "eav": {
+    "authorization-evaluator": {
+      "vs-request-by-implementer-evaluator": {
+        "help": "Permissions for VS requests by the system implementer."
+      }
+    },
     "long-running-task": {
       "vs-system-generator-long-running-task": {
         "label": "Generate requested number of virtual systems (for optimization testing only)",
@@ -267,6 +272,31 @@
           "reason": {
             "label": "Note",
             "placeholder": "Fill in the note ..."
+          }
+        }
+      }
+    },
+    "authorization-evaluator": {
+      "vs-account-form-value-evaluator": {
+        "help": "Permissions to virtual system account form values.",
+        "attributes": {
+          "form-definition": {
+            "label": "Form definition",
+            "help": "Select definition, which contains attributes. Main definition will be used as default.",
+            "placeholder": "Main definition for identities or select ..."
+          },
+          "attributes": {
+            "label": "Attributes",
+            "help": "Add permission to attributes. All attributes from selected form definition will be used as default.",
+            "placeholder": "All attributes or attribute codes (use comma as separator)"
+          },
+          "owner-update": {
+            "label": "By permission to update virtual system account",
+            "help": "Add permission to attributes of virtual system accounts, which can be updated by the logged user."
+          },
+          "owner-read": {
+            "label": "By permission to read virtual system account",
+            "help": "Add permission to attributes of virtual system accounts, which can be read by the logged user."
           }
         }
       }

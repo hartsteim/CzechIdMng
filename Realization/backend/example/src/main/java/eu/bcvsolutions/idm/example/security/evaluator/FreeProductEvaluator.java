@@ -22,9 +22,16 @@ import eu.bcvsolutions.idm.example.entity.ExampleProduct_;
  *
  * @author Radek Tomiška
  */
-@Component
+@Component(FreeProductEvaluator.EVALUATOR_NAME)
 @Description("Adds permissions to products for free..")
 public class FreeProductEvaluator extends AbstractAuthorizationEvaluator<ExampleProduct> {
+
+	public static final String EVALUATOR_NAME = "example-free-product-evaluator";
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 
 	@Override
 	public Predicate getPredicate(Root<ExampleProduct> root, CriteriaQuery<?> query, CriteriaBuilder builder, AuthorizationPolicy policy, BasePermission... permission) {

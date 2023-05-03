@@ -166,4 +166,6 @@ public interface SchedulerManager {
 	 * @since 11.1.0
 	 */
 	int switchInstanceId(String previousInstanceId, String newInstanceId);
+
+	Page<Task> findUpcomingTasks(TaskFilter toFilter, Pageable pageable);
 }

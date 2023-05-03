@@ -228,6 +228,11 @@
     }
   },
   "eav": {
+    "authorization-evaluator": {
+      "vs-request-by-implementer-evaluator": {
+        "help": "Práva na VS požadavky podle realizátora systému."
+      }
+    },
     "long-running-task": {
       "vs-system-generator-long-running-task": {
         "label": "Vygenerovat požadované množství virtuálních systémů (test výkonnosti)",
@@ -273,6 +278,31 @@
           "reason": {
             "label": "Poznámka",
             "placeholder": "Vyplňte poznámku ..."
+          }
+        }
+      }
+    },
+    "authorization-evaluator": {
+      "vs-account-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů účtu na virtuálním systému (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat účet na virtuálním systému",
+            "help": "Nastaví oprávnění pro atributy účtů na virtuálním systému, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst účet na virtuálním systému",
+            "help": "Nastaví oprávnění pro atributy účtů na virtuálním systému, které aktuálně přihlášený uživatel může číst."
           }
         }
       }

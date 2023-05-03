@@ -1,13 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Draggable from 'react-draggable';
+import React from 'react'
+import PropTypes from 'prop-types'
+import Draggable from 'react-draggable'
 //
-import AbstractContextComponent from '../AbstractContextComponent/AbstractContextComponent';
-import Cell from './Cell';
-import Icon from '../Icon/Icon';
+import AbstractContextComponent
+  from '../AbstractContextComponent/AbstractContextComponent'
+import Cell from './Cell'
+import Icon from '../Icon/Icon'
 
 // TODO: implement dynamic row height
-const DRAGABLE_ROW_HEIGHT = 64;
+const DRAGABLE_ROW_HEIGHT = 64
 
 /**
  * Component that renders the row for <Table />.
@@ -18,74 +19,74 @@ const DRAGABLE_ROW_HEIGHT = 64;
  */
 class Row extends AbstractContextComponent {
 
-  _onClick(event) {
-    this.props.onClick(event, this.props.rowIndex, this.props.data);
+  _onClick (event) {
+    this.props.onClick(event, this.props.rowIndex, this.props.data)
   }
 
-  _onDoubleClick(event) {
-    this.props.onDoubleClick(event, this.props.rowIndex, this.props.data);
+  _onDoubleClick (event) {
+    this.props.onDoubleClick(event, this.props.rowIndex, this.props.data)
   }
 
-  _onSelect(event) {
-    const { onRowSelect, rowIndex } = this.props;
+  _onSelect (event) {
+    const {onRowSelect, rowIndex} = this.props
     if (!onRowSelect) {
-      return;
+      return
     }
-    onRowSelect(rowIndex, event.currentTarget.checked);
+    onRowSelect(rowIndex, event.currentTarget.checked)
   }
 
-  _getTitle({ selected, rowIndex }) {
+  _getTitle ({selected, rowIndex}) {
     if (selected) {
-      return this.i18n('component.basic.Table.select.clear', { defaultValue: 'Clear selection' });
+      return this.i18n('component.basic.Table.select.clear', {defaultValue: 'Clear selection'})
     }
     if (rowIndex !== undefined && rowIndex !== null && rowIndex > -1) {
-      return this.i18n('component.basic.Table.select.add', { defaultValue: 'Select record' });
+      return this.i18n('component.basic.Table.select.add', {defaultValue: 'Select record'})
     }
-    return this.i18n('component.basic.Table.select.addAll', { defaultValue: 'Select records' });
+    return this.i18n('component.basic.Table.select.addAll', {defaultValue: 'Select records'})
   }
 
-  _getDraggableTitle() {
-    return this.i18n('component.basic.Table.draggable.button.title', { defaultValue: 'Change order' });
+  _getDraggableTitle () {
+    return this.i18n('component.basic.Table.draggable.button.title', {defaultValue: 'Change order'})
   }
 
-  _showRowSelection({ rowIndex, data, showRowSelection }) {
+  _showRowSelection ({rowIndex, data, showRowSelection}) {
     if (typeof showRowSelection === 'function') {
       return showRowSelection({
         rowIndex,
         data
-      });
+      })
     }
-    return showRowSelection;
+    return showRowSelection
   }
 
-  handleStart(event, dndData) {
-    const { handleStart } = this.props;
+  handleStart (event, dndData) {
+    const {handleStart} = this.props
     //
     if (handleStart) {
-      return handleStart(event, dndData);
+      return handleStart(event, dndData)
     }
-    return null;
+    return null
   }
 
-  handleDrag(event, dndData) {
-    const { handleDrag } = this.props;
+  handleDrag (event, dndData) {
+    const {handleDrag} = this.props
     //
     if (handleDrag) {
-      return handleDrag(event, dndData);
+      return handleDrag(event, dndData)
     }
-    return null;
+    return null
   }
 
-  handleStop(event, dndData) {
-    const { handleStop } = this.props;
+  handleStop (event, dndData) {
+    const {handleStop} = this.props
     //
     if (handleStop) {
-      return handleStop(event, dndData);
+      return handleStop(event, dndData)
     }
-    return null;
+    return null
   }
 
-  render() {
+  render () {
     const {
       rowIndex,
       columns,
@@ -94,56 +95,62 @@ class Row extends AbstractContextComponent {
       onRowSelect,
       data,
       draggable
-    } = this.props;
-    const cells = new Array(columns.length);
+    } = this.props
+    const cells = new Array(columns.length)
     for (let i = 0, j = columns.length; i < j; i++) {
-      const columnProps = columns[i].props;
+      const columnProps = columns[i].props
+
       cells[i] = (
         <Cell
-          key={ `cell_${i}` }
-          rowIndex={ rowIndex }
-          cell={ columnProps.cell }
-          property={ columnProps.property }
-          data={ data }
-          showLoading={ this.props.showLoading }
-          width={ columnProps.width }
-          className={ columnProps.className }
+          key={`cell_${i}`}
+          rowIndex={rowIndex}
+          cell={columnProps.cell}
+          forceWrap={columnProps.forceWrap}
+          property={columnProps.property}
+          data={data}
+          showLoading={this.props.showLoading}
+          width={columnProps.width}
+          className={columnProps.className}
         />
-      );
+      )
     }
-    let _rowClass;
+    let _rowClass
     if (!rowClass) {
-      _rowClass = '';
+      _rowClass = ''
     } else if (typeof rowClass === 'function') {
       _rowClass = rowClass({
         rowIndex,
         data
-      });
+      })
     } else {
-      _rowClass = rowClass;
+      _rowClass = rowClass
     }
     if (draggable) {
-      _rowClass += ` draggable`;
+      _rowClass += ` draggable`
     }
     //
     const content = (
       <tr
-        onClick={ this.props.onClick ? this._onClick.bind(this) : null }
-        onDoubleClick={ this.props.onDoubleClick ? this._onDoubleClick.bind(this) : null }
-        className={ _rowClass }
-        style={ draggable ? { height: DRAGABLE_ROW_HEIGHT, position: 'relative' } : null }>
+        onClick={this.props.onClick ? this._onClick.bind(this) : null}
+        onDoubleClick={this.props.onDoubleClick ? this._onDoubleClick.bind(this) : null}
+        className={_rowClass}
+        style={draggable ? {
+          height: DRAGABLE_ROW_HEIGHT,
+          position: 'relative'
+        } : null}>
         {
           !draggable
           ||
           <td className="table-action-draggable">
             {
               rowIndex < 0
-              ?
-              null
-              :
-              <div className="handle" title={ this._getDraggableTitle(this.props) }>
-                <Icon value="fa:ellipsis-v"/>
-              </div>
+                ?
+                null
+                :
+                <div className="handle"
+                     title={this._getDraggableTitle(this.props)}>
+                  <Icon value="fa:ellipsis-v"/>
+                </div>
             }
           </td>
         }
@@ -153,35 +160,35 @@ class Row extends AbstractContextComponent {
           <td width="16px" className="bulk-selection">
             <input
               type="checkbox"
-              checked={ selected }
-              onChange={ this._onSelect.bind(this) }
-              title={ this._getTitle(this.props) }
-              disabled={ !this._showRowSelection(this.props) }/>
+              checked={selected}
+              onChange={this._onSelect.bind(this)}
+              title={this._getTitle(this.props)}
+              disabled={!this._showRowSelection(this.props)}/>
           </td>
         }
-        { cells }
+        {cells}
       </tr>
-    );
+    )
     if (!draggable || rowIndex < 0) {
-      return content;
+      return content
     }
     //
     // calculate dragable boundaries => relative to selected row by index.
-    const top = -(rowIndex * DRAGABLE_ROW_HEIGHT);
-    const bottom = top + ((data ? data.length : 0) * DRAGABLE_ROW_HEIGHT) - DRAGABLE_ROW_HEIGHT;
+    const top = -(rowIndex * DRAGABLE_ROW_HEIGHT)
+    const bottom = top + ((data ? data.length : 0) * DRAGABLE_ROW_HEIGHT) - DRAGABLE_ROW_HEIGHT
     //
     return (
       <Draggable
         axis="y"
-        onStart={ this.handleStart.bind(this) }
-        onDrag={ this.handleDrag.bind(this) }
-        onStop={ this.handleStop.bind(this) }
+        onStart={this.handleStart.bind(this)}
+        onDrag={this.handleDrag.bind(this)}
+        onStop={this.handleStop.bind(this)}
         handle=".handle"
-        bounds={{ top, bottom }}
+        bounds={{top, bottom}}
         defaultClassNameDragging="dragging">
-        { content }
+        {content}
       </Draggable>
-    );
+    )
   }
 }
 
@@ -230,13 +237,13 @@ Row.propTypes = {
    * @since 10.7.0
    */
   draggable: PropTypes.bool
-};
+}
 Row.defaultProps = {
   showLoading: false,
   selected: false,
   draggable: false
-};
+}
 
-Row.DRAGABLE_ROW_HEIGHT = DRAGABLE_ROW_HEIGHT;
+Row.DRAGABLE_ROW_HEIGHT = DRAGABLE_ROW_HEIGHT
 
-export default Row;
+export default Row

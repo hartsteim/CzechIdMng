@@ -1,11 +1,5 @@
 package eu.bcvsolutions.idm.core.model.service.impl;
 
-import static eu.bcvsolutions.idm.core.api.domain.ConceptRoleRequestOperation.ADD;
-import static eu.bcvsolutions.idm.core.api.domain.ConceptRoleRequestOperation.REMOVE;
-import static eu.bcvsolutions.idm.core.api.domain.ConceptRoleRequestOperation.UPDATE;
-import static eu.bcvsolutions.idm.core.api.dto.IdmRoleRequestDto.APPLICANT_INFO_FIELD;
-import static eu.bcvsolutions.idm.core.api.dto.OperationResultDto.PROPERTY_STATE;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,10 +21,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import eu.bcvsolutions.idm.core.api.dto.filter.BaseRoleAssignmentFilter;
-import eu.bcvsolutions.idm.core.api.dto.filter.IdmRequestIdentityRoleFilter;
-import eu.bcvsolutions.idm.core.api.service.IdmRoleAssignmentService;
-import eu.bcvsolutions.idm.core.eav.entity.AbstractFormValue_;
+import eu.bcvsolutions.idm.core.api.domain.Codeable;
+import eu.bcvsolutions.idm.core.api.domain.Identifiable;
+import eu.bcvsolutions.idm.core.api.service.LookupService;
+import eu.bcvsolutions.idm.core.api.service.NiceLabelable;
+import eu.bcvsolutions.idm.core.api.service.ReadDtoService;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -40,6 +35,7 @@ import org.fusesource.hawtbuf.ByteArrayInputStream;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +48,7 @@ import com.google.common.collect.Sets;
 
 import eu.bcvsolutions.idm.core.api.audit.service.SiemLoggerManager;
 import eu.bcvsolutions.idm.core.api.domain.ConceptRoleRequestOperation;
+import static eu.bcvsolutions.idm.core.api.domain.ConceptRoleRequestOperation.*;
 import eu.bcvsolutions.idm.core.api.domain.CoreResultCode;
 import eu.bcvsolutions.idm.core.api.domain.Loggable;
 import eu.bcvsolutions.idm.core.api.domain.OperationState;
@@ -74,8 +71,11 @@ import eu.bcvsolutions.idm.core.api.dto.IdmRoleDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmRoleRequestByIdentityDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmRoleRequestDto;
 import eu.bcvsolutions.idm.core.api.dto.OperationResultDto;
+import static eu.bcvsolutions.idm.core.api.dto.OperationResultDto.PROPERTY_STATE;
 import eu.bcvsolutions.idm.core.api.dto.ResolvedIncompatibleRoleDto;
+import eu.bcvsolutions.idm.core.api.dto.filter.BaseRoleAssignmentFilter;
 import eu.bcvsolutions.idm.core.api.dto.filter.IdmBaseConceptRoleRequestFilter;
+import eu.bcvsolutions.idm.core.api.dto.filter.IdmRequestIdentityRoleFilter;
 import eu.bcvsolutions.idm.core.api.dto.filter.IdmRoleRequestFilter;
 import eu.bcvsolutions.idm.core.api.entity.AbstractEntity_;
 import eu.bcvsolutions.idm.core.api.event.EntityEvent;
@@ -93,6 +93,7 @@ import eu.bcvsolutions.idm.core.api.service.IdmIdentityRoleService;
 import eu.bcvsolutions.idm.core.api.service.IdmIdentityService;
 import eu.bcvsolutions.idm.core.api.service.IdmIncompatibleRoleService;
 import eu.bcvsolutions.idm.core.api.service.IdmRoleAssignmentManager;
+import eu.bcvsolutions.idm.core.api.service.IdmRoleAssignmentService;
 import eu.bcvsolutions.idm.core.api.service.IdmRoleCompositionService;
 import eu.bcvsolutions.idm.core.api.service.IdmRoleRequestService;
 import eu.bcvsolutions.idm.core.api.service.thin.IdmIdentityRoleThinService;
@@ -104,6 +105,7 @@ import eu.bcvsolutions.idm.core.eav.api.dto.IdmFormInstanceDto;
 import eu.bcvsolutions.idm.core.eav.api.dto.IdmFormValueDto;
 import eu.bcvsolutions.idm.core.eav.api.dto.InvalidFormAttributeDto;
 import eu.bcvsolutions.idm.core.eav.api.service.IdmFormAttributeService;
+import eu.bcvsolutions.idm.core.eav.entity.AbstractFormValue_;
 import eu.bcvsolutions.idm.core.ecm.api.dto.IdmAttachmentDto;
 import eu.bcvsolutions.idm.core.ecm.api.service.AttachmentManager;
 import eu.bcvsolutions.idm.core.model.domain.CoreGroupPermission;
@@ -148,8 +150,6 @@ public class DefaultIdmRoleRequestService
 	private IdmRoleAssignmentManager roleAssignmentManager;
 
 	@Autowired
-	private IdmIdentityRoleService identityRoleService;
-	@Autowired
 	private IdmIdentityService identityService;
 	@Autowired
 	private SecurityService securityService;
@@ -167,8 +167,10 @@ public class DefaultIdmRoleRequestService
 	private AttachmentManager attachmentManager;
 	@Autowired
 	private IdmRoleCompositionService roleCompositionService;
+
+	@Lazy
 	@Autowired
-	private IdmIdentityRoleThinService identityRoleThinService;
+	private LookupService lookupService;
 	//
 	@Autowired
 	public DefaultIdmRoleRequestService(IdmRoleRequestRepository repository,
@@ -424,6 +426,7 @@ public class DefaultIdmRoleRequestService
 		trimRequest(eventRequest);
 		event.setContent(eventRequest);
 		variables.put(EntityEvent.EVENT_PROPERTY, event);
+		variables.put("applicantInfo", request.getApplicantInfo());
 
 		ProcessInstance processInstance = workflowProcessInstanceService.startProcess(wfDefinition,
 				IdmIdentity.class.getSimpleName(), applicant.getId().toString(),
@@ -641,6 +644,21 @@ public class DefaultIdmRoleRequestService
 				.filter(abstractEventableDtoService -> accountType.equals(abstractEventableDtoService.getAccountType()))
 				.findFirst()
 				.orElse(null);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public String getApplicantLabel(ApplicantDto applicant) {
+		final BaseDto applicantDto = lookupService.lookupDto(applicant.getApplicantType(), applicant.getId());
+		final ReadDtoService<?, ?> dtoService = lookupService.getDtoService(applicantDto.getClass());
+
+		// TODO replace with pattern matching in java 17
+		if(dtoService instanceof NiceLabelable) {
+			// This unchecked cast is safe because applicantDto will always be compatible with dtoService
+			return ((NiceLabelable<BaseDto>) dtoService).getNiceLabel(applicantDto);
+		}
+		// fallback to identity applicant, which was default behavior prior to introduction of different applicant types
+		return identityService.getNiceLabel(identityService.get(applicant.getId()));
 	}
 
 	@Override
@@ -958,10 +976,12 @@ public class DefaultIdmRoleRequestService
 	@Override
 	public List<AbstractConceptRoleRequestDto> markDuplicates(List<AbstractConceptRoleRequestDto> concepts, List<AbstractRoleAssignmentDto> allByIdentity) {
 		Assert.notNull(concepts, "Role request concepts are required.");
-
+		LOG.debug("Mark duplicates in concepts [{}]", concepts.size());
 		// Check duplicates between concepts
 		markDuplicatesInConcepts(concepts);
 
+		LOG.debug("Mark duplicates in concepts and identity roles [{}]", concepts.size());
+		// Check duplicates between concepts and identity roles
 		// Split by role UUID
 		Map<UUID, List<AbstractRoleAssignmentDto>> identityRolesByRole = allByIdentity
 		.stream() //
@@ -969,9 +989,10 @@ public class DefaultIdmRoleRequestService
 				Collectors.groupingBy( // Group identity roles by role
 						AbstractRoleAssignmentDto::getRole) //
 				); //
-
+		LOG.debug("Fetched identity roles by role [{}]", identityRolesByRole.size());
 		// TODO: create hashMap with used roles (simple cache)
 		for (AbstractConceptRoleRequestDto concept : concepts) {
+			LOG.debug("Check concept [{}]", concept.getId());
 			// Only add or modification will be processed
 			if (concept.getOperation() == REMOVE) {
 				continue;
@@ -989,6 +1010,7 @@ public class DefaultIdmRoleRequestService
 
 			// Iterate over all identity roles, but only with same roles.
 			for (AbstractRoleAssignmentDto identityRole : identityRoles) {
+				LOG.debug("Check identity role [{}] against concept [{}]", identityRole.getId(), concept.getId());
 				// We must get eavs by service. This is expensive operation. But we need it.
 				IdmFormInstanceDto instanceDto = roleAssignmentManager.getServiceForAssignment(identityRole).getRoleAttributeValues(identityRole);
 				if (instanceDto != null) {
@@ -1007,7 +1029,7 @@ public class DefaultIdmRoleRequestService
 			}
 
 		}
-
+		LOG.debug("Mark duplicates in concepts and identity roles [{}] - end", concepts.size());
 		return concepts;
 	}
 
@@ -1140,6 +1162,18 @@ public class DefaultIdmRoleRequestService
 				operation,
 				contract == null ? null : contract.getValidFrom(),
 				contract == null ? null : contract.getValidTill());
+	}
+
+	@Override
+	public AbstractConceptRoleRequestDto createConceptWithoutValidity(IdmRoleRequestDto roleRequest, IdmIdentityContractDto contract, UUID roleAssignmentUuid,
+													   UUID roleId, ConceptRoleRequestOperation operation) {
+		return createConcept(roleRequest,
+				contract == null ? null : contract.getId(),
+				roleAssignmentUuid,
+				roleId,
+				operation,
+				null,
+				null);
 	}
 
 	public AbstractConceptRoleRequestDto createConcept(IdmRoleRequestDto roleRequest, UUID ownerUuid, UUID roleAssignmentUuid,
@@ -1303,7 +1337,9 @@ public class DefaultIdmRoleRequestService
 	private void markDuplicatesInConcepts(List<AbstractConceptRoleRequestDto> concepts) {
 		// Mark duplicates with concepts
 		// Compare conceptOne with conceptTwo
+		LOG.debug("Mark duplicates in concepts");
 		for (AbstractConceptRoleRequestDto conceptOne : concepts) {
+			LOG.debug("Compare concept [{}] with others", conceptOne.getId());
 			// Only add or modification will be processed
 			if (conceptOne.getOperation() == REMOVE) {
 				conceptOne.setDuplicate(Boolean.FALSE); // REMOVE concept can't be duplicated
@@ -1323,6 +1359,7 @@ public class DefaultIdmRoleRequestService
 
 			// check duplicates for concept
 			for (AbstractConceptRoleRequestDto conceptTwo : concepts) {
+				LOG.debug("Compare concept [{}] with concept [{}]", conceptOne.getId(), conceptTwo.getId());
 				// Only add or modification will be processed
 				if (conceptTwo.getOperation() == REMOVE) {
 					conceptTwo.setDuplicate(Boolean.FALSE); // REMOVE concept can be duplicated
@@ -1363,6 +1400,7 @@ public class DefaultIdmRoleRequestService
 				conceptOne.setDuplicate(Boolean.FALSE);
 			}
 		}
+		LOG.debug("Mark duplicates in concepts finished");
 	}
 	
 

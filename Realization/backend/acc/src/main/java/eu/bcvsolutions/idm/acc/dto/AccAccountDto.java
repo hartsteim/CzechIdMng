@@ -44,7 +44,6 @@ public class AccAccountDto extends FormableDto implements ExternalIdentifiable, 
 	private UUID system;
 	@Embedded(dtoClass = SysSystemEntityDto.class)
 	private UUID systemEntity;
-	@JsonProperty(access = Access.READ_ONLY)
 	private boolean inProtection;
 	private ZonedDateTime endOfProtection;
 	private String realUid;

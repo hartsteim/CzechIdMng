@@ -67,7 +67,8 @@ public class AccAccountRoleAssignmentJPAPlugin implements SysRoleAssignmentJPAPl
         Predicate identityRolePredicate = builder.isNull(subRoot.get(AbstractRoleAssignment_.roleSystem));
 
         // Identity-role predicate
-        subquery.where(builder.and(correlationPredicate,  getIdentityPredicate(query, builder, filter, subRoot), identityRolePredicate));
+        subquery.where(builder.and(correlationPredicate,  getIdentityPredicate(query, builder, filter, subRoot), identityRolePredicate,
+                filter.getAccountId() != null ? builder.equal(subRoot.get(AccAccountRoleAssignment_.account).get(AbstractEntity_.id), filter.getAccountId()) : builder.conjunction()));
 
         // Query via role-system:
         Subquery<AccAccountRoleAssignment> subqueryRs = query.subquery(AccAccountRoleAssignment.class);

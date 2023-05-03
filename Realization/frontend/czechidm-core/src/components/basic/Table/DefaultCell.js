@@ -1,7 +1,7 @@
-import React from 'react';
-import _ from 'lodash';
+import React from 'react'
+import _ from 'lodash'
 //
-import AbstractComponent from '../AbstractComponent/AbstractComponent';
+import AbstractComponent from '../AbstractComponent/AbstractComponent'
 
 /**
  * Component that handles default cell.
@@ -13,7 +13,7 @@ import AbstractComponent from '../AbstractComponent/AbstractComponent';
  *     cell={({rowIndex, width, height}) => (
  *       <Cell>
  *         Cell number: <span>{rowIndex}</span>
-*        </Cell>
+ *        </Cell>
  *     )}
  *   />
  * );
@@ -30,43 +30,41 @@ class DefaultCell extends AbstractComponent {
    * @param  {[type]} property e.q. `name`, `identityManager.name`
    * @return {any} property value
    */
-  static getPropertyValue(rowData, property) {
+  static getPropertyValue (rowData, property) {
     if (!rowData || !property) {
-      return null;
+      return null
     }
     if (rowData[property] !== undefined) { // scalar property
-      return rowData[property];
+      return rowData[property]
     }
-    let propertyValue = _.merge({}, rowData);
+    let propertyValue = _.merge({}, rowData)
     //
     if (_.includes(property, '.')) { // nested property
-      const nestedProperties = property.split('.'); // properties are joined by dot notation e.g `identityManager.name`
+      const nestedProperties = property.split('.') // properties are joined by dot notation e.g `identityManager.name`
       for (const nestedProperty of nestedProperties) {
         if (!propertyValue[nestedProperty]) {
-          return null; // we don't need previous nested object property value
+          return null // we don't need previous nested object property value
         }
-        propertyValue = propertyValue[nestedProperty];
+        propertyValue = propertyValue[nestedProperty]
       }
     } else {
-      return null;
+      return null
     }
-    return propertyValue;
+    return propertyValue
   }
 
-  render() {
-    const { style, className, title } = this.props;
-    //
+  render () {
+    const {style, className, title} = this.props
+
     return (
-      <div style={ style } className={ className } title={ title }>
+      <div style={style} className={className} title={title}>
         {this.props.children}
       </div>
-    );
+    )
   }
 }
 
-DefaultCell.propTypes = {
-};
-DefaultCell.defaultProps = {
-};
+DefaultCell.propTypes = {}
+DefaultCell.defaultProps = {}
 
-export default DefaultCell;
+export default DefaultCell

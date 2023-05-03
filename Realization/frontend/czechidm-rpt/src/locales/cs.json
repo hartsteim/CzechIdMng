@@ -134,6 +134,9 @@
             "help": "Kód executoru, např. 'identity-report'. Ke stažení kteréhokoli vygenerovaného reportu tohoto typu je třeba mít i oprávnění Vytvoření či Administrace! Toto pole je jednohodnotové, tj. může obsahovat pouze jeden report."
           }
         }
+      },
+      "rpt-self-report-evaluator": {
+        "help": "Práva na reporty vytvořené aktuálně přihlášeným uživatelem."
       }
     }
   },

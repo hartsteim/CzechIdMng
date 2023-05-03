@@ -25,12 +25,18 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  * @author svandav
  *
  */
-@Component
+@Component(SelfRequestEvaluator.EVALUATOR_NAME)
 @Description("Currently logged user can edit his requests.")
 public class SelfRequestEvaluator extends AbstractAuthorizationEvaluator<IdmRequest> {
 
+	public static final String EVALUATOR_NAME = "core-self-request-evaluator";
 	private final SecurityService securityService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
 	@Autowired
 	public SelfRequestEvaluator(SecurityService securityService) {
 		Assert.notNull(securityService, "Service is required.");

@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
+import java.util.UUID;
+
 import static eu.bcvsolutions.idm.acc.dto.filter.AccAccountRoleAssignmentFilter.PARAMETER_ACCOUNT_ID;
 
 /**
@@ -29,7 +31,10 @@ public class AccRequestIdentityRoleFilterTranslator extends AbstractPluggableFil
 
     @Override
     public IdmRequestIdentityRoleFilter transformInternal(IdmRequestIdentityRoleFilter filter, MultiValueMap<String, Object> parameters) {
-        filter.set(PARAMETER_ACCOUNT_ID, getParameterConverter().toUuid(parameters, PARAMETER_ACCOUNT_ID));
+        final UUID accountId = getParameterConverter().toUuid(parameters, PARAMETER_ACCOUNT_ID);
+        if (accountId != null) {
+            filter.set(PARAMETER_ACCOUNT_ID, accountId);
+        }
         return filter;
     }
 

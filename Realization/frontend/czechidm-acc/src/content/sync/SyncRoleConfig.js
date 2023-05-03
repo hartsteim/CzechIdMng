@@ -33,7 +33,6 @@ class SyncRoleConfig extends Basic.AbstractContent {
           ? props.synchronizationConfig._embedded.memberSystemMapping.objectClass : Domain.SearchParameters.BLANK_UUID),
       identityMappingSearchParameters: new Domain.SearchParameters()
         .setFilter('operationType', 'PROVISIONING')
-        .setFilter('entityType', 'IDENTITY')
     };
   }
 

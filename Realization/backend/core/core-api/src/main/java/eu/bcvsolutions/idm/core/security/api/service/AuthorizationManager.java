@@ -12,6 +12,7 @@ import javax.persistence.criteria.Root;
 import eu.bcvsolutions.idm.core.api.CoreModule;
 import eu.bcvsolutions.idm.core.api.domain.Identifiable;
 import eu.bcvsolutions.idm.core.api.entity.BaseEntity;
+import eu.bcvsolutions.idm.core.api.service.IdmCacheManager;
 import eu.bcvsolutions.idm.core.security.api.domain.AuthorizationPolicy;
 import eu.bcvsolutions.idm.core.security.api.domain.BasePermission;
 import eu.bcvsolutions.idm.core.security.api.dto.AuthorizableType;
@@ -27,19 +28,19 @@ public interface AuthorizationManager {
 	/**
 	 * Logged identity permissions for shown record.
 	 */
-	String PERMISSION_CACHE_NAME = String.format("%s:permission-cache", CoreModule.MODULE_ID);
+	String PERMISSION_CACHE_NAME = IdmCacheManager.getCacheName(CoreModule.MODULE_ID, "permission-cache");
 	/**
 	 * Logged identity authorization policies (as uuid).
 	 * 
 	 * @since 10.4.1
 	 */
-	String AUTHORIZATION_POLICY_CACHE_NAME = String.format("%s:authorization-policy-cache", CoreModule.MODULE_ID);
+	String AUTHORIZATION_POLICY_CACHE_NAME = IdmCacheManager.getCacheName(CoreModule.MODULE_ID, "authorization-policy-cache");
 	/**
 	 * Configured policies (uuid -> dto).
 	 * 
 	 * @since 10.7.0
 	 */
-	String AUTHORIZATION_POLICY_DEFINITION_CACHE_NAME = String.format("%s:authorization-policy-definition-cache", CoreModule.MODULE_ID);
+	String AUTHORIZATION_POLICY_DEFINITION_CACHE_NAME = IdmCacheManager.getCacheName(CoreModule.MODULE_ID, "authorization-policy-definition-cache");
 	
 	/**
 	 * Return security predicate for given permissions and root by {@link BaseEntity} type.

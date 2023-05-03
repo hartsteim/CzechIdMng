@@ -8,6 +8,7 @@ import eu.bcvsolutions.idm.core.api.CoreModule;
 import eu.bcvsolutions.idm.core.api.domain.Identifiable;
 import eu.bcvsolutions.idm.core.api.dto.IdmTokenDto;
 import eu.bcvsolutions.idm.core.api.exception.ForbiddenEntityException;
+import eu.bcvsolutions.idm.core.api.service.IdmCacheManager;
 import eu.bcvsolutions.idm.core.api.service.IdmTokenService;
 import eu.bcvsolutions.idm.core.security.api.domain.BasePermission;
 
@@ -26,7 +27,7 @@ public interface TokenManager {
 	 * 
 	 * @since 10.5.0
 	 */
-	String TOKEN_CACHE_NAME = String.format("%s:token-cache", CoreModule.MODULE_ID);
+	String TOKEN_CACHE_NAME = IdmCacheManager.getCacheName(CoreModule.MODULE_ID, "token-cache");
 	
 	/**
 	 * Returns currently used token in security context

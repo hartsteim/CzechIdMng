@@ -271,6 +271,7 @@ class AccountRolesContent extends Basic.AbstractContent {
     force = force.setFilter('category', 'eu.bcvsolutions.role.approve');
     let roleRequestsForceSearch = new Domain.SearchParameters();
     roleRequestsForceSearch = roleRequestsForceSearch.setFilter('applicant', entity.targetEntityId);
+    roleRequestsForceSearch = roleRequestsForceSearch.setFilter('applicantType', entity.targetEntityId);
     roleRequestsForceSearch = roleRequestsForceSearch.setFilter('executed', 'false');
     //
     return (

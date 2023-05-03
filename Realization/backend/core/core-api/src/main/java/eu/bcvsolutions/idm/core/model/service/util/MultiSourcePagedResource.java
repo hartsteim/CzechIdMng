@@ -1,11 +1,13 @@
 package eu.bcvsolutions.idm.core.model.service.util;
 
+import com.google.common.collect.ImmutableMap;
+import eu.bcvsolutions.idm.core.api.domain.CoreResultCode;
 import eu.bcvsolutions.idm.core.api.dto.BaseDto;
+import eu.bcvsolutions.idm.core.api.dto.filter.BaseFilter;
 import eu.bcvsolutions.idm.core.api.dto.filter.DataFilter;
-import eu.bcvsolutions.idm.core.api.dto.filter.EmptyFilter;
+import eu.bcvsolutions.idm.core.api.exception.ResultCodeException;
 import eu.bcvsolutions.idm.core.api.service.adapter.AdaptableService;
 import eu.bcvsolutions.idm.core.api.service.adapter.DtoAdapter;
-import eu.bcvsolutions.idm.core.api.utils.ReflectionUtils;
 import eu.bcvsolutions.idm.core.security.api.domain.BasePermission;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -13,20 +15,18 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.util.MultiValueMap;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static eu.bcvsolutions.idm.core.api.utils.ReflectionUtils.getLowercaseFieldNameFromGetter;
-import static eu.bcvsolutions.idm.core.api.utils.ReflectionUtils.invokeGetter;
-import static eu.bcvsolutions.idm.core.api.utils.ReflectionUtils.invokeSetter;
 import static eu.bcvsolutions.idm.core.api.utils.ReflectionUtils.translateFilter;
 
 /**
@@ -70,7 +70,7 @@ import static eu.bcvsolutions.idm.core.api.utils.ReflectionUtils.translateFilter
  *
  * Since this service combines multiple data sources, which means multiple different {@link eu.bcvsolutions.idm.core.api.dto.BaseDto}, we need a way
  * to convert them to the same data type. This is done using {@link eu.bcvsolutions.idm.core.api.service.adapter.DtoAdapter} object, which is
- * obtained by calling {@link AdaptableService#getAdapter(FILTER)}.
+ * obtained by calling {@link AdaptableService#getAdapter(BaseFilter)} (FILTER)}.
  *
  * @param <DTO> {@link BaseDto} class, which internal resources use
  * @param <INNERFILTER> {@link DataFilter} class, which internal resources use
@@ -81,6 +81,8 @@ import static eu.bcvsolutions.idm.core.api.utils.ReflectionUtils.translateFilter
  */
 public class MultiSourcePagedResource<DTO extends BaseDto, INNERFILTER extends DataFilter, FILTER extends DataFilter, RESULT> {
 
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory
+            .getLogger(MultiSourcePagedResource.class);
     private final Collection<AdaptableService<DTO, INNERFILTER, RESULT>> sources;
     private final ModelMapper modelMapper;
 
@@ -90,6 +92,7 @@ public class MultiSourcePagedResource<DTO extends BaseDto, INNERFILTER extends D
     }
 
     public Page<RESULT> find(FILTER filter, Pageable pageable, BasePermission[] permission) {
+        LOG.debug("Multiresource search using filter {} and pageable {}", filter, pageable);
         return doPaging(
                 (service, concreteFilter, currentPageable) -> service.find(concreteFilter, currentPageable, permission),
                 (service, concreteFilter, currentPage) -> {
@@ -100,6 +103,7 @@ public class MultiSourcePagedResource<DTO extends BaseDto, INNERFILTER extends D
     }
 
     public Page<UUID> findIds(FILTER filter, Pageable pageable, BasePermission[] permission) {
+        LOG.debug("Multiresource id search using filter {} and pageable {}", filter, pageable);
         return doPaging(
                 (service, concreteFilter, currentPageable) -> service.findIds(concreteFilter, currentPageable, permission),
                 (service, concreteFilter, currentPage) -> currentPage.getContent(),
@@ -107,6 +111,7 @@ public class MultiSourcePagedResource<DTO extends BaseDto, INNERFILTER extends D
     }
 
     public long count(FILTER filter, BasePermission[] permission) {
+        LOG.debug("Multiresource count using filter {}", filter);
         return doPaging(
                 (service, concreteFilter, currentPageable) -> new PageImpl<>(Collections.emptyList(), currentPageable, service.count(concreteFilter)),
                 (service, concreteFilter, currentPage) -> currentPage.getContent(),
@@ -116,6 +121,7 @@ public class MultiSourcePagedResource<DTO extends BaseDto, INNERFILTER extends D
     private <O, Q> Page<Q> doPaging(
              TriFunction<AdaptableService<DTO, INNERFILTER, RESULT>, INNERFILTER, Pageable, Page<O>> resultProvider,
             TriFunction<AdaptableService<DTO, INNERFILTER, RESULT>, INNERFILTER, Page<O>, Collection<Q>> resultMapper, DataFilter filter, Pageable pageable, BasePermission[] permission) {
+        LOG.debug("Paging using filter {} and pageable {}", filter, pageable);
         List<Q> result = new ArrayList<>();
         final Pageable nullSafePageable = Optional.ofNullable(pageable).orElse(PageRequest.of(0, Integer.MAX_VALUE));
         long total = 0L;
@@ -126,16 +132,21 @@ public class MultiSourcePagedResource<DTO extends BaseDto, INNERFILTER extends D
             if (missingCount != 0) {
                 // Still need some records fetched
                 final Pageable currentPageable = getCurrentPageable(nullSafePageable, total, missingCount);
+                LOG.debug("Searching in service {} using filter {} and pageable {}", service, concreteFilter, currentPageable);
                 //
                 final Page<O> currentPage = resultProvider.apply(service, concreteFilter, currentPageable);
+                LOG.debug("Found {} records in service {}", currentPage.getTotalElements(), service);
                 result.addAll(resultMapper.apply(service, concreteFilter, currentPage));
+                LOG.debug("Mapped {} records in service {}", currentPage.getTotalElements(), service);
                 total += currentPage.getTotalElements();
             } else {
                 // just count how many records there are
                 final long count = service.count(concreteFilter, permission);
+                LOG.debug("Counted {} records in service {}", count, service);
                 total+= count;
             }
         }
+        LOG.debug("Found {} records in total", total);
         return new PageImpl<>(result, nullSafePageable, total);
     }
 

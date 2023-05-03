@@ -21,13 +21,18 @@ import eu.bcvsolutions.idm.core.workflow.service.WorkflowProcessInstanceService;
  * 
  * @author Vít Švanda
  */
-@Component
+@Component(RequestByWfInvolvedIdentityEvaluator.EVALUATOR_NAME)
 @Description("Currently logged user can work with requests, when identity was involved to approving.")
 public class RequestByWfInvolvedIdentityEvaluator extends AbstractAuthorizationEvaluator<IdmRequest> {
-	
+
+	public static final String EVALUATOR_NAME = "core-request-by-wf-involved-identity-evaluator";
 	private final WorkflowProcessInstanceService processService;
 	private final SecurityService securityService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	@Autowired
 	public RequestByWfInvolvedIdentityEvaluator(
 			SecurityService securityService,

@@ -26,12 +26,19 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author svandav
  *
  */
-@Component
+@Component(ContractAccountByContractEvaluator.EVALUATOR_NAME)
 @Description("Permissions to contract accounts by role")
 public class ContractAccountByContractEvaluator extends AbstractTransitiveEvaluator<AccContractAccount> {
 
+	public static final String EVALUATOR_NAME = "acc-contract-account-by-contract-evaluator";
+
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	
 	@Override
 	protected Identifiable getOwner(AccContractAccount entity) {

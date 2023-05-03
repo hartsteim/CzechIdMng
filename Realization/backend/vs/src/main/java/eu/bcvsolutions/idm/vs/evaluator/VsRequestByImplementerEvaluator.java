@@ -38,9 +38,11 @@ import eu.bcvsolutions.idm.vs.service.api.VsSystemImplementerService;
  * @author Svanda
  *
  */
-@Component
+@Component(VsRequestByImplementerEvaluator.EVALUATOR_NAME)
 @Description("Permissions to virtual system requests by identity (implementers)")
 public class VsRequestByImplementerEvaluator extends AbstractAuthorizationEvaluator<VsRequest> {
+
+	public static final String EVALUATOR_NAME = "vs-request-by-implementer-evaluator";
 
 	private final SecurityService securityService;
 	private final VsSystemImplementerService systemImplementerService;
@@ -56,6 +58,11 @@ public class VsRequestByImplementerEvaluator extends AbstractAuthorizationEvalua
 		this.securityService = securityService;
 		this.systemImplementerService = systemImplementerService;
 		this.identityRoleService = identityRoleService;
+	}
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
 	}
 
 	@Override

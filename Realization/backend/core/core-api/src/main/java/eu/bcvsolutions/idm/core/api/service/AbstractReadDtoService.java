@@ -7,8 +7,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
@@ -100,6 +103,9 @@ public abstract class AbstractReadDtoService<DTO extends BaseDto, E extends Base
 	@Autowired
 	@Lazy
 	protected SiemLoggerManager siemLoggerManager;
+	//
+	@Autowired(required = false)
+	private List<PluggablePredicateProvider<E,F>> pluggablePredicateProviders;
 	//
 	private final Class<E> entityClass;
 	private final Class<F> filterClass;
@@ -340,6 +346,8 @@ public abstract class AbstractReadDtoService<DTO extends BaseDto, E extends Base
 	 * Supposed to be overriden - use super.toPredicates to transform default DataFilter props.
 	 * Transforms given filter to jpa predicate, never returns null.
 	 *
+	 * @since 13.0.0 - uses PluggablePredicateProvider beans to add predicates from other modules
+	 *
 	 * @param root
 	 * @param query
 	 * @param builder
@@ -347,10 +355,19 @@ public abstract class AbstractReadDtoService<DTO extends BaseDto, E extends Base
 	 * @return
 	 */
 	protected List<Predicate> toPredicates(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder builder, F filter) {
-		if (filter instanceof DataFilter) {
-			return getFilterManager().toPredicates(root, query, builder, (DataFilter) filter);
-		}
-		return new ArrayList<>();
+		// Add all predicates from registered PluggablePredicateProvider beans
+		final Stream<Predicate> pluggedPredicates = Optional.ofNullable(pluggablePredicateProviders).orElse(Collections.emptyList()).stream()
+				.flatMap(provider -> provider.toPredicates(root, query, builder, filter).stream());
+		//
+		final Stream<Predicate> filterManagerPredicates = filter instanceof DataFilter ?
+				getFilterManager().toPredicates(root, query, builder, (DataFilter) filter).stream() : Stream.empty();
+		//
+		return Stream.concat(
+				// Add all predicates from registered PluggablePredicateProvider beans
+				pluggedPredicates,
+				// Add generic predicates for data filters
+				filterManagerPredicates
+		).collect(Collectors.toList());
 	}
 
 	/**

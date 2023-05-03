@@ -28,7 +28,7 @@
   },
   "permission": {
     "group": {
-      "EXAMPLEPRODUCT": "Ukázkové produkty"
+      "EXAMPLEPRODUCT": "Example products"
     }
   },
   "content": {
@@ -129,6 +129,11 @@
     }
   },
   "eav": {
+    "authorization-evaluator": {
+      "example-free-product-evaluator": {
+        "help": "Permissions for free products"
+      }
+    },
     "bulk-action": {
       "identity-log-example-bulk-action": {
         "icon": "fa:info-circle",

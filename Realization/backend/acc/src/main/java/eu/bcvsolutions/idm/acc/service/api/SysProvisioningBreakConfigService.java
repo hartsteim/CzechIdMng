@@ -7,6 +7,7 @@ import eu.bcvsolutions.idm.acc.domain.ProvisioningEventType;
 import eu.bcvsolutions.idm.acc.dto.SysProvisioningBreakConfigDto;
 import eu.bcvsolutions.idm.acc.dto.SysProvisioningBreakItems;
 import eu.bcvsolutions.idm.acc.dto.filter.SysProvisioningBreakConfigFilter;
+import eu.bcvsolutions.idm.core.api.service.IdmCacheManager;
 import eu.bcvsolutions.idm.core.api.service.ReadWriteDtoService;
 import eu.bcvsolutions.idm.core.security.api.service.AuthorizableService;
 
@@ -21,7 +22,7 @@ public interface SysProvisioningBreakConfigService
 		extends ReadWriteDtoService<SysProvisioningBreakConfigDto, SysProvisioningBreakConfigFilter>,
 		AuthorizableService<SysProvisioningBreakConfigDto> {
 
-	String CACHE_NAME = String.format("%s:provisioning-cache", AccModuleDescriptor.MODULE_ID);
+	String CACHE_NAME = IdmCacheManager.getCacheName(AccModuleDescriptor.MODULE_ID, "provisioning-cache");
 	
 	/**
 	 * Return break configuration for {@link ProvisioningEventType} and system id

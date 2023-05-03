@@ -29,7 +29,7 @@ public interface IdmRoleCompositionService extends
 	 * 
 	 * @since 10.6.0
 	 */
-	String ALL_SUB_ROLES_CACHE_NAME = String.format("%s:all-sub-roles", CoreModule.MODULE_ID);
+	String ALL_SUB_ROLES_CACHE_NAME = IdmCacheManager.getCacheName(CoreModule.MODULE_ID, "all-sub-roles");
 	
 	/**
 	 * Return list of sub roles (only one level in depth)

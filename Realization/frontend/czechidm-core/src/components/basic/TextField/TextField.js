@@ -230,7 +230,7 @@ class BasicTextField extends AbstractFormComponent {
       label,
       placeholder,
       style,
-      required,
+      required: requiredProp,
       pwdAutocomplete,
       onKeyPress,
       fullWidth,
@@ -238,9 +238,11 @@ class BasicTextField extends AbstractFormComponent {
       multiline,
       rows,
       help,
-      classes
+      classes,
+      hidden
     } = this.props;
     const { inputType, value, disabled, readOnly, autoFocus } = this.state;
+    const required = requiredProp && !hidden;
     //
     const className = classNames(
       { confidential: this._showConfidentialWrapper() },

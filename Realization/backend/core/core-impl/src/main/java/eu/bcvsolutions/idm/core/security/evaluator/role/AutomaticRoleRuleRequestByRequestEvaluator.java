@@ -29,14 +29,21 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author Radek Tomiška
  * @author Vít Švanda
  */
-@Component
+@Component(AutomaticRoleRuleRequestByRequestEvaluator.EVALUATOR_NAME)
 @Description("Permissions to automatic rule requests by automatic role request")
 public class AutomaticRoleRuleRequestByRequestEvaluator extends AbstractTransitiveEvaluator<IdmAutomaticRoleAttributeRuleRequest> {
+
+	public static final String EVALUATOR_NAME = "core-automatic-role-rule-request-by-request-evaluator";
 
 	@Autowired
 	private AuthorizationManager authorizationManager;
 	@Autowired
 	private SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 
 	@Override
 	protected Identifiable getOwner(IdmAutomaticRoleAttributeRuleRequest entity) {

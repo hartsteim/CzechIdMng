@@ -1,24 +1,25 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import invariant from 'invariant';
-import Immutable from 'immutable';
-import _ from 'lodash';
-import classNames from 'classnames';
-import Waypoint from 'react-waypoint';
+import React from 'react'
+import PropTypes from 'prop-types'
+import invariant from 'invariant'
+import Immutable from 'immutable'
+import _ from 'lodash'
+import classNames from 'classnames'
+import Waypoint from 'react-waypoint'
 //
-import * as Utils from '../../../utils';
-import AbstractContextComponent from '../AbstractContextComponent/AbstractContextComponent';
-import Loading from '../Loading/Loading';
-import Alert from '../Alert/Alert';
-import Row from './Row';
-import DefaultCell from './DefaultCell';
-import Icon from '../Icon/Icon';
+import * as Utils from '../../../utils'
+import AbstractContextComponent
+  from '../AbstractContextComponent/AbstractContextComponent'
+import Loading from '../Loading/Loading'
+import Alert from '../Alert/Alert'
+import Row from './Row'
+import DefaultCell from './DefaultCell'
+import Icon from '../Icon/Icon'
 
-const HEADER = 'header';
+const HEADER = 'header'
 // const FOOTER = 'footer';
-const CELL = 'cell';
+const CELL = 'cell'
 // FE page size - pagination on FE
-const FE_PAGE_SIZE = 20;
+const FE_PAGE_SIZE = 20
 
 /**
  * Table component with header and columns.
@@ -27,101 +28,101 @@ const FE_PAGE_SIZE = 20;
  */
 class Table extends AbstractContextComponent {
 
-  constructor(props, context) {
-    super(props, context);
+  constructor (props, context) {
+    super(props, context)
     //
-    this.tableBodyRef = React.createRef();
+    this.tableBodyRef = React.createRef()
     //
     this.state = {
       startRowIndex: null,
       selectedRows: this.props.selectedRows ? new Immutable.Set(this.props.selectedRows) : new Immutable.Set(),
       showMax: FE_PAGE_SIZE,
       collapsed: props.collapsed
-    };
+    }
   }
 
-  getComponentKey() {
-    return 'component.basic.Table';
+  getComponentKey () {
+    return 'component.basic.Table'
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps (nextProps) {
     this.setState({
       selectedRows: nextProps.selectedRows ? new Immutable.Set(nextProps.selectedRows) : new Immutable.Set()
-    });
+    })
   }
 
-  componentDidMount() {
-    const { collapsed } = this.props;
+  componentDidMount () {
+    const {collapsed} = this.props
     if (collapsed) {
-      this._setCollapsed(collapsed);
+      this._setCollapsed(collapsed)
     }
   }
 
-  toogleCollapse(event) {
+  toogleCollapse (event) {
     if (event) {
-      event.preventDefault();
+      event.preventDefault()
     }
     //
-    const { collapsed } = this.state;
-    this._setCollapsed(!collapsed);
+    const {collapsed} = this.state
+    this._setCollapsed(!collapsed)
   }
 
-  _setCollapsed(collapsed = false) {
+  _setCollapsed (collapsed = false) {
     this.setState({
       collapsed
     }, () => {
-      const { uiKey, collapsible } = this.props;
+      const {uiKey, collapsible} = this.props
       //
       if (uiKey && _.isFunction(collapsible)) {
-        collapsible(uiKey, collapsed);
+        collapsible(uiKey, collapsed)
       }
-    });
+    })
   }
 
-  _resolveColumns() {
-    const children = [];
+  _resolveColumns () {
+    const children = []
     //
     if (this.props.children) {
       React.Children.forEach(this.props.children, (child) => {
         if (child == null) {
-          return;
+          return
         }
         invariant(
           // child.type.__TableColumnGroup__ ||
           !child.type || child.type.__TableColumn__,
           'child type should be <TableColumn /> or ' +
           '<TableColumnGroup />'
-        );
+        )
         // rendered columns only
         if (child.props.rendered) {
-          children.push(child);
+          children.push(child)
         }
-      });
-      return children;
+      })
+      return children
     }
     //
     // if columns aren't specified, then resolve columns from given data object
     if (children.length === 0) {
-      let properties = [];
-      const { data } = this.props;
+      let properties = []
+      const {data} = this.props
       if (data && data.length !== 0) {
         // we can not use just first object, because first row could not contain all properties filled
         data.forEach(row => {
           for (const property in row) {
             if (!row.hasOwnProperty(property)) {
-              continue;
+              continue
             }
-            properties = this._appendProperty(properties, property, row[property], '');
+            properties = this._appendProperty(properties, property, row[property], '')
           }
-        });
+        })
       }
       properties.forEach(property => {
         children.push(
-          <DefaultCell property={ property } data={ data }/>
-        );
-      });
+          <DefaultCell property={property} data={data}/>
+        )
+      })
     }
-    return children;
+    return children
   }
 
   /**
@@ -133,182 +134,188 @@ class Table extends AbstractContextComponent {
    * @param  {string} propertyPrefix nested property prefix
    * @return {array} new properties
    */
-  _appendProperty(properties, property, propertyValue, propertyPrefix) {
+  _appendProperty (properties, property, propertyValue, propertyPrefix) {
     if (properties.indexOf(propertyPrefix + property) === -1) {
       if (propertyValue && _.isObject(propertyValue)) { // nested property
         // remove nested property prefix - is nested object
         if (propertyPrefix) {
-          properties = properties.filter(p => { return p !== propertyPrefix; });
+          properties = properties.filter(p => { return p !== propertyPrefix })
         }
         // recursion
         for (const nestedProperty in propertyValue) {
           if (!propertyValue.hasOwnProperty(nestedProperty)) {
-            continue;
+            continue
           }
-          properties = this._appendProperty(properties, nestedProperty, propertyValue[nestedProperty], `${ propertyPrefix }${ property }.`);
+          properties = this._appendProperty(properties, nestedProperty, propertyValue[nestedProperty], `${propertyPrefix}${property}.`)
         }
       } else {
-        properties.push(propertyPrefix + property);
+        properties.push(propertyPrefix + property)
       }
     }
-    return properties;
+    return properties
   }
 
-  _selectColumnElement(columns, type) {
-    const newColumns = [];
+  _selectColumnElement (columns, type) {
+    const newColumns = []
     for (let i = 0; i < columns.length; ++i) {
-      const column = columns[i];
+      const column = columns[i]
       newColumns.push(React.cloneElement(
         column,
         {
           cell: type ? column.props[type] : column.props[CELL]
         }
-      ));
+      ))
     }
-    return newColumns;
+    return newColumns
   }
 
-  _showRowSelection({ rowIndex, data, showRowSelection }) {
+  _showRowSelection ({rowIndex, data, showRowSelection}) {
     if (typeof showRowSelection === 'function') {
       return showRowSelection({
         rowIndex,
         data
-      });
+      })
     }
-    return showRowSelection;
+    return showRowSelection
   }
 
-  selectRow(rowIndex, selected) {
-    const { selectRowCb } = this.props;
-    let newSelectedRows;
+  selectRow (rowIndex, selected) {
+    const {selectRowCb} = this.props
+    let newSelectedRows
     if (selectRowCb != null) {
-      newSelectedRows = selectRowCb(rowIndex, selected);
+      newSelectedRows = selectRowCb(rowIndex, selected)
     } else if (rowIndex !== undefined && rowIndex !== null && rowIndex > -1) {
-      const recordId = this.getIdentifier(rowIndex);
-      newSelectedRows = (selected ? this.state.selectedRows.add(recordId) : this.state.selectedRows.remove(recordId));
+      const recordId = this.getIdentifier(rowIndex)
+      newSelectedRows = (selected ? this.state.selectedRows.add(recordId) : this.state.selectedRows.remove(recordId))
     } else { // de/select all
-      newSelectedRows = this.state.selectedRows;
-      const { data } = this.props;
+      newSelectedRows = this.state.selectedRows
+      const {data} = this.props
       //
       for (let i = 0; i < data.length; i++) {
-        if (this._showRowSelection({ ...this.props, rowIndex: i })) {
+        if (this._showRowSelection({...this.props, rowIndex: i})) {
           if (selected) {
-            newSelectedRows = newSelectedRows.add(this.getIdentifier(i));
+            newSelectedRows = newSelectedRows.add(this.getIdentifier(i))
           } else {
-            newSelectedRows = newSelectedRows.remove(this.getIdentifier(i));
+            newSelectedRows = newSelectedRows.remove(this.getIdentifier(i))
           }
         }
       }
     }
     this.setState({
       selectedRows: newSelectedRows
-    }, this._onRowSelect(rowIndex, selected, newSelectedRows.toArray()));
+    }, this._onRowSelect(rowIndex, selected, newSelectedRows.toArray()))
   }
 
   /**
    * Clears row selection
    */
-  clearSelectedRows() {
-    const { selectedRows } = this.state;
+  clearSelectedRows () {
+    const {selectedRows} = this.state
     //
     this.setState({
       selectedRows: selectedRows.clear()
-    });
+    })
   }
 
-  _onRowSelect(rowIndex, selected, selection) {
-    const { onRowSelect } = this.props;
+  _onRowSelect (rowIndex, selected, selection) {
+    const {onRowSelect} = this.props
     if (!onRowSelect) {
-      return;
+      return
     }
-    onRowSelect(rowIndex, selected, selection);
+    onRowSelect(rowIndex, selected, selection)
   }
 
-  getSelectedRows() {
-    return this.state.selectedRows.toArray();
+  getSelectedRows () {
+    return this.state.selectedRows.toArray()
   }
 
-  _isAllRowsSelected() {
-    const { data, isAllRowsSelectedCb } = this.props;
-    const { selectedRows } = this.state;
+  _isAllRowsSelected () {
+    const {data, isAllRowsSelectedCb} = this.props
+    const {selectedRows} = this.state
     if (isAllRowsSelectedCb) {
-      return isAllRowsSelectedCb();
+      return isAllRowsSelectedCb()
     }
     if (!data || data.length === 0) {
-      return false;
+      return false
     }
-    let enabledRowsCount = 0;
+    let enabledRowsCount = 0
     for (let i = 0; i < data.length; i++) {
-      if (this._showRowSelection({ ...this.props, rowIndex: i })) {
+      if (this._showRowSelection({...this.props, rowIndex: i})) {
         if (!selectedRows.has(this.getIdentifier(i))) {
-          return false;
+          return false
         }
-        enabledRowsCount += 1;
+        enabledRowsCount += 1
       }
     }
-    return enabledRowsCount > 0;
+    return enabledRowsCount > 0
   }
 
-  getIdentifierProperty() {
+  getIdentifierProperty () {
     // TODO: support for custom property?
-    return 'id';
+    return 'id'
   }
 
-  getIdentifier(rowIndex) {
-    const { data } = this.props;
-    return data[rowIndex][this.getIdentifierProperty()];
+  getIdentifier (rowIndex) {
+    const {data} = this.props
+    return data[rowIndex][this.getIdentifierProperty()]
   }
 
-  _incrementData() {
-    const { showMax } = this.state;
+  _incrementData () {
+    const {showMax} = this.state
     this.setState({
       showMax: showMax + FE_PAGE_SIZE
-    });
+    })
   }
 
-  renderHeader(columns) {
-    const { showLoading, showRowSelection, noHeader, data, draggable } = this.props;
+  renderHeader (columns) {
+    const {
+      showLoading,
+      showRowSelection,
+      noHeader,
+      data,
+      draggable
+    } = this.props
     if (noHeader) {
-      return null;
+      return null
     }
     //
-    const headerColumns = this._selectColumnElement(columns, HEADER);
+    const headerColumns = this._selectColumnElement(columns, HEADER)
     return (
       <thead key="basic-table-header">
-        <Row
-          key="row-header"
-          columns={ headerColumns }
-          rowIndex={ -1 }
-          showLoading={ showLoading }
-          showRowSelection={ showRowSelection }
-          onRowSelect={ showRowSelection ? this.selectRow.bind(this) : null }
-          selected={ this._isAllRowsSelected() }
-          data={ data }
-          draggable={ draggable }/>
+      <Row
+        key="row-header"
+        columns={headerColumns}
+        rowIndex={-1}
+        showLoading={showLoading}
+        showRowSelection={showRowSelection}
+        onRowSelect={showRowSelection ? this.selectRow.bind(this) : null}
+        selected={this._isAllRowsSelected()}
+        data={data}
+        draggable={draggable}/>
       </thead>
-    );
+    )
   }
 
-  handleStart(event, dnd) {
-    const rowTableIndex = dnd.node.rowIndex;
-    const { noHeader } = this.props;
-    const startIndex = noHeader ? rowTableIndex : rowTableIndex - 1;
+  handleStart (event, dnd) {
+    const rowTableIndex = dnd.node.rowIndex
+    const {noHeader} = this.props
+    const startIndex = noHeader ? rowTableIndex : rowTableIndex - 1
     //
     this.setState({
       startIndex,
       differenceIndex: 0
-    });
+    })
   }
 
-  handleDrag(event, dnd) {
-    const { startIndex } = this.state;
-    const { data } = this.props;
-    const tableBody = $(this.tableBodyRef.current);
-    const curentRowIndex = startIndex + 1;
+  handleDrag (event, dnd) {
+    const {startIndex} = this.state
+    const {data} = this.props
+    const tableBody = $(this.tableBodyRef.current)
+    const curentRowIndex = startIndex + 1
     //
-    let differenceIndex;
+    let differenceIndex
     if (dnd.y > 0) {
-      differenceIndex = parseInt((dnd.y + (Row.DRAGABLE_ROW_HEIGHT / 2)) / Row.DRAGABLE_ROW_HEIGHT, 10);
+      differenceIndex = parseInt((dnd.y + (Row.DRAGABLE_ROW_HEIGHT / 2)) / Row.DRAGABLE_ROW_HEIGHT, 10)
       //
       // move down
       for (let index = 1; index < curentRowIndex; index++) {
@@ -317,12 +324,12 @@ class Table extends AbstractContextComponent {
       //
       for (let index = curentRowIndex; index <= startIndex + differenceIndex + 1; index++) {
         if (index === curentRowIndex) {
-          continue;
+          continue
         }
-        const rowBefore = tableBody.find(`tr:nth-child(${ index })`);
+        const rowBefore = tableBody.find(`tr:nth-child(${index})`)
         rowBefore.css({
-          transform: `translate(0px, ${ -Row.DRAGABLE_ROW_HEIGHT }px)`
-        });
+          transform: `translate(0px, ${-Row.DRAGABLE_ROW_HEIGHT}px)`
+        })
       }
       //
       // current row
@@ -330,19 +337,19 @@ class Table extends AbstractContextComponent {
       //
       // next
       for (let index = startIndex + differenceIndex + 2; index <= data.length; index++) {
-        const rowAfter = tableBody.find(`tr:nth-child(${ index })`);
+        const rowAfter = tableBody.find(`tr:nth-child(${index})`)
         rowAfter.css({
           transform: 'translate(0px, 0px)'
-        });
+        })
       }
     } else {
-      differenceIndex = parseInt((dnd.y - (Row.DRAGABLE_ROW_HEIGHT / 2)) / Row.DRAGABLE_ROW_HEIGHT, 10);
+      differenceIndex = parseInt((dnd.y - (Row.DRAGABLE_ROW_HEIGHT / 2)) / Row.DRAGABLE_ROW_HEIGHT, 10)
       // move up
       for (let index = 1; index <= startIndex + differenceIndex; index++) {
-        const rowAfter = tableBody.find(`tr:nth-child(${ index })`);
+        const rowAfter = tableBody.find(`tr:nth-child(${index})`)
         rowAfter.css({
           transform: 'translate(0px, 0px)'
-        });
+        })
       }
       //
       // current row
@@ -350,13 +357,13 @@ class Table extends AbstractContextComponent {
       //
       for (let index = startIndex + differenceIndex + 1; index <= startIndex; index++) {
         if (index === (curentRowIndex)) {
-          continue;
+          continue
         }
         if (index !== data.length) {
-          const rowBefore = tableBody.find(`tr:nth-child(${ index })`);
+          const rowBefore = tableBody.find(`tr:nth-child(${index})`)
           rowBefore.css({
-            transform: `translate(0px, ${ Row.DRAGABLE_ROW_HEIGHT }px)`
-          });
+            transform: `translate(0px, ${Row.DRAGABLE_ROW_HEIGHT}px)`
+          })
         }
       }
       // rest => unchanged
@@ -367,77 +374,77 @@ class Table extends AbstractContextComponent {
     //
     this.setState({
       differenceIndex
-    });
+    })
   }
 
-  handleStop(event, dnd) {
-    const { data, onDraggableStop } = this.props;
-    const { startIndex, differenceIndex } = this.state;
-    const tableBody = $(this.tableBodyRef.current); // internal content elemet to enable jquery integration
-    const currentRow = tableBody.find(`tr:nth-child(${ startIndex + 1 })`);
+  handleStop (event, dnd) {
+    const {data, onDraggableStop} = this.props
+    const {startIndex, differenceIndex} = this.state
+    const tableBody = $(this.tableBodyRef.current) // internal content elemet to enable jquery integration
+    const currentRow = tableBody.find(`tr:nth-child(${startIndex + 1})`)
     //
     if (dnd.y > 0) { // move down
-      const remain = dnd.y % Row.DRAGABLE_ROW_HEIGHT;
+      const remain = dnd.y % Row.DRAGABLE_ROW_HEIGHT
       currentRow.css({
         top: (parseInt(dnd.y / Row.DRAGABLE_ROW_HEIGHT, 10) + (remain < (Row.DRAGABLE_ROW_HEIGHT / 2) ? 0 : 1)) * Row.DRAGABLE_ROW_HEIGHT,
         transform: 'translate(0px, 0px)'
-      });
+      })
     } else { // move up
-      const remain = dnd.y % Row.DRAGABLE_ROW_HEIGHT;
+      const remain = dnd.y % Row.DRAGABLE_ROW_HEIGHT
       currentRow.css({
         top: (parseInt(dnd.y / Row.DRAGABLE_ROW_HEIGHT, 10) - (remain > -(Row.DRAGABLE_ROW_HEIGHT / 2) ? 0 : 1)) * Row.DRAGABLE_ROW_HEIGHT,
         transform: 'translate(0px, 0px)'
-      });
+      })
     }
     if (differenceIndex !== 0 && onDraggableStop) {
       onDraggableStop({
         data,
         startIndex,
         differenceIndex
-      });
+      })
     }
   }
 
-  renderBody(columns) {
-    const { data, showLoading, supportsPagination } = this.props;
-    const { showMax } = this.state;
+  renderBody (columns) {
+    const {data, showLoading, supportsPagination} = this.props
+    const {showMax} = this.state
     if (!data || data.length === 0) {
-      return null;
+      return null
     }
-    const rows = [];
+    const rows = []
     for (let i = 0; i < data.length && (!supportsPagination || i < showMax); i++) {
-      rows.push(this.renderRow(columns, i));
+      rows.push(this.renderRow(columns, i))
     }
     return (
-      <tbody ref={ this.tableBodyRef } className="basic-table-body">
-        { rows }
-        {
-          !supportsPagination
-          ||
-          showLoading
-          ||
-          showMax >= data.length
-          ||
-          <tr>
-            <th colSpan={ columns.length }>
-              <div className="text-center" style={{ padding: 15, color: '#ccc' }}>
-                <Icon value="fa:refresh" showLoading />
-              </div>
-              <div>
-                <Waypoint onEnter={ this._incrementData.bind(this) }>
-                  <div>
-                    { ' ' }
-                  </div>
-                </Waypoint>
-              </div>
-            </th>
-          </tr>
-        }
+      <tbody ref={this.tableBodyRef} className="basic-table-body">
+      {rows}
+      {
+        !supportsPagination
+        ||
+        showLoading
+        ||
+        showMax >= data.length
+        ||
+        <tr>
+          <th colSpan={columns.length}>
+            <div className="text-center" style={{padding: 15, color: '#ccc'}}>
+              <Icon value="fa:refresh" showLoading/>
+            </div>
+            <div>
+              <Waypoint onEnter={this._incrementData.bind(this)}>
+                <div>
+                  {' '}
+                </div>
+              </Waypoint>
+            </div>
+          </th>
+        </tr>
+      }
       </tbody>
-    );
+    )
   }
 
-  renderRow(columns, rowIndex) {
+  renderRow (columns, rowIndex) {
     const {
       data,
       onRowClick,
@@ -446,38 +453,39 @@ class Table extends AbstractContextComponent {
       rowClass,
       isRowSelectedCb,
       draggable
-    } = this.props;
-    const key = `row-${ rowIndex }`;
+    } = this.props
+    const key = `row-${rowIndex}`
+
     return (
       <Row
-        key={ key }
-        data={ data }
-        columns={ columns }
-        rowIndex={ rowIndex }
-        showRowSelection={ showRowSelection }
-        onRowSelect={ showRowSelection ? this.selectRow.bind(this) : null }
+        key={key}
+        data={data}
+        columns={columns}
+        rowIndex={rowIndex}
+        showRowSelection={showRowSelection}
+        onRowSelect={showRowSelection ? this.selectRow.bind(this) : null}
         selected={
           isRowSelectedCb === null
-          ?
-          this.state.selectedRows.has(this.getIdentifier(rowIndex))
-          :
-          isRowSelectedCb(this.getIdentifier(rowIndex))
+            ?
+            this.state.selectedRows.has(this.getIdentifier(rowIndex))
+            :
+            isRowSelectedCb(this.getIdentifier(rowIndex))
         }
-        onClick={ onRowClick }
-        onDoubleClick={ onRowDoubleClick }
-        rowClass={ rowClass }
-        draggable={ draggable }
-        handleStart={ this.handleStart.bind(this) }
-        handleDrag={ this.handleDrag.bind(this) }
-        handleStop={ this.handleStop.bind(this) }/>
-    );
+        onClick={onRowClick}
+        onDoubleClick={onRowDoubleClick}
+        rowClass={rowClass}
+        draggable={draggable}
+        handleStart={this.handleStart.bind(this)}
+        handleDrag={this.handleDrag.bind(this)}
+        handleStop={this.handleStop.bind(this)}/>
+    )
   }
 
-  renderFooter() {
-    return null;
+  renderFooter () {
+    return null
   }
 
-  render() {
+  render () {
     const {
       uiKey,
       data,
@@ -493,102 +501,83 @@ class Table extends AbstractContextComponent {
       style,
       draggable,
       collapsible
-    } = this.props;
-    const { collapsed } = this.state;
+    } = this.props
+    const {collapsed} = this.state
     //
     if (!rendered) {
-      return null;
+      return null
     }
 
-    const columns = this._resolveColumns();
-    const columnsHeaders = this.renderHeader(columns);
-    const body = this.renderBody(columns);
-    const footer = this.renderFooter();
+    const columns = this._resolveColumns()
+    const columnsHeaders = this.renderHeader(columns)
+    const body = this.renderBody(columns)
+    const footer = this.renderFooter()
     const classNamesTable = classNames(
-      { table: true },
-      { 'table-hover': hover},
-      { 'table-condensed': condensed },
-      { 'table-no-header': noHeader }
-    );
+      {table: true},
+      {'table-hover': hover},
+      {'table-condensed': condensed},
+      {'table-no-header': noHeader}
+    )
     //
-    const content = [];
-    /*
-    const kkk = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-    content.push(columnsHeaders);
-    content.push(
-      kkk.map(row => (
-        <tr key="row-show-loading">
-          {
-            columns.map(columnsHeaders => (
-              <td style={{ padding: 0 }}>
-                <div style={{ height: 40, backgroundColor: '#efefef', borderRadius: 3, margin: 8 }} />
-              </td>
-            ))
-          }
-          <td style={{ padding: 0 }}>
-            <div style={{ height: 40, backgroundColor: '#efefef', borderRadius: 3, margin: 8 }} />
-          </td>
-        </tr>
-      ))
-    );*/
+    const content = []
 
     if (!data || data.length === 0) {
       if (showLoading) {
         content.push(
           <tr key="row-show-loading">
-            <td colSpan={ columns.length }>
+            <td colSpan={columns.length}>
               <Loading showLoading className="static"/>
             </td>
           </tr>
-        );
+        )
       } else {
         content.push(
           <tr key="row-no-data">
-            <td colSpan={ columns.length }>
-              <Alert text={ noData } className="no-data"/>
+            <td colSpan={columns.length}>
+              <Alert text={noData} className="no-data"/>
             </td>
           </tr>
-        );
+        )
       }
     } else {
-      content.push(columnsHeaders);
-      content.push(body);
-      content.push(footer);
+      content.push(columnsHeaders)
+      content.push(body)
+      content.push(footer)
     }
     //
-    const _style = { cursor: 'pointer' };
+    const _style = {cursor: 'pointer'}
     if (!collapsed) {
-      _style.color = '#ccc';
+      _style.color = '#ccc'
     }
     //
     return (
       <div
-        key={ uiKey && draggable ? `${ uiKey }-${ Utils.Ui.getComponentKey(data) }` : null }
-        className={ classNames(className, 'basic-table') }
-        style={ supportsPagination ? {} : { overflowX: 'auto' } }>
-        <Loading showLoading={ showLoading && data && data.length > 0 }>
-          <table className={ classNamesTable } style={ style }>
+        key={uiKey && draggable ? `${uiKey}-${Utils.Ui.getComponentKey(data)}` : null}
+        className={classNames(className, 'basic-table')}
+        style={supportsPagination ? {} : {overflowX: 'auto'}}>
+        <Loading showLoading={showLoading && data && data.length > 0}>
+          <table className={classNamesTable} style={style}>
             {
               !header || noHeader
               ||
               <thead>
-                <tr className="basic-table-header">
-                  <th
-                    colSpan={ columns.length }
-                    style={ collapsed ? { borderBottom: 0 } : {} }>
-                    <div style={{ display: 'flex', alignItems: 'center'}}>
-                      <div style={{ flex: 1 }}>
-                        { header }
-                      </div>
-                      <Icon
-                        icon={ !collapsed ? 'fa:angle-double-up' : 'fa:angle-double-down' }
-                        style={ _style }
-                        onClick={ (event) => this.toogleCollapse(event) }
-                        rendered={ collapsible !== false }
-                        title={ !collapsed ? this.i18n('button.collapse.title') : this.i18n('button.expand.title') }/>
+              <tr className="basic-table-header">
+                <th
+                  colSpan={columns.length}
+                  style={collapsed ? {borderBottom: 0} : {}}>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                    <div style={{flex: 1}}>
+                      {header}
                     </div>
-                  </th>
-                </tr>
+                    <Icon
+                      icon={!collapsed ? 'fa:angle-double-up' : 'fa:angle-double-down'}
+                      style={_style}
+                      onClick={(event) => this.toogleCollapse(event)}
+                      rendered={collapsible !== false}
+                      title={!collapsed ? this.i18n('button.collapse.title') : this.i18n('button.expand.title')}/>
+                  </div>
+                </th>
+              </tr>
               </thead>
             }
             {
@@ -599,7 +588,7 @@ class Table extends AbstractContextComponent {
           </table>
         </Loading>
       </div>
-    );
+    )
   }
 }
 
@@ -701,7 +690,7 @@ Table.propTypes = {
    * @since 11.2.0
    */
   collapsed: PropTypes.bool
-};
+}
 Table.defaultProps = {
   ...AbstractContextComponent.defaultProps,
   data: [],
@@ -718,8 +707,8 @@ Table.defaultProps = {
   draggable: false,
   collapsible: false,
   collapsed: false
-};
+}
 
-Table.SELECT_ALL = 'select-all-rows';
+Table.SELECT_ALL = 'select-all-rows'
 
-export default Table;
+export default Table

@@ -26,5 +26,5 @@ public interface IdmConfigurationService extends
 	/**
 	 * Cache for configuration properties.
 	 */
-	String CACHE_NAME = String.format("%s:configuration-cache", CoreModule.MODULE_ID);
+	String CACHE_NAME = IdmCacheManager.getCacheName(CoreModule.MODULE_ID, "configuration-cache");
 }

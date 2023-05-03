@@ -477,7 +477,7 @@ export default class AutomaticRoleAttributeRuleDetail extends Basic.AbstractCont
   }
 
   _formAttributeOrComparisonChange(option) {
-    let { entity } = this.state;
+    const { entity } = this.state;
     let formAttribute = null;
     let comparison = null;
     if (option && option.id) {
@@ -491,7 +491,7 @@ export default class AutomaticRoleAttributeRuleDetail extends Basic.AbstractCont
     let valueRequired = true;
     let hideValueField = false;
     let incompatibleWithMultiple = true;
-    
+
     if (comparison && comparison.value && (comparison.value === AutomaticRoleAttributeRuleComparisonEnum.findKeyBySymbol(AutomaticRoleAttributeRuleComparisonEnum.IS_EMPTY) ||
     comparison.value === AutomaticRoleAttributeRuleComparisonEnum.findKeyBySymbol(AutomaticRoleAttributeRuleComparisonEnum.IS_NOT_EMPTY)) &&
     (!formAttribute || !formAttribute.persistentType || formAttribute.persistentType !== 'TEXT')) {
@@ -587,7 +587,13 @@ export default class AutomaticRoleAttributeRuleDetail extends Basic.AbstractCont
 
   _getValueFieldForEav(formAttribute, value, valueRequired) {
     const { readOnly } = this.props;
-    const component = this.formAttributeManager.getFormComponent(formAttribute);
+
+    const attribute = {
+      ...formAttribute,
+      faceType: formAttribute.persistentType === 'BOOLEAN' && !formAttribute.faceType ? 'BOOLEAN-SELECT' : formAttribute.faceType
+    };
+
+    const component = this.formAttributeManager.getFormComponent(attribute);
     if (!component || !component.component) {
       // when component doesn't exists show default field
       return this._getDefaultTextField(value, valueRequired);
@@ -595,26 +601,26 @@ export default class AutomaticRoleAttributeRuleDetail extends Basic.AbstractCont
     if (formAttribute.persistentType === 'TEXT') {
       return (
         <Basic.LabelWrapper label={ this.i18n('entity.AutomaticRole.attribute.value.label') }>
-          <Basic.Alert text={this.i18n('attributeCantBeUsed.persistentTypeText', {name: formAttribute.name})}/>
+          <Basic.Alert text={this.i18n('attributeCantBeUsed.persistentTypeText', {name: attribute.name})}/>
         </Basic.LabelWrapper>
       );
     }
     if (formAttribute.confidential) {
       return (
         <Basic.LabelWrapper label={ this.i18n('entity.AutomaticRole.attribute.value.label') }>
-          <Basic.Alert text={this.i18n('attributeCantBeUsed.confidential', {name: formAttribute.name})}/>
+          <Basic.Alert text={this.i18n('attributeCantBeUsed.confidential', {name: attribute.name})}/>
         </Basic.LabelWrapper>
       );
     }
     const FormValueComponent = component.component;
     //
     // override helpBlock, label and placeholder
-    const _formAttribute = _.merge({}, formAttribute); // immutable - form attribute is used twice on the form
+    const _formAttribute = _.merge({}, attribute); // immutable - form attribute is used twice on the form
     _formAttribute.description = this.i18n('entity.AutomaticRole.attribute.value.help');
     _formAttribute.name = this.i18n('entity.AutomaticRole.attribute.value.label');
     _formAttribute.placeholder = '';
     _formAttribute.defaultValue = null;
-    _formAttribute.required = valueRequired;
+    _formAttribute.required = valueRequired && formAttribute.persistentType !== 'BOOLEAN';
     _formAttribute.readonly = readOnly; // readnOnly from props has prio, default value is false
     _formAttribute.multiple = false; // Multiple value cannot be added
     //

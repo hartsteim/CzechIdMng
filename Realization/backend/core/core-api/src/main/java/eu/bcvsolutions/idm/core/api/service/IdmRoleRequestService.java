@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import eu.bcvsolutions.idm.core.api.dto.ApplicantDto;
+import org.springframework.transaction.annotation.Transactional;
+
 import eu.bcvsolutions.idm.core.api.domain.ConceptRoleRequestOperation;
 import eu.bcvsolutions.idm.core.api.domain.Loggable;
 import eu.bcvsolutions.idm.core.api.domain.PriorityType;
@@ -25,7 +28,6 @@ import eu.bcvsolutions.idm.core.api.event.EntityEvent;
 import eu.bcvsolutions.idm.core.security.api.domain.IdmBasePermission;
 import eu.bcvsolutions.idm.core.security.api.service.AuthorizableService;
 import eu.bcvsolutions.idm.core.security.api.service.ExceptionProcessable;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for role request.
@@ -256,6 +258,18 @@ public interface IdmRoleRequestService extends
                                                 ConceptRoleRequestOperation operation);
 
 	/**
+	 * Method create {@link IdmConceptRoleRequestDto} without role assignment validity.
+	 *
+	 * @param roleRequest
+	 * @param contract
+	 * @param roleId
+	 * @param operation
+	 * @return
+	 */
+	AbstractConceptRoleRequestDto createConceptWithoutValidity(IdmRoleRequestDto roleRequest, IdmIdentityContractDto contract,
+				UUID identityRoleId, UUID roleId, ConceptRoleRequestOperation operation);
+
+	/**
 	 * Refresh state on a systems. If is state changed, then will be returned in the request
 	 * 
 	 * @param request
@@ -271,4 +285,6 @@ public interface IdmRoleRequestService extends
 	ApplicantService getApplicantService(String applicantType);
 
 	ApplicantService getApplicantServiceByAccountType(String accountType);
+
+	String getApplicantLabel(ApplicantDto applicant) throws ClassNotFoundException;
 }

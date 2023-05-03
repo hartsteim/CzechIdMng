@@ -68,7 +68,7 @@ public interface FormService extends ScriptEnabled {
 	 * 
 	 * @since 10.4.2
 	 */
-	String FORM_DEFINITION_CACHE_NAME = String.format("%s:form-definition-cache", CoreModule.MODULE_ID);
+	String FORM_DEFINITION_CACHE_NAME = IdmCacheManager.getCacheName(CoreModule.MODULE_ID, "form-definition-cache");
 	
 	/**
 	 * System (internal) form definition for owner type basic field validations and additional configurations.

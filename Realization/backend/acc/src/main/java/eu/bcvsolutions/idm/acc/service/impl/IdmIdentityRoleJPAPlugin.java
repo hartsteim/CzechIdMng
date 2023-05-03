@@ -72,8 +72,8 @@ public class IdmIdentityRoleJPAPlugin implements SysRoleAssignmentJPAPlugin {
 
         // Query via role-system:
         Subquery<IdmIdentityRole> subqueryViaRoleSystem = query.subquery(IdmIdentityRole.class);
-        Root<IdmIdentityRole> subRootViaRoleSystem  = subqueryViaRoleSystem.from(IdmIdentityRole.class);
-        subqueryViaRoleSystem.select(subRootViaRoleSystem );
+        Root<IdmIdentityRole> subRootViaRoleSystem = subqueryViaRoleSystem.from(IdmIdentityRole.class);
+        subqueryViaRoleSystem.select(subRootViaRoleSystem);
 
         // Correlation attribute predicate
         Predicate correlationPredicateViaRoleSystem = builder.equal(

@@ -40,6 +40,7 @@ public class Task implements BaseDto {
 	//
 	public static final String PROPERTY_TASK_TYPE = "taskType";
 	public static final String PROPERTY_DESCRIPTION = "description";
+	public static final String PROPERTY_NEXT_FIRE_TIME = "nextFireTime";
 	public static final String PROPERTY_INSTANCE_ID = ConfigurationService.PROPERTY_INSTANCE_ID;
 	//
 	@JsonDeserialize(as = String.class)
@@ -51,7 +52,7 @@ public class Task implements BaseDto {
 	@Size(max = DefaultFieldLengths.DESCRIPTION)
 	private String description;
 	private boolean disabled; // task is disabled
-	@JsonProperty(access=Access.READ_ONLY)
+	@ApiModelProperty(accessMode = AccessMode.READ_ONLY)
 	private List<AbstractTaskTrigger> triggers;
 	private Map<String, String> parameters;
 	private IdmFormDefinitionDto formDefinition;
@@ -59,6 +60,8 @@ public class Task implements BaseDto {
 	private boolean recoverable;
 	@ApiModelProperty(accessMode = AccessMode.READ_ONLY)
 	private ZonedDateTime modified;
+	@ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+	private List<Task> dependentTasks;
 	
 	@Override
 	public String getId() {
@@ -252,5 +255,16 @@ public class Task implements BaseDto {
 	)
 	public boolean isTrimmed() {
 		return true;
+	}
+
+	public List<Task> getDependentTasks() {
+		if (dependentTasks == null) {
+			dependentTasks = new ArrayList<>();
+		}
+		return dependentTasks;
+	}
+
+	public void setDependentTasks(List<Task> dependentTasks) {
+		this.dependentTasks = dependentTasks;
 	}
 }

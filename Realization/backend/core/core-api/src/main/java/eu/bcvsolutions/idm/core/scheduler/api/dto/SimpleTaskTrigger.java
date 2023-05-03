@@ -1,9 +1,10 @@
 package eu.bcvsolutions.idm.core.scheduler.api.dto;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import javax.validation.constraints.NotNull;
 
-import java.time.ZonedDateTime;
-import java.time.ZoneId;
 
 import org.quartz.SimpleTrigger;
 
@@ -40,5 +41,10 @@ public class SimpleTaskTrigger extends AbstractTaskTrigger {
 	
 	public void setFireTime(ZonedDateTime fireTime) {
 		this.fireTime = fireTime;
+	}
+
+	@Override
+	public void accept(TaskTriggerVisitor visitor) {
+		visitor.visit(this);
 	}
 }

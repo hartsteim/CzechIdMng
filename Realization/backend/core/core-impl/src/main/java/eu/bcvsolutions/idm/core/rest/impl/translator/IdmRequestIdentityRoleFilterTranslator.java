@@ -27,6 +27,7 @@ public class IdmRequestIdentityRoleFilterTranslator extends AbstractPluggableFil
 
     @Override
     public IdmRequestIdentityRoleFilter transformInternal(IdmRequestIdentityRoleFilter filter, MultiValueMap<String, Object> parameters) {
+        filter.setId(getParameterConverter().toUuid(parameters, "id"));
         filter.setIdentity(getParameterConverter().toEntityUuid(parameters, "identityId", IdmIdentityDto.class));
         filter.setIdentityContractId(getParameterConverter().toUuid(parameters, "identityContractId"));
         filter.setRoleId(getParameterConverter().toUuid(parameters, BaseRoleAssignmentFilter.PARAMETER_ROLE_ID));

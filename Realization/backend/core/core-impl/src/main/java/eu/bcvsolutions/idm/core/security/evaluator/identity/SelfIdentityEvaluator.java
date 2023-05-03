@@ -25,17 +25,24 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(SelfIdentityEvaluator.EVALUATOR_NAME)
 @Description("Currently logged user - self permissions.")
 public class SelfIdentityEvaluator extends AbstractAuthorizationEvaluator<IdmIdentity> {
 
+	public static final String EVALUATOR_NAME = "core-self-identity-evaluator";
+
 	private final SecurityService securityService;
-	
+
 	@Autowired
 	public SelfIdentityEvaluator(SecurityService securityService) {
 		Assert.notNull(securityService, "Service is required.");
 		//
 		this.securityService = securityService;
+	}
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
 	}
 	
 	@Override

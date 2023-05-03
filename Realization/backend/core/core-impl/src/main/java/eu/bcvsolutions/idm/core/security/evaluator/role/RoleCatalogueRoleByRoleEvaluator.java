@@ -38,6 +38,11 @@ public class RoleCatalogueRoleByRoleEvaluator extends AbstractTransitiveEvaluato
 	
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	
 	@Override
 	protected Identifiable getOwner(IdmRoleCatalogueRole entity) {

@@ -1,8 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from 'react'
+import PropTypes from 'prop-types'
+import classNames from 'classnames'
+import { isFunction, isString } from 'swiss-knife-utils'
 //
-import AbstractComponent from '../AbstractComponent/AbstractComponent';
-import DefaultCell from './DefaultCell';
+import AbstractComponent from '../AbstractComponent/AbstractComponent'
+import DefaultCell from './DefaultCell'
 
 /**
  * Component that renders the cell for <Table />.
@@ -13,59 +15,71 @@ import DefaultCell from './DefaultCell';
  */
 class Cell extends AbstractComponent {
 
-  render() {
-    const { property, data, showLoading, width, className, ...props } = this.props;
+  render () {
+    const {
+      property,
+      data,
+      showLoading,
+      width,
+      className,
+      forceWrap,
+      ...props
+    } = this.props
     const cellProps = {
       showLoading
-    };
+    }
     const innerStyle = {
       width
-    };
+    }
 
     if (props.rowIndex >= 0) {
-      cellProps.rowIndex = props.rowIndex;
+      cellProps.rowIndex = props.rowIndex
     }
     // default property from owner component
     if (props.cell && props.cell.props && !props.cell.props.property) {
-      cellProps.property = property;
+      cellProps.property = property
     }
     // default data from owner component
     if (props.cell && props.cell.props && !props.cell.props.data) {
-      cellProps.data = data;
+      cellProps.data = data
     }
 
-    let content;
+    let content
     if (!props.cell) {
-      let text = null;
+      let text = null
       if (props.rowIndex === -1) { // header
-        text = property;
+        text = property
       } else if (data && property && data[cellProps.rowIndex]) { // body
-        text = DefaultCell.getPropertyValue(data[cellProps.rowIndex], property);
+        text = DefaultCell.getPropertyValue(data[cellProps.rowIndex], property)
       }
       content = (
         <DefaultCell
           {...cellProps}>
           {text}
         </DefaultCell>
-      );
+      )
     } else if (React.isValidElement(props.cell)) {
-      content = React.cloneElement(props.cell, cellProps);
-    } else if (typeof props.cell === 'function') {
-      content = props.cell(this.props);
+      content = React.cloneElement(props.cell, cellProps)
+    } else if (isFunction(props.cell)) {
+      content = props.cell(this.props)
     } else {
       content = (
         <DefaultCell
           {...cellProps}>
           {props.cell}
         </DefaultCell>
-      );
+      )
     }
 
     return (
-      <td style={innerStyle} className={className}>
+      <td style={innerStyle}
+          className={classNames(className, {
+            forceWrap,
+            [`forceWrap-${forceWrap}`]: forceWrap && isString(forceWrap)
+          })}>
         {content}
       </td>
-    );
+    )
   }
 }
 
@@ -82,10 +96,14 @@ Cell.propTypes = {
   /**
    * input data as array of json objects
    */
-  data: PropTypes.array
-};
+  data: PropTypes.array,
 
-Cell.defaultProps = {
-};
+  forceWrap: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.oneOf(['anywhere', 'break-word'])
+  ])
+}
 
-export default Cell;
+Cell.defaultProps = {}
+
+export default Cell

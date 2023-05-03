@@ -9,18 +9,16 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
-import eu.bcvsolutions.idm.core.api.service.IdmIdentityService;
-import org.activiti.engine.IdentityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
 import eu.bcvsolutions.idm.core.api.domain.Identifiable;
-import eu.bcvsolutions.idm.core.api.dto.ApplicantDto;
 import eu.bcvsolutions.idm.core.api.dto.filter.IdmIdentityContractFilter;
 import eu.bcvsolutions.idm.core.api.dto.filter.PermissionContext;
 import eu.bcvsolutions.idm.core.api.entity.AbstractEntity_;
 import eu.bcvsolutions.idm.core.api.service.IdmIdentityContractService;
+import eu.bcvsolutions.idm.core.api.service.IdmIdentityService;
 import eu.bcvsolutions.idm.core.model.entity.IdmIdentity;
 import eu.bcvsolutions.idm.core.model.entity.IdmRoleRequest;
 import eu.bcvsolutions.idm.core.model.entity.IdmRoleRequest_;
@@ -42,16 +40,22 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(RoleRequestByIdentityEvaluator.EVALUATOR_NAME)
 @Description("Permissions to role requests by identity")
 public class RoleRequestByIdentityEvaluator extends AbstractTransitiveEvaluator<IdmRoleRequest> {
 
+	public static final String EVALUATOR_NAME = "core-role-request-by-identity-evaluator";
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
 	@Autowired private IdmIdentityContractService contractService;
 
 	@Autowired private IdmIdentityService identityService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
 	@Override
 	protected Identifiable getOwner(IdmRoleRequest entity) {
 		return identityService.get(entity.getApplicant());

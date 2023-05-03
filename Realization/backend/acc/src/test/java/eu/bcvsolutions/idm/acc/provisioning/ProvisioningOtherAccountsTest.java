@@ -295,6 +295,7 @@ public class ProvisioningOtherAccountsTest extends AbstractIntegrationTest {
 
 		AccAccountFilter accountFilter = new AccAccountFilter();
 		accountFilter.setAccountType(AccountType.PERSONAL_OTHER);
+		accountFilter.setIdentityId(identityDto.getId());
 		long accountsCount = accountService.count(accountFilter);
 		assertEquals(0, accountsCount);
 

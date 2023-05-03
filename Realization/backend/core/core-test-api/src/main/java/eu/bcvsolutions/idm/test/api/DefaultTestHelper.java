@@ -12,8 +12,7 @@ import java.util.function.Function;
 
 import javax.sql.DataSource;
 
-import eu.bcvsolutions.idm.core.api.dto.ApplicantImplDto;
-import eu.bcvsolutions.idm.core.scheduler.api.service.LongRunningTaskExecutor;
+
 import org.flywaydb.core.internal.exception.FlywaySqlException;
 import org.flywaydb.core.internal.jdbc.JdbcUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,7 @@ import eu.bcvsolutions.idm.core.api.domain.PriorityType;
 import eu.bcvsolutions.idm.core.api.domain.RecursionType;
 import eu.bcvsolutions.idm.core.api.domain.RoleRequestedByType;
 import eu.bcvsolutions.idm.core.api.domain.ScriptAuthorityType;
+import eu.bcvsolutions.idm.core.api.dto.ApplicantImplDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmAuthorizationPolicyDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmAutomaticRoleAttributeDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmAutomaticRoleAttributeRuleDto;
@@ -118,6 +118,7 @@ import eu.bcvsolutions.idm.core.scheduler.api.dto.IdmProcessedTaskItemDto;
 import eu.bcvsolutions.idm.core.scheduler.api.dto.IdmScheduledTaskDto;
 import eu.bcvsolutions.idm.core.scheduler.api.dto.filter.IdmLongRunningTaskFilter;
 import eu.bcvsolutions.idm.core.scheduler.api.service.IdmScheduledTaskService;
+import eu.bcvsolutions.idm.core.scheduler.api.service.LongRunningTaskExecutor;
 import eu.bcvsolutions.idm.core.scheduler.api.service.LongRunningTaskManager;
 import eu.bcvsolutions.idm.core.security.api.domain.BasePermission;
 import eu.bcvsolutions.idm.core.security.api.domain.GroupPermission;
@@ -1047,11 +1048,25 @@ public class DefaultTestHelper implements TestHelper {
 	}
 
 	@Override
+	public IdmFormAttributeDto createEavAttribute(String code, UUID formDefinitionId, PersistentType type) {
+		IdmFormAttributeDto eavAttribute = new IdmFormAttributeDto();
+		eavAttribute.setCode(code);
+		IdmFormDefinitionDto main = formDefinitionService.get(formDefinitionId);
+		eavAttribute.setFormDefinition(formDefinitionId);
+		eavAttribute.setName(code);
+		eavAttribute.setConfidential(false);
+		eavAttribute.setRequired(false);
+		eavAttribute.setReadonly(false);
+		eavAttribute.setPersistentType(type);
+		return formAttributeService.save(eavAttribute);
+	}
+
+	@Override
 	public void setEavValue(Identifiable owner, IdmFormAttributeDto attribute, Class<? extends Identifiable> clazz,
 			Serializable value, PersistentType type) {
-		IdmFormDefinitionDto main = formDefinitionService.findOneByMain(clazz.getName());
-		
-		setEavValue(owner, attribute, clazz, value, type, main);
+//		IdmFormDefinitionDto main = formDefinitionService.findOneByMain(clazz.getName());
+		IdmFormDefinitionDto formDefinition = formDefinitionService.get(attribute.getFormDefinition());
+		setEavValue(owner, attribute, clazz, value, type, formDefinition);
 	}
 	
 	@Override

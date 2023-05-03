@@ -129,6 +129,11 @@
     }
   },
   "eav": {
+    "authorization-evaluator": {
+      "example-free-product-evaluator": {
+        "help": "Oprávnění na produkty zdarma"
+      }
+    },
     "bulk-action": {
       "identity-log-example-bulk-action": {
         "icon": "fa:info-circle",

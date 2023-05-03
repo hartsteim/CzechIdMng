@@ -25,9 +25,11 @@ import eu.bcvsolutions.idm.rpt.entity.RptReport_;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(SelfReportEvaluator.EVALUATOR_NAME)
 @Description("Report's creator is logged identity")
 public class SelfReportEvaluator extends AbstractAuthorizationEvaluator<RptReport> {
+
+	public static final String EVALUATOR_NAME = "rpt-self-report-evaluator";
 
 	private SecurityService securityService;
 	
@@ -36,6 +38,11 @@ public class SelfReportEvaluator extends AbstractAuthorizationEvaluator<RptRepor
 		Assert.notNull(securityService, "Service is required.");
 		//
 		this.securityService = securityService;
+	}
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
 	}
 	
 	@Override

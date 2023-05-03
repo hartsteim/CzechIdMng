@@ -593,7 +593,11 @@ public class PrepareConnectorObjectProcessor extends AbstractEntityEventProcesso
 			}
 		}
 
-		AccAccountDto account = DtoUtils.getEmbedded(provisioningOperation, SysProvisioningOperation_.account, AccAccountDto.class);
+		AccAccountDto account = DtoUtils.getEmbedded(provisioningOperation, SysProvisioningOperation_.account, AccAccountDto.class, null);
+		if (account == null) {
+			// account can be null in some cases (when provisioning operation is built directly in a builder)
+			account = accountService.get(provisioningOperation.getAccount());
+		}
 
 		// Load definition of all controlled values in IdM for that attribute
 		List<Serializable> controlledValues = attributeMappingService.getCachedControlledAndHistoricAttributeValues(

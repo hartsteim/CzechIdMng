@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { AbstractComponent } from '../../basic';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { AbstractComponent } from '../../basic'
 
 /**
  * Component that defines the attributes of table column.
@@ -9,14 +9,14 @@ import { AbstractComponent } from '../../basic';
  */
 class AdvancedColumn extends AbstractComponent {
 
-  render() {
-    const { rendered } = this.props;
+  render () {
+    const {rendered} = this.props
     if (!rendered) {
-      return null;
+      return null
     }
     return (
       <span>Advanced column never render himself</span>
-    );
+    )
   }
 }
 
@@ -73,11 +73,16 @@ AdvancedColumn.propTypes = {
   /**
    * If component is rendered on page
    */
-  rendered: PropTypes.bool
-};
+  rendered: PropTypes.bool,
+
+  forceWrap: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.oneOf(['anywhere', 'break-word'])
+  ])
+}
 AdvancedColumn.defaultProps = {
   rendered: true
-};
-AdvancedColumn.__AdvancedColumn__ = true;
+}
+AdvancedColumn.__AdvancedColumn__ = true
 
-export default AdvancedColumn;
+export default AdvancedColumn

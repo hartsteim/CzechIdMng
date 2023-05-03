@@ -26,13 +26,20 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(CodeListItemByCodeListEvaluator.EVALUATOR_NAME)
 @Description("Permissions to code list items by code list.")
 public class CodeListItemByCodeListEvaluator extends AbstractTransitiveEvaluator<IdmCodeListItem> {
 
+	public static final String EVALUATOR_NAME = "core-code-list-item-by-code-list-evaluator";
+
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
 	@Override
 	protected Identifiable getOwner(IdmCodeListItem entity) {
 		return entity.getCodeList();

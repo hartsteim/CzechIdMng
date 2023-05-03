@@ -3,13 +3,13 @@
   <process id="change-role-without-approve" name="Process for assign/change/remove role idenity without approve." isExecutable="true">
     <documentation>Workflow for assign/change/remove role to identity without approve.</documentation>
     <startEvent id="startevent1" name="Start"></startEvent>
-    <serviceTask id="servicetask2" name="Create name of process" activiti:expression="Assign role &quot;{{${conceptRole.role != null ? roleService.get(conceptRole.role, null).name : 'N/A'}}}&quot; to &quot;{{${identityService.getNiceLabel(identityService.get(applicantIdentifier, null))}}}&quot; without approving" activiti:resultVariableName="processInstanceName"></serviceTask>
+    <serviceTask id="servicetask2" name="Create name of process" activiti:expression="Assign role &quot;{{${conceptRole.role != null ? roleService.get(conceptRole.role, null).name : 'N/A'}}}&quot; to &quot;{{${roleRequestService.getApplicantLabel(applicantInfo)}}}&quot; without approving" activiti:resultVariableName="processInstanceName"></serviceTask>
     <sequenceFlow id="flow7" sourceRef="startevent1" targetRef="exclusivegateway2"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow9" sourceRef="exclusivegateway2" targetRef="servicetask2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[#{operationType.equals("add")}]]></conditionExpression>
     </sequenceFlow>
-    <serviceTask id="servicetask5" name="Create name of process" activiti:expression="Change role &quot;{{${conceptRole.role != null ? roleService.get(conceptRole.role, null).name : 'N/A'}}}&quot; assigned on &quot;{{${identityService.getNiceLabel(identityService.get(applicantIdentifier, null))}}}&quot;  without approving" activiti:resultVariableName="processInstanceName"></serviceTask>
+    <serviceTask id="servicetask5" name="Create name of process" activiti:expression="Change role &quot;{{${conceptRole.role != null ? roleService.get(conceptRole.role, null).name : 'N/A'}}}&quot; assigned on &quot;{{${roleRequestService.getApplicantLabel(applicantInfo)}}}&quot;  without approving" activiti:resultVariableName="processInstanceName"></serviceTask>
     <sequenceFlow id="flow27" sourceRef="exclusivegateway2" targetRef="servicetask5">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[#{operationType.equals("change")}]]></conditionExpression>
     </sequenceFlow>
@@ -24,7 +24,7 @@ conceptDto.setWfProcessId(processInstanceId);
 conceptManager.getServiceForConcept(conceptDto).save(conceptDto);
 </script>
     </scriptTask>
-    <serviceTask id="servicetask6" name="Create name of process" activiti:expression="Remove role &quot;{{${conceptRole.role != null ? roleService.get(conceptRole.role, null).name : 'N/A'}}}&quot; (bez schvalování) asigned on &quot;{{${identityService.getNiceLabel(identityService.get(applicantIdentifier, null))}}}&quot; without approving" activiti:resultVariableName="processInstanceName"></serviceTask>
+    <serviceTask id="servicetask6" name="Create name of process" activiti:expression="Remove role &quot;{{${conceptRole.role != null ? roleService.get(conceptRole.role, null).name : 'N/A'}}}&quot; (bez schvalování) asigned on &quot;{{${roleRequestService.getApplicantLabel(applicantInfo)}}}&quot; without approving" activiti:resultVariableName="processInstanceName"></serviceTask>
     <sequenceFlow id="flow37" sourceRef="exclusivegateway2" targetRef="servicetask6">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[#{operationType.equals("remove")}]]></conditionExpression>
     </sequenceFlow>

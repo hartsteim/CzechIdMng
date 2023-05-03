@@ -14,6 +14,8 @@ import eu.bcvsolutions.idm.core.api.utils.EntityUtils;
 import eu.bcvsolutions.idm.core.eav.api.dto.IdmFormValueDto;
 import eu.bcvsolutions.idm.core.eav.repository.AbstractFormValueRepository;
 import eu.bcvsolutions.idm.core.eav.service.impl.AbstractFormValueService;
+import eu.bcvsolutions.idm.core.model.domain.CoreGroupPermission;
+import eu.bcvsolutions.idm.core.security.api.dto.AuthorizableType;
 
 /**
  * Service for control form value on system
@@ -58,6 +60,11 @@ public class DefaultSysSystemFormValueService extends AbstractFormValueService<S
 					guardedValue);
 		}
 		return cloned;
+	}
+
+	@Override
+	public AuthorizableType getAuthorizableType() {
+		return new AuthorizableType(CoreGroupPermission.FORMVALUE, getEntityClass());
 	}
 
 }

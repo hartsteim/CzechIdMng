@@ -25,15 +25,21 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * 
  * @author Vít Švanda
  */
-@Component
+@Component(RequestItemByRequestEvaluator.EVALUATOR_NAME)
 @Description("Permissions to universal request items by request")
 public class RequestItemByRequestEvaluator extends AbstractTransitiveEvaluator<IdmRequestItem> {
+
+	public static final String EVALUATOR_NAME = "core-request-item-by-request-evaluator";
 
 	@Autowired
 	private AuthorizationManager authorizationManager;
 	@Autowired
 	private SecurityService securityService;
 
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	@Override
 	protected Identifiable getOwner(IdmRequestItem entity) {
 		return entity.getRequest();

@@ -108,6 +108,7 @@
     "redux-promise": "0.6.0",
     "redux-thunk": "2.3.0",
     "stringify": "5.2.0",
+    "swiss-knife-utils": "0.0.2",
     "uuid": "2.0.1",
     "vinyl-fs": "3.0.3",
     "zxcvbn": "4.4.1"
@@ -122,7 +123,6 @@
     "@babel/preset-react": "7.13.13",
     "@babel/register": "7.13.14",
     "ansi-colors": "4.1.1",
-    "JSONPath": "0.11.2",
     "babelify": "10.0.0",
     "browser-sync": "2.26.14",
     "browser-sync-client": "2.26.14",
@@ -155,6 +155,7 @@
     "gulp-sourcemaps": "3.0.0",
     "gulp-uglify-es": "3.0.0",
     "gulp-version-number": "0.2.4",
+    "JSONPath": "0.11.2",
     "pathmodify": "0.5.0",
     "vinyl-buffer": "1.0.1",
     "vinyl-source-stream": "2.0.0",

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 //
 import * as Basic from "../../components/basic";
 import * as Advanced from "../../components/advanced";
-import AbstractComponent from "../../components/basic/AbstractComponent/AbstractComponent";
 import AbstractContextComponent from "../../components/basic/AbstractContextComponent/AbstractContextComponent";
 import {
     IdentityManager,
@@ -83,7 +82,7 @@ export class IdentityRoleTableFilter extends AbstractContextComponent {
 
     render() {
         const {useFilter, showEnvironment, hasRoleForceFilter, hasIdentityForceFilter,
-            contractForceSearchParameters, cancelFilter} = this.props
+            contractForceSearchParameters, cancelFilter, environmentItems} = this.props
         const {selectedOwnerType} = this.state;
         //
         const ownerTypeOptions = this.getOwnerTypeOptions();
@@ -113,7 +112,7 @@ export class IdentityRoleTableFilter extends AbstractContextComponent {
                             code="environment"
                             label={ null }
                             placeholder={ this.i18n('entity.Role.environment.label') }
-                            //items={ environmentItems || [] }
+                            items={ environmentItems || [] }
                             hidden={ hasRoleForceFilter }
                             multiSelect/>
                     </Basic.Col>

@@ -37,9 +37,11 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  * @author Svanda
  *
  */
-@Component
+@Component(ReadAccountByIdentityEvaluator.EVALUATOR_NAME)
 @Description("Permissions to accounts by identity")
 public class ReadAccountByIdentityEvaluator extends AbstractAuthorizationEvaluator<AccAccount> {
+
+	public static final String EVALUATOR_NAME = "acc-read-account-by-identity-evaluator";
 
 	@Autowired
 	private SecurityService securityService;
@@ -49,6 +51,11 @@ public class ReadAccountByIdentityEvaluator extends AbstractAuthorizationEvaluat
 	private AuthorizationManager authorizationManager;
 	@Autowired
 	private LookupService lookupService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 
 	@Override
 	public Set<String> getPermissions(AccAccount authorizable, AuthorizationPolicy policy) {

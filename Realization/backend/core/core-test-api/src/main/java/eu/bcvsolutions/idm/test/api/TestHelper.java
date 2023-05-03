@@ -984,6 +984,16 @@ public interface TestHelper {
 	 * @return
 	 */
 	IdmFormAttributeDto createEavAttribute(String code, Class<? extends Identifiable> clazz, PersistentType type);
+
+	/**
+	 * Create eav attribute, wit given code, owner id and type
+	 *
+	 * @param code
+	 * @param formDefinitionId
+	 * @param type
+	 * @return
+	 */
+	IdmFormAttributeDto createEavAttribute(String code, UUID formDefinitionId, PersistentType type);
 	
 	/**
 	 * Save value to eav with code

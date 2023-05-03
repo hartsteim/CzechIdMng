@@ -1,8 +1,11 @@
 package eu.bcvsolutions.idm.core.security.service.impl;
 
+import java.net.Proxy;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -27,17 +30,31 @@ import eu.bcvsolutions.idm.core.security.api.service.RecaptchaService;
 @Service("recaptchaService")
 public class DefaultRecaptchaService implements RecaptchaService {
 
+	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(DefaultRecaptchaService.class);
+
 	@Autowired @Lazy private RestTemplate restTemplate;
 	@Autowired private RecaptchaConfiguration recaptchaConfiguration;
 
 	@Override
 	public RecaptchaResponse checkRecaptcha(RecaptchaRequest req) {
+		Proxy proxy = recaptchaConfiguration.getProxy();
+		RestTemplate newRestTemplate = null;
+		if (proxy == null) {
+			newRestTemplate = this.restTemplate;
+			LOG.debug("ReCaptcha will not use proxy conffiguration.");
+		} else {
+			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+			requestFactory.setProxy(proxy);
+			newRestTemplate = new RestTemplate(requestFactory);
+			LOG.debug("ReCaptcha will use proxy conffiguration: [{}].", proxy.address().toString());
+		}
+
 		// If i tried to send is as an Entity, google API didn't understand the message
 		// and returned errors. Therefore this map.
 		MultiValueMap<String, String> body = createBody(recaptchaConfiguration.getSecretKey().asString(), req.getRemoteIp(), req.getResponse());
 		
         try {
-        	RecaptchaResponse response = restTemplate
+        	RecaptchaResponse response = newRestTemplate
         			.postForEntity(recaptchaConfiguration.getUrl(), body, RecaptchaResponse.class)
                     .getBody();
         	if (!response.getErrorCodes().isEmpty()) {

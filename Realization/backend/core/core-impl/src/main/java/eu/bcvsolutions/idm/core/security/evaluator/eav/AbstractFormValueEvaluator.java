@@ -184,7 +184,6 @@ public class AbstractFormValueEvaluator<T extends AbstractFormValue<?>> extends 
 		List<String> parameters = super.getPropertyNames();
 		parameters.add(PARAMETER_FORM_DEFINITION);
 		parameters.add(PARAMETER_FORM_ATTRIBUTES);
-		parameters.add(PARAMETER_SELF_ONLY);
 		parameters.add(PARAMETER_OWNER_UPDATE);
 		parameters.add(PARAMETER_OWNER_READ);
 		return parameters;
@@ -195,7 +194,6 @@ public class AbstractFormValueEvaluator<T extends AbstractFormValue<?>> extends 
 		return Lists.newArrayList(
 				new IdmFormAttributeDto(PARAMETER_FORM_DEFINITION, PARAMETER_FORM_DEFINITION, PersistentType.UUID, BaseFaceType.FORM_DEFINITION_SELECT),
 				new IdmFormAttributeDto(PARAMETER_FORM_ATTRIBUTES, PARAMETER_FORM_ATTRIBUTES, PersistentType.SHORTTEXT),
-				new IdmFormAttributeDto(PARAMETER_SELF_ONLY, PARAMETER_SELF_ONLY, PersistentType.BOOLEAN),
 				new IdmFormAttributeDto(PARAMETER_OWNER_UPDATE, PARAMETER_OWNER_UPDATE, PersistentType.BOOLEAN),
 				new IdmFormAttributeDto(PARAMETER_OWNER_READ, PARAMETER_OWNER_READ, PersistentType.BOOLEAN)
 				);

@@ -30,7 +30,7 @@ public interface IdmIdentityService extends
 		FormableDtoService<IdmIdentityDto, IdmIdentityFilter>,
 		AuthorizableService<IdmIdentityDto>,
 		CodeableService<IdmIdentityDto>,
-		ScriptEnabled {
+		ScriptEnabled, NiceLabelable<IdmIdentityDto> {
 
 	/**
 	 * Returns identity by given username
@@ -39,15 +39,6 @@ public interface IdmIdentityService extends
 	 */
 	IdmIdentityDto getByUsername(String username);
 
-	/**
-	 * Better "toString".
-	 * Returns identity's fullName with titles if lastName is not blank, otherwise returns username 
-	 * 
-	 * @param identity
-	 * @return
-	 */
-	String getNiceLabel(IdmIdentityDto identity);
-	
 	/**
 	 * Changes given identity's password by the event processing. New password property has to be set in event properties.
 	 * 

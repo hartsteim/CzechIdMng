@@ -38,7 +38,11 @@ public class IncompatibleRoleBySubRoleEvaluator extends AbstractTransitiveEvalua
 	
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	@Override
 	protected Identifiable getOwner(IdmIncompatibleRole entity) {
 		return entity.getSub();

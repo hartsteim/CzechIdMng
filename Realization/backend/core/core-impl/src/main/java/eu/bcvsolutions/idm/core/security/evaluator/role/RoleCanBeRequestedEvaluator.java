@@ -25,9 +25,11 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  *
  * @author Peter Sourek
  */
-@Component
+@Component(RoleCanBeRequestedEvaluator.EVALUATOR_NAME)
 @Description("Only allows access to roles, which can be requested.")
 public class RoleCanBeRequestedEvaluator extends AbstractAuthorizationEvaluator<IdmRole> {
+
+	public static final String EVALUATOR_NAME = "core-role-can-be-requested-evaluator";
 
 	private final SecurityService securityService;
 
@@ -36,6 +38,11 @@ public class RoleCanBeRequestedEvaluator extends AbstractAuthorizationEvaluator<
 		Assert.notNull(securityService, "Service is required.");
 		//
 		this.securityService = securityService;
+	}
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
 	}
 
 	@Override

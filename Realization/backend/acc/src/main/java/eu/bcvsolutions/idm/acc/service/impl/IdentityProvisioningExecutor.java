@@ -189,9 +189,8 @@ public class IdentityProvisioningExecutor extends AbstractProvisioningExecutor<I
 		// Cross-domains attributes and no-login attributes will be added only for default UID.
 		// It means, if some attributes override an UID attribute, then no additional attribute will be used!
 		boolean uidIsOverridden = roleSystemAttributesAll.stream().anyMatch(SysRoleSystemAttributeDto::isUid);
-		final SysSystemMappingDto sysSystemMappingDto = systemMappingService.get(mapping);
 
-		if (!uidIsOverridden && !sysSystemMappingDto.getAccountType().equals(AccountType.PERSONAL_OTHER)) {
+		if (!uidIsOverridden) {
 			// Add overridden attributes which are in a cross-domain group or is in no-login role.
 			// Beware - these attributes are added for every account (overridden attributes are not supported)
 			roleSystemAttributeFilter = new SysRoleSystemAttributeFilter();

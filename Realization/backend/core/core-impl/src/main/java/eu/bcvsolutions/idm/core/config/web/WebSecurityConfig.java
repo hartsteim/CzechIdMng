@@ -2,6 +2,9 @@ package eu.bcvsolutions.idm.core.config.web;
 
 import java.util.Set;
 
+import eu.bcvsolutions.idm.core.api.rest.BaseController;
+import eu.bcvsolutions.idm.core.security.api.domain.IdmBasePermission;
+import eu.bcvsolutions.idm.core.security.api.domain.IdmGroupPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
@@ -61,8 +64,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			.expressionHandler(expressionHandler())
 			.antMatchers(HttpMethod.OPTIONS).permitAll()
-			.requestMatchers(publicPaths.toArray(new RequestMatcher[publicPaths.size()])).permitAll()
-			.antMatchers(BaseDtoController.BASE_PATH + "/**").fullyAuthenticated() // TODO: controllers should choose security?
+			.requestMatchers(publicPaths.toArray(new RequestMatcher[0])).permitAll()
+				 .antMatchers(BaseController.BASE_PATH + "/**").fullyAuthenticated()
+				 // securing actuator endpoints
+				 .antMatchers("/actuator/**").hasAuthority(IdmGroupPermission.APP_METRICS)
 			.anyRequest().permitAll(); // gui could run in application context
     }
 

@@ -156,7 +156,7 @@ public abstract class AbstractSynchronizationExecutor<DTO extends AbstractDto>
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory
 			.getLogger(AbstractSynchronizationExecutor.class);
 
-	public static final String CACHE_NAME = AccModuleDescriptor.MODULE_ID + ":sync-mapping-cache";
+	public static final String CACHE_NAME = IdmCacheManager.getCacheName(AccModuleDescriptor.MODULE_ID, "sync-mapping-cache");
 
 	@Autowired
 	private WorkflowProcessInstanceService workflowProcessInstanceService;

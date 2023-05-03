@@ -314,6 +314,7 @@ class IdentityRoles extends Basic.AbstractContent {
     force = force.setFilter('category', 'eu.bcvsolutions.role.approve');
     let roleRequestsForceSearch = new SearchParameters();
     roleRequestsForceSearch = roleRequestsForceSearch.setFilter('applicant', entityId);
+    roleRequestsForceSearch = roleRequestsForceSearch.setFilter('applicantType', 'eu.bcvsolutions.idm.core.api.dto.IdmIdentityDto');
     roleRequestsForceSearch = roleRequestsForceSearch.setFilter('executed', 'false');
     //
     return (

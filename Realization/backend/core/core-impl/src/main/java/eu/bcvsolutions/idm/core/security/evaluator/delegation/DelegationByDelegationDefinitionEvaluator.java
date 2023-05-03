@@ -26,14 +26,20 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author Vít Švanda
  *
  */
-@Component
+@Component(DelegationByDelegationDefinitionEvaluator.EVALUATOR_NAME)
 @Description("Permissions to delegation by delegation definition.")
 public class DelegationByDelegationDefinitionEvaluator extends AbstractTransitiveEvaluator<IdmDelegation> {
 
+	public static final String EVALUATOR_NAME = "core-delegation-by-delegation-definition-evaluator";
 	@Autowired
 	private AuthorizationManager authorizationManager;
 	@Autowired
 	private SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 
 	@Override
 	protected Identifiable getOwner(IdmDelegation entity) {

@@ -8,6 +8,7 @@ import eu.bcvsolutions.idm.acc.domain.SynchronizationContext;
 import eu.bcvsolutions.idm.acc.dto.AbstractSysSyncConfigDto;
 import eu.bcvsolutions.idm.acc.dto.SysSyncItemLogDto;
 import eu.bcvsolutions.idm.acc.entity.SysSyncConfig;
+import eu.bcvsolutions.idm.core.api.service.IdmCacheManager;
 import eu.bcvsolutions.idm.core.scheduler.api.service.AbstractSchedulableTaskExecutor;
 import eu.bcvsolutions.idm.ic.api.IcAttribute;
 
@@ -32,7 +33,7 @@ public interface SynchronizationService {
 	String WF_VARIABLE_KEY_SYSTEM_ID = "systemId";
 	String WRAPPER_SYNC_ITEM = "wrapper_sync_item";
 	String RESULT_SYNC_ITEM = "result_sync_item";
-	String SYNC_EXECUTOR_CACHE_NAME = AccModuleDescriptor.MODULE_ID + ":sync-executor-cache";
+	String SYNC_EXECUTOR_CACHE_NAME = IdmCacheManager.getCacheName(AccModuleDescriptor.MODULE_ID, "sync-executor-cache");
 
 	/**
 	 * Cancels all previously ran synchronizations

@@ -50,6 +50,7 @@ Configuration properties:
     <callActivity id="startAddSubWorkflow" name="Approval assign of particular authorizations" calledElement="${roleService.findAssignRoleWorkflowDefinition(conceptRole.role) == null ? &quot;change-role-without-approve&quot; : roleService.findAssignRoleWorkflowDefinition(conceptRole.role) }">
       <extensionElements>
         <activiti:in source="applicantIdentifier" target="applicantIdentifier"></activiti:in>
+          <activiti:in source="applicantInfo" target="applicantInfo"></activiti:in>
         <activiti:in source="applicantUsername" target="applicantUsername"></activiti:in>
         <activiti:in source="approve" target="approve"></activiti:in>
         <activiti:in source="disapprove" target="disapprove"></activiti:in>
@@ -76,7 +77,7 @@ def addedConceptRoles = conceptManager.getAllByRoleRequest(requestId, ConceptRol
 
 execution.setVariable("addedConceptRoles", addedConceptRoles);</script>
     </scriptTask>
-    <serviceTask id="servicetaskCreateProcessName" name="Generating process name" activiti:expression="Change permissions request for {{${identityService.getNiceLabel(identityService.get(applicantIdentifier, null))}}}" activiti:resultVariableName="processInstanceName"></serviceTask>
+    <serviceTask id="servicetaskCreateProcessName" name="Generating process name" activiti:expression="Change permissions request for {{${roleRequestService.getApplicantLabel(applicantInfo)}}}" activiti:resultVariableName="processInstanceName"></serviceTask>
     <sequenceFlow id="flow23" sourceRef="startevent1" targetRef="servicetaskCreateProcessName"></sequenceFlow>
     <scriptTask id="scripttask2" name="Loading concepts for change permissions" scriptFormat="groovy" activiti:autoStoreVariables="false">
       <script>import java.time.LocalDate;
@@ -94,6 +95,7 @@ execution.setVariable("changedConceptRoles", changedConceptRoles);</script>
     <callActivity id="startChangeSubWorkflow" name="Approval change of particular authorizations" calledElement="${roleService.findChangeAssignRoleWorkflowDefinition(conceptRole.role) == null ? 'change-role-without-approve' : roleService.findChangeAssignRoleWorkflowDefinition(conceptRole.role) }">
       <extensionElements>
         <activiti:in source="applicantIdentifier" target="applicantIdentifier"></activiti:in>
+          <activiti:in source="applicantInfo" target="applicantInfo"></activiti:in>
         <activiti:in source="applicantUsername" target="applicantUsername"></activiti:in>
         <activiti:in source="approve" target="approve"></activiti:in>
         <activiti:in source="disapprove" target="disapprove"></activiti:in>
@@ -113,6 +115,7 @@ execution.setVariable("changedConceptRoles", changedConceptRoles);</script>
     <callActivity id="startRemoveSubWorkflow" name="Approval remove of particular authorizations" calledElement="${roleService.findUnAssignRoleWorkflowDefinition(conceptRole.role) == null ? 'change-role-without-approve' : roleService.findUnAssignRoleWorkflowDefinition(conceptRole.role) }">
       <extensionElements>
         <activiti:in source="identityIdentifier" target="identityIdentifier"></activiti:in>
+          <activiti:in source="applicantInfo" target="applicantInfo"></activiti:in>
         <activiti:in source="applicantIdentifier" target="applicantIdentifier"></activiti:in>
         <activiti:in source="applicantUsername" target="applicantUsername"></activiti:in>
         <activiti:in source="approve" target="approve"></activiti:in>

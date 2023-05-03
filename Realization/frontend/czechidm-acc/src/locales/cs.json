@@ -2145,7 +2145,6 @@
       "IDENTITYROLEACCOUNT": "Účty pro přiřazené role",
       "CONTRACTACCOUNT": "Účty pro vztahy identity (pozice)",
       "CONTRACTSLICEACCOUNT": "Účty pro časové řezy vztahů identity",
-      "CONTRACTACCOUNT": "Účty pro vztahy identity (pozice)",
       "PROVISIONINGBREAK": "Provisioning - brzda",
       "PROVISIONINGOPERATION": "Provisioning - operace ve frontě",
       "PROVISIONINGARCHIVE": "Provisioning - archív",
@@ -2153,10 +2152,43 @@
       "UNIFORMPASSWORD": "Systém jednotného hesla",
       "SYSTEMGROUP": "Skupiny systémů",
       "SYSTEMOWNER": "Vlastník systému",
-      "SYSTEMOWNERROLE": "Vlastník systému dle role"
+      "SYSTEMOWNERROLE": "Vlastník systému dle role",
+      "ACCOUNTFORMVALUE": "Formuláře - hodnoty",
+      "ACCOUNTROLEASSIGNMENT": "Přiřazení rolí k účtům",
+      "REMOTESERVER": "Konektor servery",
+      "SYSTEMGROUPSYSTEM": "Systémy ve skupině systémů"
     }
   },
   "eav": {
+    "authorization-evaluator": {
+      "acc-system-owner-evaluator": {
+        "help": "Oprávnění pro systémy pro vlastníka systému."
+      },
+      "acc-system-owner-assigned-by-identity-evaluator": {
+        "help": "Oprávnění pro vlastníka systému podle práv na systém."
+      },
+      "acc-system-owner-assigned-by-role-evaluator": {
+        "help": "Oprávnění pro vlastníka systému (podle role) podle práv na systém."
+      },
+      "acc-role-account-by-role-evaluator": {
+        "help": "Oprávnění pro účty rolí podle práv na role."
+      },
+      "acc-contract-account-by-contract-evaluator": {
+        "help": "Oprávnění pro účty kontraktů podle práv na kontrakty."
+      },
+      "acc-read-account-by-identity-evaluator": {
+        "help": "Oprávnění pro účty identit podle práv na identitu."
+      },
+      "acc-role-catalogue-account-by-role-catalogue-evaluator": {
+        "help": "Oprávnění pro účty katalogů rolí podle práv na katalog rolí."
+      },
+      "acc-identity-role-account-by-identity-role-evaluator": {
+        "help": "Oprávnění pro účty přiřazených rolí podle práv na přiřazené role."
+      },
+      "acc-identity-account-by-account-evaluator": {
+        "help": "Oprávnění pro účty vlastněné účty identit podle práv na účty."
+      }
+    },
     "eu-bcvsolutions-idm-acc-entity-syssystem": {
       "connid-net-tirasa-connid-bundles-db-table-databasetableconnector-net-tirasa-connid-bundles-db-table-2-2-4": {
         "attributes": {
@@ -2872,7 +2904,13 @@
       "account-delete-bulk-action": {
         "label": "$t(action.delete.action) účty",
         "help": "Smaže vybrané účty.",
-        "icon": "$t(action.delete.icon)"
+        "icon": "$t(action.delete.icon)",
+        "attributes": {
+          "force-delete": {
+            "label": "Smazat účty i v případě, že jsou v chráněném režimu, příp. na systému je nastavený chráněný režim",
+            "help": "Účet bude smazán i v případě, že je chráněný před smazáním nebo je na systému zapnutý chráněný režim."
+          }
+        }
       },
       "account-stop-managing-bulk-action": {
         "label": "Přestat spravovat účty",
@@ -2902,7 +2940,7 @@
       "acc-system-mapping-duplicate-bulk-action": {
         "icon": "fa:clone",
         "label": "Duplikovat mapování systému",
-        "help": "Vytvoří kopie vybraných mapování systému."
+        "help": "Vytvoří kopie vybraných mapování systému. Pokud je nastavené související mapování, bude z duplikovaného mapování odstraněno."
       },
       "acc-identity-account-management-bulk-action": {
         "icon": "link",
@@ -3054,6 +3092,100 @@
         }
       }
     },
+    "authorization-evaluator": {
+      "acc-account-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů účtu (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat účet",
+            "help": "Nastaví oprávnění pro atributy účtů, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst účet",
+            "help": "Nastaví oprávnění pro atributy účtů, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      },
+      "account-concept-role-request-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů konceptu žádosti o roli (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat koncept žádosti o roli",
+            "help": "Nastaví oprávnění pro atributy konceptů žádostí o role, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst koncept žádosti o roli",
+            "help": "Nastaví oprávnění pro atributy konceptů žádostí o role, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      },
+      "account-role-assignment-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů přiřazené role (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat přiřazenou roli",
+            "help": "Nastaví oprávnění pro atributy přiřazených rolí, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst přiřazenou roli",
+            "help": "Nastaví oprávnění pro atributy přiřazených rolí, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      },
+      "system-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů systému (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat systém",
+            "help": "Nastaví oprávnění pro atributy systémů, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst systém",
+            "help": "Nastaví oprávnění pro atributy systémů, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      }
+    },
     "monitoring-evaluator": {
       "acc-synchronization-monitoring-evaluator": {
         "label": "Monitoring synchronizace",
@@ -3073,6 +3205,18 @@
           "numberofdays": {
             "label": "Počet dní",
             "help": "Chyby, které nejsou starší, než-li zadaný počet dní."
+          }
+        }
+      }
+    },
+    "authorization-evaluator": {
+      "acc-account-role-assignment-by-account-evaluator": {
+        "help": "Oprávnění na přiřazené role na účet podle práv na účet",
+        "attributes": {
+          "include-permissions": {
+            "label": "Přenést oprávnění",
+            "help": "Vyberte oprávnění, které budou přenesena dle oprávnění na účet.",
+            "placeholder": "Stejná oprávnění jako na účet nebo vyberte ..."
           }
         }
       }

@@ -424,7 +424,7 @@ public class DefaultAccAccountConceptRoleRequestService extends AbstractConceptR
     public <F2 extends BaseFilter> DtoAdapter<AccAccountConceptRoleRequestDto, IdmRequestIdentityRoleDto> getAdapter(F2 originalFilter) {
 
         // Need to translate the filter. API is too general here, but
-        IdmRequestIdentityRoleFilter translatedFilter = modelMapper.map(originalFilter, IdmRequestIdentityRoleFilter.class);
+        IdmRequestIdentityRoleFilter translatedFilter =  modelMapper.map(originalFilter, IdmRequestIdentityRoleFilter.class);
         return new AccAccountConceptRoleRequestAdapter(accRoleAccountService, this,
                 roleSystemService, translatedFilter, workflowProcessInstanceService, modelMapper, requestService);
     }

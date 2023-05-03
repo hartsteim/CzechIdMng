@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 //
 import * as Basic from '../../components/basic';
 import * as Advanced from '../../components/advanced';
@@ -13,14 +13,13 @@ import {
   IdentityRoleManager,
   RequestIdentityRoleManager,
   RoleManager,
-  RoleTreeNodeManager
+  RoleTreeNodeManager,
 } from '../../redux';
 import SearchParameters from '../../domain/SearchParameters';
 import FormInstance from '../../domain/FormInstance';
 import ConfigLoader from '../../utils/ConfigLoader';
-import ComponentService from "../../services/ComponentService";
-import {AssignmentOwnerSelector} from "./AssignmentOwnerSelector";
-
+import ComponentService from '../../services/ComponentService';
+import { AssignmentOwnerSelector } from './AssignmentOwnerSelector';
 
 const identityRoleManager = new IdentityRoleManager();
 const identityContractManager = new IdentityContractManager();
@@ -33,7 +32,6 @@ const uiKeyRoleAttributeFormDefinition = 'role-attribute-form-definition';
 const componentService = new ComponentService();
 const requestIdentityRoleManager = new RequestIdentityRoleManager();
 
-
 /**
  * Detail of role concept request
  *
@@ -43,12 +41,18 @@ export class RoleConceptDetail extends Basic.AbstractContent {
 
   constructor(props, context) {
     super(props, context);
-    const updatedEntity = {...props.entity};
-    updatedEntity[props.entity.ownerType] = props.entity.ownerUuid
+    const updatedEntity = { ...props.entity };
 
+    if (props.entity?.ownerType) {
+      updatedEntity[props.entity.ownerType] = props.entity.ownerUuid;
+    }
+
+    const ownerType = props.isAccount ?
+      'eu.bcvsolutions.idm.acc.dto.AccAccountDto' : props.entity?.ownerType || IdentityContractManager.ENTITY_TYPE;
     this.state = {
       entity: updatedEntity,
       environment: ConfigLoader.getConfig('role.table.filter.environment', []),
+      selectedOwnerType: ownerType,
     };
   }
 
@@ -91,18 +95,18 @@ export class RoleConceptDetail extends Basic.AbstractContent {
   }
 
   getEntity() {
-    let entity = this.getForm().getData();
+    const entity = this.getForm().getData();
     const eavForm = this.getEavForm();
     let eavValues = null;
     const ownerType = this.refs.ownerSelector.getSelectedOwnerType();
     //
     if (eavForm) {
-      eavValues = {values: eavForm.getValues()};
+      eavValues = { values: eavForm.getValues() };
     }
 
     // Conversions
-    if ( entity[ownerType] && _.isObject( entity[ownerType])) {
-      entity[ownerType] =  entity[ownerType].id;
+    if (entity[ownerType] && _.isObject(entity[ownerType])) {
+      entity[ownerType] = entity[ownerType].id;
     }
     if (entity.role && _.isArray(entity.role)) {
       entity.roles = entity.role;
@@ -113,7 +117,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
     entity._eav = [eavValues];
     //
     const conceptComponentInfo = componentService.getConcepComponentByOwnerType(ownerType);
-    entity.assignmentType = conceptComponentInfo.entityType[0]
+    entity.assignmentType = conceptComponentInfo.entityType[0];
 
     //
     return entity;
@@ -132,7 +136,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
       return;
     }
     const entityFormData = _.merge({}, entity, {
-      role: entity._embedded && entity._embedded.role ? entity._embedded.role : null
+      role: entity._embedded && entity._embedded.role ? entity._embedded.role : null,
     });
 
     if (entityFormData.role && entityFormData.role.identityRoleAttributeDefinition) {
@@ -143,7 +147,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
         `${uiKeyRoleAttributeFormDefinition}-${entityFormData.role.id}`,
         (json, error) => {
           this.handleError(error);
-        }
+        },
       ));
 
       if (selectedIdentityRole.id && selectedIdentityRole.operation !== 'ADD') {
@@ -157,7 +161,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
                 this.addErrorMessage({ hidden: true, level: 'info' }, error);
                 this.setState({ error });
               }
-            }
+            },
           ));
         }
       } else {
@@ -177,7 +181,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
    */
   _onChangeSelectOfContract(value) {
     const entity = this.state && this.state.entity ? this.state.entity : this.props.entity;
-    const ownerType = this.refs.ownerSelector.getSelectedOwnerType()
+    const ownerType = this.refs.ownerSelector.getSelectedOwnerType();
     let validFrom = value ? value.validFrom : null;
     const now = moment().utc().valueOf();
     if (validFrom && moment(validFrom).isBefore(now)) {
@@ -190,7 +194,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
       entityFormData.role = this.refs.role.getValue();
     }
     if (this.props.entity) {
-      this.setState({entity: entityFormData});
+      this.setState({ entity: entityFormData });
     }
     return true;
   }
@@ -202,7 +206,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
         this.context.store.dispatch(
           roleManager.fetchAttributeFormDefinition(selectedRole.id, `${uiKeyRoleAttributeFormDefinition}-${selectedRole.id}`, (json, error) => {
             this.handleError(error);
-          })
+          }),
         );
       }
     } else {
@@ -231,7 +235,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
     }
     //
     this.setState({
-      environment: codes
+      environment: codes,
     });
   }
 
@@ -248,10 +252,10 @@ export class RoleConceptDetail extends Basic.AbstractContent {
       validationErrors,
       showEnvironment,
       isAccount,
-      accountId
+      accountId,
     } = this.props;
     const { environment } = this.state;
-    const entity = this.state.entity ? this.state.entity : this.props.entity;
+    const entity = this.state.entity?.id ? this.state.entity : this.props.entity;
 
     if (!entity) {
       return null;
@@ -296,27 +300,27 @@ export class RoleConceptDetail extends Basic.AbstractContent {
     return (
       <Basic.AbstractForm
         ref="form"
-        data={ entity }
-        style={ style }
-        showLoading={ showLoading }
-        readOnly={ !isEdit || readOnly }>
+        data={entity}
+        style={style}
+        showLoading={showLoading}
+        readOnly={!isEdit || readOnly}>
         <Advanced.CodeListSelect
           code="environment"
           hidden={!showEnvironment}
-          label={ this.i18n('entity.Role.environment.label') }
-          placeholder={ this.i18n('entity.Role.environment.help') }
+          label={this.i18n('entity.Role.environment.label')}
+          placeholder={this.i18n('entity.Role.environment.help')}
           multiSelect
-          onChange={ this._onEnvironmentChange.bind(this) }
-          rendered={ (!added || readOnly || !Utils.Entity.isNew(entity)) === false }
-          value={ environment }/>
+          onChange={this._onEnvironmentChange.bind(this)}
+          rendered={(!added || readOnly || !Utils.Entity.isNew(entity)) === false}
+          value={environment}/>
         <Advanced.RoleSelect
           required
-          readOnly={ !added || readOnly || !Utils.Entity.isNew(entity)}
-          multiSelect={ added && multiAdd }
+          readOnly={!added || readOnly || !Utils.Entity.isNew(entity)}
+          multiSelect={added && multiAdd}
           showActionButtons
-          header={ this.i18n('selectRoleCatalogue.header') }
-          onChange={ this._onChangeSelectOfRole.bind(this) }
-          label={ this.i18n('entity.IdentityRole.role') }
+          header={this.i18n('selectRoleCatalogue.header')}
+          onChange={this._onChangeSelectOfRole.bind(this)}
+          label={this.i18n('entity.IdentityRole.role')}
           ref="role"
           forceSearchParameters={new SearchParameters('can-be-requested')
             .setFilter('environment', environment)
@@ -324,7 +328,7 @@ export class RoleConceptDetail extends Basic.AbstractContent {
         />
         <Advanced.EntitySelectBox
           ref="roleSystem"
-          readOnly={ !added || readOnly }
+          readOnly={!added || readOnly}
           hidden={!_showSystems}
           entityType="roleSystem"
           disableable={false}
@@ -333,34 +337,34 @@ export class RoleConceptDetail extends Basic.AbstractContent {
             new SearchParameters()
               .setFilter('isInCrossDomainGroupRoleId', selectedRoleId || SearchParameters.BLANK_UUID)
           }
-          helpBlock={ this.i18n('entity.IdentityRole.roleSystem.help')}
-          label={ this.i18n('entity.IdentityRole.roleSystem.label') }/>
-          <AssignmentOwnerSelector
-              ref="ownerSelector"
-              entity={entity}
-              isNew={added}
-              accountId={accountId}
-              identityUsername = {identityUsername}
-              isAccount = {isAccount}
-              readOnly = {readOnly}
-              onChange={this._onChangeSelectOfContract.bind(this)}
-          />
+          helpBlock={this.i18n('entity.IdentityRole.roleSystem.help')}
+          label={this.i18n('entity.IdentityRole.roleSystem.label')}/>
+        <AssignmentOwnerSelector
+          ref="ownerSelector"
+          entity={entity}
+          isNew={added}
+          accountId={accountId}
+          identityUsername={identityUsername}
+          isAccount={isAccount}
+          readOnly={readOnly}
+          onChange={this._onChangeSelectOfContract.bind(this)}
+        />
         <Basic.LabelWrapper
-          label={ this.i18n('entity.IdentityRole.automaticRole.label') }
-          helpBlock={ this.i18n('entity.IdentityRole.automaticRole.help') }
-          rendered={ entity.automaticRole !== null }
-          hidden={ added }>
-          { entity.automaticRole ? roleTreeNodeManager.getNiceLabel(entity._embedded.automaticRole) : null }
+          label={this.i18n('entity.IdentityRole.automaticRole.label')}
+          helpBlock={this.i18n('entity.IdentityRole.automaticRole.help')}
+          rendered={entity.automaticRole !== null}
+          hidden={added}>
+          {entity.automaticRole ? roleTreeNodeManager.getNiceLabel(entity._embedded.automaticRole) : null}
         </Basic.LabelWrapper>
         <Basic.Row>
-          <Basic.Col lg={ 6 }>
+          <Basic.Col lg={6}>
             <Basic.DateTimePicker
               mode="date"
               className={entity.hasOwnProperty('_validFromChanged') ? 'text-danger' : null}
               ref={entity.hasOwnProperty('_validFromChanged') ? '_validFromChanged' : 'validFrom'}
               label={this.i18n('label.validFrom')}/>
           </Basic.Col>
-          <Basic.Col lg={ 6 }>
+          <Basic.Col lg={6}>
             <Basic.DateTimePicker
               mode="date"
               className={entity.hasOwnProperty('_validTillChanged') ? 'text-danger' : null}
@@ -368,21 +372,23 @@ export class RoleConceptDetail extends Basic.AbstractContent {
               label={this.i18n('label.validTill')}/>
           </Basic.Col>
         </Basic.Row>
-        <Basic.Panel rendered={_showEAV} showLoading={!_formInstance} style={{border: '0px'}}>
+        <Basic.Panel
+          rendered={_showEAV}
+          showLoading={!_formInstance}
+          style={{ border: '0px' }}>
           <Basic.ContentHeader>
-            {this.i18n('identityRoleAttributes.header') }
+            {this.i18n('identityRoleAttributes.header')}
           </Basic.ContentHeader>
           <Advanced.EavForm
             ref="eavForm"
-            formInstance={ _formInstance }
+            formInstance={_formInstance}
             readOnly={!isEdit || readOnly}
             useDefaultValue={Utils.Entity.isNew(entity)}
-            validationErrors={ validationErrors }/>
+            validationErrors={validationErrors}/>
         </Basic.Panel>
       </Basic.AbstractForm>
     );
   }
-
 }
 
 RoleConceptDetail.propTypes = {
@@ -394,7 +400,7 @@ RoleConceptDetail.propTypes = {
   readOnly: PropTypes.bool,
   showEnvironment: PropTypes.bool,
   isAccount: PropTypes.bool,
-  accountId: PropTypes.string
+  accountId: PropTypes.string,
 };
 
 RoleConceptDetail.defaultProps = {
@@ -402,7 +408,7 @@ RoleConceptDetail.defaultProps = {
   showLoading: false,
   readOnly: true,
   showEnvironment: true,
-  isAccount: false
+  isAccount: false,
 };
 
 function select(state) {

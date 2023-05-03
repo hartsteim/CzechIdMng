@@ -26,14 +26,21 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author svandav
  *
  */
-@Component
+@Component(IdentityRoleAccountByIdentityRoleEvaluator.EVALUATOR_NAME)
 @Description("Permissions to identity-role-accounts by identity-role")
 public class IdentityRoleAccountByIdentityRoleEvaluator extends AbstractTransitiveEvaluator<AccIdentityRoleAccount> {
+
+	public static final String EVALUATOR_NAME = "acc-identity-role-account-by-identity-role-evaluator";
 
 	@Autowired
 	private AuthorizationManager authorizationManager;
 	@Autowired
 	private SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 
 	@Override
 	protected Identifiable getOwner(AccIdentityRoleAccount entity) {

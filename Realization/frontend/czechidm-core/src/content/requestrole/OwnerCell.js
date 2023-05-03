@@ -13,6 +13,7 @@ export default class OwnerCell extends AdvancedColumn {
         const {entity} = this.props;
 
         const manager = componentService.getManagerForConceptByOwnerType(entity.ownerType)
+
         const owner = manager.getEmbeddedOwner(entity);
         if (!owner) {
             return (

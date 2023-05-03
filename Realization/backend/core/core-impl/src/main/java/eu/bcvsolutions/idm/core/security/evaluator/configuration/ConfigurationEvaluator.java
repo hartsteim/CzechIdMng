@@ -23,12 +23,19 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(ConfigurationEvaluator.EVALUATOR_NAME)
 @Description("Permissions to application configurations. If secured is 'true', then secured configuration will be available too.")
 public class ConfigurationEvaluator extends AbstractAuthorizationEvaluator<IdmConfiguration> {
-	
+
+	public static final String EVALUATOR_NAME = "core-configuration-evaluator";
+
 	public static final String PARAMETER_SECURED = "secured";
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
 	@Override
 	public Predicate getPredicate(Root<IdmConfiguration> root, CriteriaQuery<?> query, CriteriaBuilder builder, AuthorizationPolicy policy, BasePermission... permission) {
 		if (!hasPermission(policy, permission)) {

@@ -14,6 +14,10 @@ import WorkflowTaskInfo from '../../components/advanced/WorkflowTaskInfo/Workflo
 import WorkflowProcessInfo from '../../components/advanced/WorkflowProcessInfo/WorkflowProcessInfo';
 import DateValue from '../../components/advanced/DateValue/DateValue';
 import DecisionButtons from './DecisionButtons';
+import ComponentService from "../../services/ComponentService";
+
+
+const componentService = new ComponentService()
 
 /**
  * Default component for render task detail.
@@ -177,12 +181,19 @@ class DynamicTaskDetail extends Basic.AbstractContent {
       const type = UiUtils.getSimpleJavaType(task._dtotype);
       const isHistoricTask = type === 'WorkflowHistoricTaskInstanceDto';
 
+      const request = task?.variables?.conceptRole?._embedded?.roleRequest
+      const infoComponent = request && request.applicantInfo ? componentService.getApplicantInfoComponent(request.applicantInfo.applicantType) : null;
+
       return (
         <Basic.Row>
           <Basic.Col lg={ 8 }>
             <div>
               <Basic.LabelWrapper rendered={task.applicant} readOnly ref="applicant" label={this.i18n('applicant')}>
-                <IdentityInfo username={task.applicant} showLoading={!task} className="no-margin"/>
+                {
+                    infoComponent && <infoComponent.component
+                        entityIdentifier={ request?.applicantInfo?.id }
+                        showLoading={!request}/>
+                }
               </Basic.LabelWrapper>
               <Basic.LabelWrapper
                 rendered={task.variables.implementerIdentifier}

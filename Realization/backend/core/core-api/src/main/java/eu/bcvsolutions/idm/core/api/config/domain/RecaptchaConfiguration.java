@@ -1,5 +1,6 @@
 package eu.bcvsolutions.idm.core.api.config.domain;
 
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface RecaptchaConfiguration extends Configurable {
 	String DEFAULT_URL = "https://www.google.com/recaptcha/api/siteverify";
 	//
 	String PROPERTY_SECRET_KEY = ConfigurationService.IDM_PRIVATE_PROPERTY_PREFIX + "security.recaptcha.secretKey";
+	//
+	String PROPERTY_PROXY_URL = ConfigurationService.IDM_PRIVATE_PROPERTY_PREFIX + "security.recaptcha.proxy";
 	
 	@Override
 	default String getConfigurableType() {
@@ -32,9 +35,10 @@ public interface RecaptchaConfiguration extends Configurable {
 	
 	@Override
 	default List<String> getPropertyNames() {
-		List<String> properties = new ArrayList<>(); // we are not using superclass properties - enable and order does not make sense here
+		List<String> properties = new ArrayList<>(3); // we are not using superclass properties - enable and order does not make sense here
 		properties.add(getPropertyName(PROPERTY_URL));
 		properties.add(getPropertyName(PROPERTY_SECRET_KEY));
+		properties.add(getPropertyName(PROPERTY_PROXY_URL));
 		return properties;
 	}
 
@@ -47,4 +51,11 @@ public interface RecaptchaConfiguration extends Configurable {
 	 * Returns secret key for this installation.  
 	 */
 	GuardedString getSecretKey();
+
+	/**
+	 * Returns {@link Proxy} object only for ReCaptcha behavior.
+	 *
+	 * @return
+	 */
+	Proxy getProxy();
 }

@@ -31,14 +31,19 @@ import eu.bcvsolutions.idm.core.security.api.domain.BasePermission;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(CodeableEvaluator.EVALUATOR_NAME)
 @Description("Share entity by their identifier - uuid or code.")
 public class CodeableEvaluator extends AbstractAuthorizationEvaluator<Identifiable> {
-	
+
+	public static final String EVALUATOR_NAME = "core-codeable-evaluator";
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(CodeableEvaluator.class);
 	public static final String PARAMETER_IDENTIFIER = "identifier";
 	@Autowired private LookupService lookupService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	@Override
 	public boolean supports(Class<?> authorizableType) {
 		Assert.notNull(authorizableType, "Authorizable type is required.");

@@ -23,7 +23,7 @@ Input variables:
     <sequenceFlow id="flow3" name="disapproved" sourceRef="exclusivegateway1" targetRef="scripttask4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[#{decision.equals("disapprove")}]]></conditionExpression>
     </sequenceFlow>
-    <serviceTask id="servicetask2" name="Create name of process" activiti:expression="Approve role &quot;{{${roleService.get(conceptRole.role, null).name}}}&quot; assignment by role guarantee for &quot;{{${identityService.getNiceLabel(identityService.get(applicantIdentifier, null))}}}&quot;" activiti:resultVariableName="processInstanceName"></serviceTask>
+    <serviceTask id="servicetask2" name="Create name of process" activiti:expression="Approve role &quot;{{${roleService.get(conceptRole.role, null).name}}}&quot; assignment by role guarantee for &quot;{{${roleRequestService.getApplicantLabel(applicantInfo)}}}&quot;" activiti:resultVariableName="processInstanceName"></serviceTask>
     <sequenceFlow id="flow7" sourceRef="exclusivegateway8" targetRef="scripttask8">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[#{!approvalForAutomaticRole}]]></conditionExpression>
     </sequenceFlow>
@@ -32,7 +32,7 @@ Input variables:
     <sequenceFlow id="flow9" sourceRef="exclusivegateway2" targetRef="servicetask2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[#{operationType.equals("add")}]]></conditionExpression>
     </sequenceFlow>
-    <serviceTask id="servicetask5" name="Create name of process" activiti:expression="Approve role &quot;{{${roleService.get(conceptRole.role, null).name}}}&quot; change by role guarantee for &quot;{{${identityService.getNiceLabel(identityService.get(applicantIdentifier, null))}}}&quot;" activiti:resultVariableName="processInstanceName"></serviceTask>
+    <serviceTask id="servicetask5" name="Create name of process" activiti:expression="Approve role &quot;{{${roleService.get(conceptRole.role, null).name}}}&quot; change by role guarantee for &quot;{{${roleRequestService.getApplicantLabel(applicantInfo)}}}&quot;" activiti:resultVariableName="processInstanceName"></serviceTask>
     <userTask id="approveChangeByGuarantee" name="Approve by role guarantee" activiti:candidateUsers="#{candidatesApproveByAuthorizers}" activiti:formKey="dynamicTaskRoleConceptDetail" activiti:skipExpression="#{skipApproveByAuthorizers}">
       <documentation>${processInstanceName}</documentation>
       <extensionElements>

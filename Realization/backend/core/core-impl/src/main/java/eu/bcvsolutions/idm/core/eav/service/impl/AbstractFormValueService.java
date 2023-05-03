@@ -449,7 +449,8 @@ public abstract class AbstractFormValueService<O extends FormableEntity, E exten
 			case UUID: {
 				return repository.findOwnersByUuidValue(attribute.getId(), value.getUuidValue(), pageable);
 			}
-			case SHORTTEXT: {
+			case SHORTTEXT:
+			case CODELIST: {
 				return repository.findOwnersByShortTextValue(attribute.getId(), value.getShortTextValue(), pageable);
 			}
 			// texts

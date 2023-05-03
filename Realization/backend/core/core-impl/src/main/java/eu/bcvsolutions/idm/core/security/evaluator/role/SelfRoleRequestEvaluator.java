@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import eu.bcvsolutions.idm.core.model.entity.IdmIdentity_;
 import eu.bcvsolutions.idm.core.model.entity.IdmRoleRequest;
 import eu.bcvsolutions.idm.core.model.entity.IdmRoleRequest_;
 import eu.bcvsolutions.idm.core.security.api.domain.AuthorizationPolicy;
@@ -26,11 +25,18 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(SelfRoleRequestEvaluator.EVALUATOR_NAME)
 @Description("Currently logged user can edit his role requests.")
 public class SelfRoleRequestEvaluator extends AbstractAuthorizationEvaluator<IdmRoleRequest> {
 
+	public static final String EVALUATOR_NAME = "core-self-role-request-evaluator";
+
 	private final SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	
 	@Autowired
 	public SelfRoleRequestEvaluator(SecurityService securityService) {

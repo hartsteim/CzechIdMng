@@ -1162,6 +1162,7 @@
   "permission": {
     "base" : {
       "ADMIN": "Administration (all)",
+      "METRICS": "Monitoring",
       "COUNT": "Number of records",
       "AUTOCOMPLETE": "View in select box (autocomplete)",
       "READ": "Read",
@@ -6341,6 +6342,11 @@
         "help": "$t(action.delete.action) role requests.",
         "icon": "$t(action.delete.icon)"
       },
+      "role-composition-delete-bulk-action": {
+        "label": "$t(action.delete.action) business roles",
+        "help": "$t(action.delete.action) business roles.",
+        "icon": "$t(action.delete.icon)"
+      },
       "identity-add-role-bulk-action": {
         "label": "Roles assignment",
         "icon": "component:identity-role-add",
@@ -6870,6 +6876,165 @@
       }
     },
     "authorization-evaluator": {
+      "core-uuid-evaluator": {
+        "help": "Permission to object by its UUID",
+        "attributes": {
+          "uuid": {
+            "label": "UUID",
+            "help": "UUID of object"
+          }
+        }
+      },
+      "core-codeable-evaluator": {
+        "help": "Permission to object by its code/identifier",
+        "attributes": {
+          "identifier": {
+            "label": "Code/identifier",
+            "help": "Code/identifier of the object"
+          }
+        }
+      },
+      "core-base-permission-evaluator": {
+        "help": "Permission to all object of this type"
+      },
+      "core-request-item-by-request-evaluator": {
+        "help": "Permissions to universal request items by request"
+      },
+      "core-request-by-creator-evaluator": {
+        "help": "Permissions to requests created by the current user."
+      },
+      "core-self-request-evaluator": {
+        "help": "Permissions to requests owned by the current user."
+      },
+      "core-request-by-owner-evaluator": {
+        "help": "Permissions to requests based on the permissions to the request's owner (target object). Only supports IdmRole as owner now!"
+      },
+      "core-request-by-wf-involved-identity-evaluator": {
+        "help": "Permissions to requests when the identity is involved in the approval of the request."
+      },
+      "core-role-request-by-identity-evaluator": {
+        "help": "Permissions to role requests based on permissions to request owner."
+      },
+      "core-self-role-request-evaluator": {
+        "help": "Permissions to role requests owned by the current user."
+      },
+      "core-role-request-by-wf-involved-identity-evaluator": {
+        "help": "Permissions to role requests when the identity is involved in the approval of the request."
+      },
+      "core-contract-position-by-identity-contract-evaluator": {
+        "help": "Permissions to contract positions based on permissions to contract."
+      },
+      "core-role-form-attribute-by-role-evaluator": {
+        "help": "Permissions to role form attributes based on role permissions."
+      },
+      "core-role-tree-node-by-role-evaluator": {
+        "help": "Permissions to automatic roles based on role permissions."
+      },
+      "core-code-list-item-by-code-list-evaluator": {
+        "help": "Permissions to code list items based on code list permissions."
+      },
+      "core-role-composition-by-superior-role-evaluator": {
+        "help": "Permissions to business roles based on permissions for superior role."
+      },
+      "core-role-composition-by-sub-role-evaluator": {
+        "help": "Permissions to business roles based on permissions for subordinate role."
+      },
+      "core-incompatible-role-by-superior-role-evaluator": {
+        "help": "Permissions to incompatible roles based on permissions for superior role."
+      },
+      "core-incompatible-role-by-sub-role-evaluator": {
+        "help": "Permissions to incompatible roles based on permissions for subordinate role."
+      },
+      "core-delegation-by-delegation-definition-evaluator": {
+        "help": "Permissions to delegation based on permissions for delegation definition."
+      },
+      "core-delegation-def-by-delegator-and-delegate-evaluator": {
+        "help": "Allows creating a delegation definition if the logged user has IdentityBasePermission.DELEGATOR for delegator and IdentityBasePermission.DELEGATE for delegate."
+      },
+      "core-self-delegation-definition-by-delegator-evaluator": {
+        "help": "Permissions to delegation definitions where the logged user is the delegator."
+      },
+      "core-self-delegation-definition-by-delegate-evaluator": {
+        "help": "Permissions to delegation definitions where the logged user is the delegate."
+      },
+      "core-delegation-definition-by-delegator-contract-evaluator": {
+        "help": "Permissions to delegation definitions based on permissions for delegator contract."
+      },
+      "core-delegation-definition-by-delegate-evaluator": {
+        "help": "Permissions to delegation definitions based on permissions for delegate."
+      },
+      "core-delegation-definition-by-delegator-evaluator": {
+        "help": "Permissions to delegation definitions based on permissions for delegator."
+      },
+      "core-form-attribute-by-definition-evaluator": {
+        "help": "Permissions to form attributes based on permissions for form definitions."
+      },
+      "core-form-attribute-by-code-list-evaluator": {
+        "help": "Permissions to form attributes based on permissions for code list."
+      },
+      "core-contract-guarantee-by-identity-contract-evaluator": {
+        "help": "Permissions to contract guarantor based on permissions for contract."
+      },
+      "core-role-guarantee-by-role-evaluator": {
+        "help": "Permissions to role guarantor based on permissions for role."
+      },
+      "core-role-guarantee-role-by-role-evaluator": {
+        "help": "Permissions to role guarantor by role based on permissions for role."
+      },
+      "core-role-catalogue-role-by-role-evaluator": {
+        "help": "Oprávnění pro katalog rolí podle práv na roli."
+      },
+      "core-configuration-evaluator": {
+        "help": "Permissions for the application configuration.",
+        "attributes": {
+          "secured": {
+            "label": "Show secure items",
+            "help": "Show even secure configuration items (true/false)"
+          }
+        }
+      },
+      "core-self-long-running-task-evaluator": {
+        "help": "Permissions for long running tasks owned by the currently logged user."
+      },
+      "core-authorization-policy-by-role-evaluator": {
+        "help": "Permissions for authorization policies based on permissions for role."
+      },
+      "core-subordinate-contract-evaluator": {
+        "help": "Permissions for contracts of the subordinates."
+      },
+      "core-self-identity-role-evaluator": {
+        "help": "Permissions for assigned roles owned by the logged user."
+      },
+      "core-identity-role-by-contract-evaluator": {
+        "help": "Permissions for assigned roles based on permissions for contract."
+      },
+      "core-identity-role-by-identity-evaluator": {
+        "help": "Permissions for assigned roles based on permissions for identity."
+      },
+      "core-self-profile-evaluator": {
+        "help": "Permissions for profile owned by the logged user."
+      },
+      "core-role-can-be-requested-evaluator": {
+        "help": "Permissions for roles that have 'can be requested' set."
+      },
+      "core-role-by-guarantee-evaluator": {
+        "help": "Permissions for roles where the user is a guarantor."
+      },
+      "core-self-identity-evaluator": {
+        "help": "Permissions for identity of the logged user."
+      },
+      "core-subordinates-identity-evaluator": {
+        "help": "Permissions for subordinate identities."
+      },
+      "core-identity-by-contract-evaluator": {
+        "help": "Permissions for identity based on contract permissions."
+      },
+      "core-automatic-role-request-by-wf-involved-identity-evaluator": {
+        "help": "Permissions for automatic role request where the user is involved."
+      },
+      "core-automatic-role-rule-request-by-request-evaluator": {
+        "help": "Permissions for rules of automatic role request where the user is involved."
+      },
       "identity-form-value-evaluator": {
         "help": "Permissions to identity form attribute values. By definition (main if not specified) and attrinute codes (all if not specified).",
         "attributes": {
@@ -6888,17 +7053,155 @@
             "help": "Add permission to currently logged user only. Logged user doesn't get permissions to other users attributes."
           },
           "owner-update": {
-            "label": "By permission to update user",
-            "help": "Add permission to attributes of users, which can be updated by the logged user (for example, when logged user can update identity, then he can update attributes too)."
+            "label": "By permission to update identity",
+            "help": "Add permission to attributes of identities, which can be updated by the logged user."
           },
           "owner-read": {
-            "label": "By permission to read user",
-            "help": "Add permission to attributes of users, which can be read by the logged user (for example, when logged user can read identity, then he can update attributes)."
+            "label": "By permission to read identity",
+            "help": "Add permission to attributes of identities, which can be read by the logged user."
+          }
+        }
+      },
+      "code-list-item-value-evaluator": {
+        "help": "Permissions to code list item form values.",
+        "attributes": {
+          "form-definition": {
+            "label": "Form definition",
+            "help": "Select definition, which contains attributes. Main definition will be used as default.",
+            "placeholder": "Main definition for identities or select ..."
+          },
+          "attributes": {
+            "label": "Attributes",
+            "help": "Add permission to attributes. All attributes from selected form definition will be used as default.",
+            "placeholder": "All attributes or attribute codes (use comma as separator)"
+          },
+          "owner-update": {
+            "label": "By permission to update code list item",
+            "help": "Add permission to attributes of code list items, which can be updated by the logged user."
+          },
+          "owner-read": {
+            "label": "By permission to read code list item",
+            "help": "Add permission to attributes of code list items, which can be read by the logged user."
+          }
+        }
+      },
+      "concept-role-request-form-value-evaluator": {
+        "help": "Permissions to concept role request form values.",
+        "attributes": {
+          "form-definition": {
+            "label": "Form definition",
+            "help": "Select definition, which contains attributes. Main definition will be used as default.",
+            "placeholder": "Main definition for identities or select ..."
+          },
+          "attributes": {
+            "label": "Attributes",
+            "help": "Add permission to attributes. All attributes from selected form definition will be used as default.",
+            "placeholder": "All attributes or attribute codes (use comma as separator)"
+          },
+          "owner-update": {
+            "label": "By permission to update concept role request",
+            "help": "Add permission to attributes of concept role requests, which can be updated by the logged user."
+          },
+          "owner-read": {
+            "label": "By permission to read concept role request",
+            "help": "Add permission to attributes of concept role requests, which can be read by the logged user."
+          }
+        }
+      },
+      "contract-slice-form-value-evaluator": {
+        "help": "Permissions to contract slice form values.",
+        "attributes": {
+          "form-definition": {
+            "label": "Form definition",
+            "help": "Select definition, which contains attributes. Main definition will be used as default.",
+            "placeholder": "Main definition for identities or select ..."
+          },
+          "attributes": {
+            "label": "Attributes",
+            "help": "Add permission to attributes. All attributes from selected form definition will be used as default.",
+            "placeholder": "All attributes or attribute codes (use comma as separator)"
+          },
+          "owner-update": {
+            "label": "By permission to update contract slice",
+            "help": "Add permission to attributes of contract slices, which can be updated by the logged user."
+          },
+          "owner-read": {
+            "label": "By permission to read contract slice",
+            "help": "Add permission to attributes of contract slices, which can be read by the logged user."
+          }
+        }
+      },
+      "identity-role-form-value-evaluator": {
+        "help": "Permissions to identity role form values.",
+        "attributes": {
+          "form-definition": {
+            "label": "Form definition",
+            "help": "Select definition, which contains attributes. Main definition will be used as default.",
+            "placeholder": "Main definition for identities or select ..."
+          },
+          "attributes": {
+            "label": "Attributes",
+            "help": "Add permission to attributes. All attributes from selected form definition will be used as default.",
+            "placeholder": "All attributes or attribute codes (use comma as separator)"
+          },
+          "owner-update": {
+            "label": "By permission to update identity role",
+            "help": "Add permission to attributes of identity roles, which can be updated by the logged user."
+          },
+          "owner-read": {
+            "label": "By permission to read identity role",
+            "help": "Add permission to attributes of identity roles, which can be read by the logged user."
+          }
+        }
+      },
+      "role-form-value-evaluator": {
+        "help": "Permissions to role form values.",
+        "attributes": {
+          "form-definition": {
+            "label": "Form definition",
+            "help": "Select definition, which contains attributes. Main definition will be used as default.",
+            "placeholder": "Main definition for identities or select ..."
+          },
+          "attributes": {
+            "label": "Attributes",
+            "help": "Add permission to attributes. All attributes from selected form definition will be used as default.",
+            "placeholder": "All attributes or attribute codes (use comma as separator)"
+          },
+          "owner-update": {
+            "label": "By permission to update role",
+            "help": "Add permission to attributes of roles, which can be updated by the logged user."
+          },
+          "owner-read": {
+            "label": "By permission to read role",
+            "help": "Add permission to attributes of roles, which can be read by the logged user."
+          }
+        }
+      },
+      "tree-node-form-value-evaluator": {
+        "help": "Permissions to tree node form values.",
+        "attributes": {
+          "form-definition": {
+            "label": "Form definition",
+            "help": "Select definition, which contains attributes. Main definition will be used as default.",
+            "placeholder": "Main definition for identities or select ..."
+          },
+          "attributes": {
+            "label": "Attributes",
+            "help": "Add permission to attributes. All attributes from selected form definition will be used as default.",
+            "placeholder": "All attributes or attribute codes (use comma as separator)"
+          },
+          "owner-update": {
+            "label": "By permission to update tree node",
+            "help": "Add permission to attributes of tree nodes, which can be updated by the logged user."
+          },
+          "owner-read": {
+            "label": "By permission to read tree node",
+            "help": "Add permission to attributes of tree nodes, which can be read by the logged user."
           }
         }
       },
       "core-identity-contract-form-value-evaluator": {
-        "help": "Permissions to contract form attribute values. By definition (main if not specified) and attrinute codes (all if not specified).",
+        "help": "Permissions to identity contract form attribute values. By definition (main if not specified) and attrinute codes (all if not specified).",
         "attributes": {
           "form-definition": {
             "label": "Form definition",
@@ -6912,7 +7215,7 @@
           },
           "owner-update": {
             "label": "By permission to update contract",
-            "help": "Add permission to attributes of users, which can be updated by the logged user (for example, when logged user can update contract, then he can update attributes too)."
+            "help": "Add permission to attributes of contracts, which can be updated by the logged user (for example, when logged user can update contract, then he can update attributes too)."
           },
           "owner-read": {
             "label": "By permission to read contract",

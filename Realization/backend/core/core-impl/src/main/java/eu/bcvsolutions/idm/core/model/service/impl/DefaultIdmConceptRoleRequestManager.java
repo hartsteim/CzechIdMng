@@ -3,6 +3,7 @@ package eu.bcvsolutions.idm.core.model.service.impl;
 import eu.bcvsolutions.idm.core.api.domain.ConceptRoleRequestOperation;
 import eu.bcvsolutions.idm.core.api.dto.AbstractConceptRoleRequestDto;
 import eu.bcvsolutions.idm.core.api.dto.AbstractRoleAssignmentDto;
+import eu.bcvsolutions.idm.core.api.dto.ApplicantDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmRequestIdentityRoleDto;
 import eu.bcvsolutions.idm.core.api.dto.filter.BaseFilter;
 import eu.bcvsolutions.idm.core.api.dto.filter.IdmBaseConceptRoleRequestFilter;
@@ -135,7 +136,6 @@ public class DefaultIdmConceptRoleRequestManager extends  AbstractAdaptableMulti
 
     @Override
     public MultiSourcePagedResource<IdmRequestIdentityRoleDto, IdmRequestIdentityRoleFilter, IdmRequestIdentityRoleFilter, IdmRequestIdentityRoleDto> getMultiResource() {
-        // TODO comment wtf
         List<AdaptableService<IdmRequestIdentityRoleDto, IdmRequestIdentityRoleFilter, IdmRequestIdentityRoleDto>> services = new ArrayList<>();
         conceptServices.values().forEach(services::add);
         return new MultiSourcePagedResource<>(services, modelMapper);

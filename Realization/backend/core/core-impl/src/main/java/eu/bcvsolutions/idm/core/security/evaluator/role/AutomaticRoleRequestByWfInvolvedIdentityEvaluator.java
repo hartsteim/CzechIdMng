@@ -22,9 +22,11 @@ import eu.bcvsolutions.idm.core.workflow.service.WorkflowProcessInstanceService;
  * @author Radek Tomiška
  * @author Vít Švanda
  */
-@Component
+@Component(AutomaticRoleRequestByWfInvolvedIdentityEvaluator.EVALUATOR_NAME)
 @Description("Currently logged user can work with automatic role requests, when identity was involved to approving.")
 public class AutomaticRoleRequestByWfInvolvedIdentityEvaluator extends AbstractAuthorizationEvaluator<IdmAutomaticRoleRequest> {
+
+	public static final String EVALUATOR_NAME = "core-automatic-role-request-by-wf-involved-identity-evaluator";
 	
 	private final WorkflowProcessInstanceService processService;
 	private final SecurityService securityService;
@@ -38,6 +40,11 @@ public class AutomaticRoleRequestByWfInvolvedIdentityEvaluator extends AbstractA
 		//
 		this.securityService = securityService;
 		this.processService = processService;
+	}
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
 	}
 	
 	@Override

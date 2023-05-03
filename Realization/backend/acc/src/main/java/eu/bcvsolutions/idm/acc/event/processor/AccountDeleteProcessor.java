@@ -7,13 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import eu.bcvsolutions.idm.acc.dto.AccAccountConceptRoleRequestDto;
-import eu.bcvsolutions.idm.acc.dto.AccAccountRoleAssignmentDto;
-import eu.bcvsolutions.idm.acc.dto.filter.AccAccountConceptRoleRequestFilter;
-import eu.bcvsolutions.idm.acc.dto.filter.AccAccountRoleAssignmentFilter;
-import eu.bcvsolutions.idm.acc.service.api.AccAccountConceptRoleRequestService;
-import eu.bcvsolutions.idm.acc.service.api.AccAccountRoleAssignmentService;
-import eu.bcvsolutions.idm.core.model.event.processor.ConceptCancellingProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +17,9 @@ import org.springframework.util.Assert;
 import com.google.common.collect.ImmutableMap;
 
 import eu.bcvsolutions.idm.acc.domain.AccResultCode;
+import eu.bcvsolutions.idm.acc.dto.AccAccountConceptRoleRequestDto;
 import eu.bcvsolutions.idm.acc.dto.AccAccountDto;
+import eu.bcvsolutions.idm.acc.dto.AccAccountRoleAssignmentDto;
 import eu.bcvsolutions.idm.acc.dto.AccContractAccountDto;
 import eu.bcvsolutions.idm.acc.dto.AccContractSliceAccountDto;
 import eu.bcvsolutions.idm.acc.dto.AccIdentityAccountDto;
@@ -32,6 +27,7 @@ import eu.bcvsolutions.idm.acc.dto.AccRoleAccountDto;
 import eu.bcvsolutions.idm.acc.dto.AccRoleCatalogueAccountDto;
 import eu.bcvsolutions.idm.acc.dto.AccTreeAccountDto;
 import eu.bcvsolutions.idm.acc.dto.SysSystemEntityDto;
+import eu.bcvsolutions.idm.acc.dto.filter.AccAccountConceptRoleRequestFilter;
 import eu.bcvsolutions.idm.acc.dto.filter.AccContractAccountFilter;
 import eu.bcvsolutions.idm.acc.dto.filter.AccContractSliceAccountFilter;
 import eu.bcvsolutions.idm.acc.dto.filter.AccIdentityAccountFilter;
@@ -40,6 +36,8 @@ import eu.bcvsolutions.idm.acc.dto.filter.AccRoleCatalogueAccountFilter;
 import eu.bcvsolutions.idm.acc.dto.filter.AccTreeAccountFilter;
 import eu.bcvsolutions.idm.acc.entity.AccAccount_;
 import eu.bcvsolutions.idm.acc.event.AccountEvent.AccountEventType;
+import eu.bcvsolutions.idm.acc.service.api.AccAccountConceptRoleRequestService;
+import eu.bcvsolutions.idm.acc.service.api.AccAccountRoleAssignmentService;
 import eu.bcvsolutions.idm.acc.service.api.AccAccountService;
 import eu.bcvsolutions.idm.acc.service.api.AccContractAccountService;
 import eu.bcvsolutions.idm.acc.service.api.AccContractSliceAccountService;
@@ -51,14 +49,15 @@ import eu.bcvsolutions.idm.acc.service.api.ProvisioningService;
 import eu.bcvsolutions.idm.acc.service.api.SysSystemEntityTypeManager;
 import eu.bcvsolutions.idm.acc.system.entity.SystemEntityTypeRegistrable;
 import eu.bcvsolutions.idm.core.api.event.CoreEvent;
-import eu.bcvsolutions.idm.core.api.event.CoreEventProcessor;
 import eu.bcvsolutions.idm.core.api.event.DefaultEventResult;
 import eu.bcvsolutions.idm.core.api.event.EntityEvent;
+import eu.bcvsolutions.idm.core.api.event.EntityEventProcessor;
 import eu.bcvsolutions.idm.core.api.event.EventResult;
 import eu.bcvsolutions.idm.core.api.exception.ResultCodeException;
 import eu.bcvsolutions.idm.core.api.service.EntityEventManager;
 import eu.bcvsolutions.idm.core.api.service.IdmRoleRequestService;
 import eu.bcvsolutions.idm.core.api.utils.DtoUtils;
+import eu.bcvsolutions.idm.core.model.event.processor.ConceptCancellingProcessor;
 
 /**
  * Deletes identity account
@@ -134,8 +133,13 @@ public class AccountDeleteProcessor
 		}
 
 		Assert.notNull(account, "Account cannot be null!");
-		// We do not allow delete account in protection
-		if (account.isAccountProtectedAndValid()) {
+		// We do not allow delete account in protection unless force delete is set
+		boolean forceDelete = false;
+		Object forceDeleteObj = event.getProperties().get(EntityEventProcessor.PROPERTY_FORCE_DELETE);
+		if (forceDeleteObj instanceof Boolean) {
+			forceDelete = (boolean) forceDeleteObj;
+		}
+		if (account.isAccountProtectedAndValid() && !forceDelete) {
 			throw new ResultCodeException(AccResultCode.ACCOUNT_CANNOT_BE_DELETED_IS_PROTECTED,
 					ImmutableMap.of("uid", account.getUid()));
 		}
@@ -150,7 +154,11 @@ public class AccountDeleteProcessor
 		for (AccIdentityAccountDto identityAccount : identityAccounts) {
 			// delete referenced role assignment
 			removeRelatedAssignedRoles(event,identityAccount.getIdentity(), account.getId(), false);
-			identityAccountService.delete(identityAccount, deleteTargetAccount);
+			if (forceDelete) {
+				identityAccountService.forceDelete(identityAccount);
+			} else {
+				identityAccountService.delete(identityAccount, deleteTargetAccount);
+			}
 		}
 		removeRelatedAssignedRoles(event, account.getId(), false);
 

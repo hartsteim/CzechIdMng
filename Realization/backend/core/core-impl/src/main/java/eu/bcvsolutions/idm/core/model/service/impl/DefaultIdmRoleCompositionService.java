@@ -14,7 +14,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import eu.bcvsolutions.idm.core.model.event.AbstractRoleAssignmentEvent;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +42,7 @@ import eu.bcvsolutions.idm.core.model.domain.CoreGroupPermission;
 import eu.bcvsolutions.idm.core.model.entity.IdmRoleComposition;
 import eu.bcvsolutions.idm.core.model.entity.IdmRoleComposition_;
 import eu.bcvsolutions.idm.core.model.entity.IdmRole_;
+import eu.bcvsolutions.idm.core.model.event.AbstractRoleAssignmentEvent;
 import eu.bcvsolutions.idm.core.model.event.IdentityRoleEvent;
 import eu.bcvsolutions.idm.core.model.repository.IdmRoleCompositionRepository;
 import eu.bcvsolutions.idm.core.security.api.domain.BasePermission;
@@ -63,7 +63,7 @@ public class DefaultIdmRoleCompositionService
 	//
 	@Autowired private IdmIdentityRoleService identityRoleService;
 	@Autowired private IdmCacheManager cacheManager;
-	
+
 	@Autowired
 	public DefaultIdmRoleCompositionService(IdmRoleCompositionRepository repository, EntityEventManager entityEventManager) {
 		super(repository, entityEventManager);
@@ -81,7 +81,7 @@ public class DefaultIdmRoleCompositionService
 		// clear cache right here => delete is asynchronous
 		cacheManager.evictCache(IdmRoleCompositionService.ALL_SUB_ROLES_CACHE_NAME);
 	}
-	
+
 	@Override
 	public List<IdmRoleCompositionDto> findDirectSubRoles(UUID superiorId, BasePermission... permission) {
 		Assert.notNull(superiorId, "Superior role identifier is required.");

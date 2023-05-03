@@ -66,7 +66,7 @@ class RoleRequestDetail extends Advanced.AbstractTableContent {
   _initComponent(props) {
     const { entityId } = props;
     const _entityId = entityId || props.match.params.entityId;
-    const applicantType = this.resolveApplicantType(props.location.query?.applicantType);
+    const applicantType = this.resolveApplicantType(props.location?.query?.applicantType);
     if (this._getIsNew(props)) {
       this.setState({
         showLoading: false,
@@ -83,7 +83,9 @@ class RoleRequestDetail extends Advanced.AbstractTableContent {
       });
     } else {
       this.context.store.dispatch(roleRequestManager.fetchEntity(_entityId, null, (entity, error) => {
-        const {isAccount, accountId} = this.props.match;
+        // this only occurs when this component is displayed in DynamicTaskRoleDetail. Since approval workflows for other types
+        // than identity roles are not supported atm, we can safely assume that this is not an account
+        const {isAccount = false, accountId = null} = this.props.match || {};
         if (error) {
           this.setState({
             errorOccurred: true,

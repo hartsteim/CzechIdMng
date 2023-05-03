@@ -30,13 +30,19 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(SubordinatesEvaluator.EVALUATOR_NAME)
 @Description("Permissions to subordinates.")
 public class SubordinatesEvaluator extends AbstractAuthorizationEvaluator<IdmIdentity> {
-	
+
+	public static final String EVALUATOR_NAME = "core-subordinates-identity-evaluator";
 	@Autowired private SecurityService securityService;
 	@Autowired private FilterManager filterManager;
 	@Autowired private IdmIdentityService identityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 
 	@Override
 	public Predicate getPredicate(Root<IdmIdentity> root, CriteriaQuery<?> query, CriteriaBuilder builder, AuthorizationPolicy policy, BasePermission... permission) {

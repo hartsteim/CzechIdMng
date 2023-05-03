@@ -26,13 +26,20 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(FormAttributteByDefinitionEvaluator.EVALUATOR_NAME)
 @Description("Permissions to form attributes by form definition")
 public class FormAttributteByDefinitionEvaluator extends AbstractTransitiveEvaluator<IdmFormAttribute> {
 
+	public static final String EVALUATOR_NAME = "core-form-attribute-by-definition-evaluator";
+
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
 	@Override
 	protected Identifiable getOwner(IdmFormAttribute entity) {
 		return entity.getFormDefinition();

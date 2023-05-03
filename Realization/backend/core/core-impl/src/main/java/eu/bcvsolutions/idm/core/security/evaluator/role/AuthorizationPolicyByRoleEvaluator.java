@@ -30,12 +30,19 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(AuthorizationPolicyByRoleEvaluator.EVALUATOR_NAME)
 @Description("Permissions to authorization policies by role")
 public class AuthorizationPolicyByRoleEvaluator extends AbstractTransitiveEvaluator<IdmAuthorizationPolicy> {
 
+	public static final String EVALUATOR_NAME =	"core-authorization-policy-by-role-evaluator";
+
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	
 	@Override
 	protected Identifiable getOwner(IdmAuthorizationPolicy entity) {

@@ -20,6 +20,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +61,8 @@ import eu.bcvsolutions.idm.core.api.service.LookupService;
 import eu.bcvsolutions.idm.core.eav.api.domain.FormDefinitionCache;
 import eu.bcvsolutions.idm.core.eav.api.domain.PersistentType;
 import eu.bcvsolutions.idm.core.eav.api.dto.FormDefinitionAttributes;
+import eu.bcvsolutions.idm.core.eav.api.dto.IdmCodeListDto;
+import eu.bcvsolutions.idm.core.eav.api.dto.IdmCodeListItemDto;
 import eu.bcvsolutions.idm.core.eav.api.dto.IdmFormAttributeDto;
 import eu.bcvsolutions.idm.core.eav.api.dto.IdmFormDefinitionDto;
 import eu.bcvsolutions.idm.core.eav.api.dto.IdmFormInstanceDto;
@@ -71,6 +74,8 @@ import eu.bcvsolutions.idm.core.eav.api.exception.ChangePersistentTypeException;
 import eu.bcvsolutions.idm.core.eav.api.service.AbstractFormableService;
 import eu.bcvsolutions.idm.core.eav.api.service.FormService;
 import eu.bcvsolutions.idm.core.eav.api.service.FormValueService;
+import eu.bcvsolutions.idm.core.eav.api.service.IdmCodeListItemService;
+import eu.bcvsolutions.idm.core.eav.api.service.IdmCodeListService;
 import eu.bcvsolutions.idm.core.eav.api.service.IdmFormAttributeService;
 import eu.bcvsolutions.idm.core.eav.api.service.IdmFormDefinitionService;
 import eu.bcvsolutions.idm.core.eav.entity.IdmFormAttribute;
@@ -123,6 +128,8 @@ public class DefaultFormServiceIntegrationTest extends AbstractIntegrationTest {
 	@Autowired private EventConfiguration eventConfiguration;
 	@Autowired private EntityEventManager entityEventManager;
 	@Autowired private IdmCacheManager cacheManager;
+	@Autowired private IdmCodeListService codeListService;
+	@Autowired private IdmCodeListItemService codeListItemService;
 	//
 	private DefaultFormService formService;
 
@@ -555,6 +562,40 @@ public class DefaultFormServiceIntegrationTest extends AbstractIntegrationTest {
 	}
 
 	@Test
+	public void testFindOwnersByCodeListAttributeValue() {
+		IdmIdentityDto owner = getHelper().createIdentity((GuardedString) null);
+		IdmIdentityDto ownerTwo = getHelper().createIdentity((GuardedString) null);
+		IdmIdentityDto ownerThree = getHelper().createIdentity((GuardedString) null);
+		IdmFormDefinitionDto formDefinition = formService.getDefinition(IdmIdentity.class);
+		IdmFormAttributeDto attribute = new IdmFormAttributeDto();
+		attribute.setCode(getHelper().createName());
+		attribute.setFormDefinition(formDefinition.getId());
+		attribute.setName(getHelper().createName());
+		attribute.setPersistentType(PersistentType.CODELIST);
+		//
+		IdmCodeListDto codeList = new IdmCodeListDto();
+		codeList.setCode(getHelper().createName());
+		codeList.setName(getHelper().createName());
+		codeList = codeListService.save(codeList);
+		attribute.setFaceType(codeList.getCode());
+		IdmCodeListItemDto codeListItem = new IdmCodeListItemDto();
+		codeListItem.setCodeList(codeList.getId());
+		final String value = "test";
+		codeListItem.setCode(value);
+		codeListItem.setName(value);
+		codeListItem = codeListItemService.save(codeListItem);
+		//
+		attribute = formService.saveAttribute(attribute);
+		// save values
+		formService.saveValues(owner.getId(), IdmIdentity.class, attribute, Lists.newArrayList(value));
+		//
+		Page<? extends Identifiable> owners = formService.findOwners(IdmIdentity.class, attribute, value, null);
+		//
+		assertEquals(1, owners.getTotalElements());
+		assertEquals(owner.getId(), owners.getContent().get(0).getId());
+	}
+
+	@Test
 	public void testFindTreeNodesByNullShortTextAttributeValue() {
 		IdmTreeNodeDto owner = getHelper().createTreeNode();
 		//
@@ -736,10 +777,17 @@ public class DefaultFormServiceIntegrationTest extends AbstractIntegrationTest {
 
 		IdmFormDefinitionDto formDefinition = formService.getDefinition(IdmRole.class);
 		IdmFormAttributeDto attribute = formDefinition.getMappedAttributeByCode("extAttr");
+		if (formDefinition == null) {
+			formDefinition = getHelper().createFormDefinition(IdmRole.class.getCanonicalName());
+		}
+		if (attribute == null) {
+			attribute = getHelper().createEavAttribute("extAttr", IdmRole.class, PersistentType.SHORTTEXT);
+		}
 		//
 		formService.saveValues(owner.getId(), IdmRole.class, attribute, Lists.newArrayList("test"));
 		formService.saveValues(ownerTwo.getId(), IdmRole.class, attribute, Lists.newArrayList("test2"));
 
+		IdmFormAttributeDto finalAttribute = attribute; // to please the compiler
 		Specification<IdmRole> criteria = new Specification<IdmRole>() {
 			private static final long serialVersionUID = 1L;
 
@@ -750,7 +798,7 @@ public class DefaultFormServiceIntegrationTest extends AbstractIntegrationTest {
 
 				Predicate predicate = builder.and(
 						builder.equal(subRoot.get(IdmRoleFormValue_.owner), root),
-						builder.equal(subRoot.get(IdmRoleFormValue_.formAttribute).get(IdmFormAttribute_.id), attribute.getId()),
+						builder.equal(subRoot.get(IdmRoleFormValue_.formAttribute).get(IdmFormAttribute_.id), finalAttribute.getId()),
 						builder.equal(subRoot.get(IdmRoleFormValue_.stringValue), "test"));
 				subquery.where(predicate);
 				//

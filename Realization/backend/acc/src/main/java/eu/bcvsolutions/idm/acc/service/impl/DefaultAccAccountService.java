@@ -128,7 +128,7 @@ public class DefaultAccAccountService extends AbstractFormableService<AccAccount
 
 	@Autowired
 	public DefaultAccAccountService(AccAccountRepository accountRepository,
-			AccIdentityAccountService identityAccountService, SysSystemService systemService,
+			AccIdentityAccountService identityAccountService, @Lazy SysSystemService systemService,
 			SysSchemaObjectClassService schemaObjectClassService, SysSchemaAttributeService schemaAttributeService,
 			FormService formService, EntityEventManager entityEventManager) {
 		super(accountRepository, entityEventManager, formService);

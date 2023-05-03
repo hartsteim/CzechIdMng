@@ -33,4 +33,9 @@ public class DependentTaskTrigger extends AbstractTaskTrigger {
 	public void setInitiatorTaskId(String initiatorTaskId) {
 		this.initiatorTaskId = initiatorTaskId;
 	}
+
+	@Override
+	public void accept(TaskTriggerVisitor visitor) {
+		visitor.visit(this);
+	}
 }

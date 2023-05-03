@@ -128,11 +128,6 @@ export class RoleCompositionTable extends Advanced.AbstractTableContent {
           showRowSelection={ manager.canDelete() }
           className={ className }
           _searchParameters={ this.getSearchParameters() }
-          actions={
-            [
-              { value: 'delete', niceLabel: this.i18n('action.delete.action'), action: this.onDelete.bind(this), disabled: false }
-            ]
-          }
           buttons={
             [
               <Basic.Button

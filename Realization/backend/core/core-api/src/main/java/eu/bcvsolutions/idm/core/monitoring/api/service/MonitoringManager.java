@@ -2,6 +2,7 @@ package eu.bcvsolutions.idm.core.monitoring.api.service;
 
 import java.util.List;
 
+import eu.bcvsolutions.idm.core.api.service.IdmCacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -27,7 +28,7 @@ public interface MonitoringManager {
 	/**
 	 * Last monitoring results - results are evaluated on different instances, so synchronized cache is needed.
 	 */
-	String LAST_RESULT_CACHE_NAME = String.format("%s:monitoring-last-result-cache", CoreModule.MODULE_ID);
+	String LAST_RESULT_CACHE_NAME = IdmCacheManager.getCacheName(CoreModule.MODULE_ID, "monitoring-last-result-cache");
 	
 	/**
 	 * Init monitoring manager - load last results into cache etc.

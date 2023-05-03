@@ -159,6 +159,9 @@ public abstract class AbstractConceptRoleRequestService<A extends AbstractRoleAs
             predicates.add(builder.disjunction());
             return predicates;
         }
+        if (filter.getId() != null) {
+            predicates.add(builder.equal(root.get(AbstractEntity_.id), filter.getId()));
+        }
         //
         if (filter.getRoleRequestId() != null) {
             predicates.add(builder.equal(root.get(AbstractConceptRoleRequest_.roleRequest).get(AbstractEntity_.id),

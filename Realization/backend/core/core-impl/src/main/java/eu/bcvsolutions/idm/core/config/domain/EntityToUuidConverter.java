@@ -1,7 +1,5 @@
 package eu.bcvsolutions.idm.core.config.domain;
 
-import static eu.bcvsolutions.idm.core.api.utils.EntityUtils.getFirstFieldInClassHierarchy;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -22,9 +20,11 @@ import org.springframework.util.Assert;
 import eu.bcvsolutions.idm.core.api.domain.Embedded;
 import eu.bcvsolutions.idm.core.api.dto.AbstractDto;
 import eu.bcvsolutions.idm.core.api.dto.BaseDto;
+import eu.bcvsolutions.idm.core.api.dto.IdmTreeNodeDto;
 import eu.bcvsolutions.idm.core.api.entity.BaseEntity;
 import eu.bcvsolutions.idm.core.api.exception.CoreException;
 import eu.bcvsolutions.idm.core.api.service.LookupService;
+import static eu.bcvsolutions.idm.core.api.utils.EntityUtils.getFirstFieldInClassHierarchy;
 
 /**
  * Converter for transform fields (marked with {@link Embedded} annotation) from BaseEntity to UUID 
@@ -77,7 +77,8 @@ public class EntityToUuidConverter implements Converter<BaseEntity, UUID> {
 				if (fieldTyp.isAnnotationPresent(Embedded.class)) {
 					Embedded embeddedAnnotation = fieldTyp.getAnnotation(Embedded.class);
 					// if embedded has same type as parent we don't want to make it embedded, otherwise it will cycle.
-					if (embeddedAnnotation.enabled() && !embeddedAnnotation.dtoClass().equals(parentDto.getClass())) {
+					if (embeddedAnnotation.enabled() && (!embeddedAnnotation.dtoClass().equals(parentDto.getClass())
+							|| embeddedAnnotation.dtoClass().equals(IdmTreeNodeDto.class))) {
 						// If has field Embedded (enabled) annotation, then
 						// we will create new
 						// instance of DTO.

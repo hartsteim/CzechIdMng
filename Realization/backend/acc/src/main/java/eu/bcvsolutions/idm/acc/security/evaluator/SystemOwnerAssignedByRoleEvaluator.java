@@ -42,6 +42,11 @@ public class SystemOwnerAssignedByRoleEvaluator extends AbstractTransitiveEvalua
 	private SecurityService securityService;
 
 	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
+	@Override
 	protected Identifiable getOwner(SysSystemOwnerRole entity) {
 		return entity.getSystem();
 	}

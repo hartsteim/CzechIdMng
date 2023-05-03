@@ -254,6 +254,7 @@ public class DefaultSysSystemMappingService
 
 		original.setId(null);
 		EntityUtils.clearAuditFields(original);
+		original.setConnectedSystemMappingId(null);
 		return original;
 	}
 

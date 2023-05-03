@@ -63,7 +63,7 @@ public interface EntityEventManager extends ScriptEnabled {
 	 * 
 	 * @since 10.6.0
 	 */
-	String TRANSACTION_EVENT_CACHE_NAME = String.format("%s:transaction-event-cache", CoreModule.MODULE_ID);
+	String TRANSACTION_EVENT_CACHE_NAME = IdmCacheManager.getCacheName(CoreModule.MODULE_ID, "transaction-event-cache");
 	
 	/**
 	 * Cancel all previously ran events

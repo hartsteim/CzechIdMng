@@ -441,7 +441,7 @@ public class ProcessAutomaticRoleByTreeTaskExecutor extends AbstractSchedulableS
 				UUID identityRoleId = identityRole.getId();
 				//
 				if (!requireNewTransaction()) {
-					checkProcessedIdentityRole(processedIdentityRoles, identityRole, automaticRole);
+					removeUnprocessedIdentityRole(processedIdentityRoles, identityRole, automaticRole);
 				} else {
 					TransactionTemplate template = new TransactionTemplate(platformTransactionManager);
 					template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -451,7 +451,7 @@ public class ProcessAutomaticRoleByTreeTaskExecutor extends AbstractSchedulableS
 							
 							@Override
 							public void doInTransactionWithoutResult(TransactionStatus status) {
-								checkProcessedIdentityRole(processedIdentityRoles, identityRole, automaticRole);
+								removeUnprocessedIdentityRole(processedIdentityRoles, identityRole, automaticRole);
 							}
 						});
 					} catch (UnexpectedRollbackException ex ) {
@@ -630,14 +630,14 @@ public class ProcessAutomaticRoleByTreeTaskExecutor extends AbstractSchedulableS
 	
 	/**
 	 * Check currently assigned role is processed by current automatic role definition.
-	 * If not => assigned role will be removed by synchronous role request.
-	 * 
+	 * If not => assigned role will be removed by a role request.
+	 *
 	 * @param processedIdentityRoles assigned roles processed by automatic role
-	 * @param identityRole assigned role
-	 * @param automaticRole automatic role definition (just for logging)
+	 * @param identityRole           assigned role
+	 * @param automaticRoleId        automatic role id (just for logging)
 	 */
-	private void checkProcessedIdentityRole(
-			Set<UUID> processedIdentityRoles, 
+	private void removeUnprocessedIdentityRole(
+			Set<UUID> processedIdentityRoles,
 			IdmIdentityRoleDto identityRole,
 			UUID automaticRoleId) {
 		UUID identityRoleId = identityRole.getId();
@@ -645,7 +645,7 @@ public class ProcessAutomaticRoleByTreeTaskExecutor extends AbstractSchedulableS
 		IdmIdentityDto identity = getLookupService().lookupEmbeddedDto(identityContract, IdmIdentityContract_.identity);
 		IdmRoleDto role = getLookupService().lookupEmbeddedDto(identityRole, AbstractRoleAssignment_.role);
 		//
-		if (!processedIdentityRoles.contains(identityRoleId)) {
+		if (!processedIdentityRoles.contains(identityRoleId) && !longRunningTaskService.get(this.getLongRunningTaskId()).isDryRun()) {
 			// remove role by request
 			try {
 				IdmConceptRoleRequestDto conceptRoleRequest = new IdmConceptRoleRequestDto();

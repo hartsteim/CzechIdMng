@@ -1195,6 +1195,7 @@
   "permission": {
     "base" : {
       "ADMIN": "Administrace (vše)",
+      "METRICS": "Monitoring",
       "COUNT": "Počet záznamů",
       "AUTOCOMPLETE": "Zobrazení v našeptávačích, výběrech",
       "READ": "Čtení",
@@ -6394,6 +6395,11 @@
         "help": "Smaže vybrané žádosti o role.",
         "icon": "$t(action.delete.icon)"
       },
+      "role-composition-delete-bulk-action": {
+        "label": "$t(action.delete.action) business role",
+        "help": "Smaže vybrané business role.",
+        "icon": "$t(action.delete.icon)"
+      },
       "identity-add-role-bulk-action": {
         "label": "Přidělení rolí",
         "icon": "component:identity-role-add",
@@ -6831,7 +6837,7 @@
             "help": "Na koho se mají úkoly přesunout."
           },
           "candidateorassigned": {
-            "label": "Delegátor",
+            "label": "Delegující",
             "help": "Od koho se mají úkoly přesunout."
           }
         }
@@ -6923,6 +6929,165 @@
       }
     },
     "authorization-evaluator": {
+      "core-uuid-evaluator": {
+        "help": "Oprávnění pro objekt podle jeho UUID",
+        "attributes": {
+          "uuid": {
+            "label": "UUID",
+            "help": "UUID objektu"
+          }
+        }
+      },
+      "core-codeable-evaluator": {
+        "help": "Oprávnění pro objekt podle jeho kódu/identifikátoru",
+        "attributes": {
+          "identifier": {
+            "label": "Kód/identifikátor",
+            "help": "Kód/identifikátor objektu"
+          }
+        }
+      },
+      "core-base-permission-evaluator": {
+        "help": "Oprávnění pro všechny objekty daného typu"
+      },
+      "core-request-item-by-request-evaluator": {
+        "help": "Oprávnění pro položky univerzální žádosti podle žádostí"
+      },
+      "core-request-by-creator-evaluator": {
+        "help": "Oprávnění pro žádosti vytvořené aktuálně přihlášeným uživatelem"
+      },
+      "core-self-request-evaluator": {
+        "help": "Oprávnění pro žádosti vlastněné aktuálně přihlášeným uživatelem"
+      },
+      "core-request-by-owner-evaluator": {
+        "help": "Oprávnění pro žádosti podle práv na vlastníka žádosti. Podporuje pouze vlastníky typu IdmRole."
+      },
+      "core-request-by-wf-involved-identity-evaluator": {
+        "help": "Oprávnění pro žádosti, v jejichž schvalování uživatel vystupuje."
+      },
+      "core-role-request-by-identity-evaluator": {
+        "help": "Oprávnění pro žádosti o role podle práv na vlastníka žádosti."
+      },
+      "core-self-role-request-evaluator": {
+        "help": "Oprávnění pro žádosti o role vlastněné aktuálně přihlášeným uživatelem."
+      },
+      "core-role-request-by-wf-involved-identity-evaluator": {
+        "help": "Oprávnění pro žádosti o role, v jejichž schvalování uživatel vystupuje."
+      },
+      "core-contract-position-by-identity-contract-evaluator": {
+        "help": "Oprávnění pro pozice kontraktu podle práv na kontrakty."
+      },
+      "core-role-form-attribute-by-role-evaluator": {
+        "help": "Oprávnění pro atributy rolí podle práv na role."
+      },
+      "core-role-tree-node-by-role-evaluator": {
+        "help": "Oprávnění pro automatické role podle práv na role."
+      },
+      "core-code-list-item-by-code-list-evaluator": {
+        "help": "Oprávnění pro položky číselníku podle práv na číselníky."
+      },
+      "core-role-composition-by-superior-role-evaluator": {
+        "help": "Oprávnění pro business role podle práv na nadřazené role."
+      },
+      "core-role-composition-by-sub-role-evaluator": {
+        "help": "Oprávnění pro business role podle práv na podřazené role."
+      },
+      "core-incompatible-role-by-superior-role-evaluator": {
+        "help": "Oprávnění pro neslučitelné role podle práv na nadřazené role."
+      },
+      "core-incompatible-role-by-sub-role-evaluator": {
+        "help": "Oprávnění pro neslučitelné role podle práv na podřazené role."
+      },
+      "core-delegation-by-delegation-definition-evaluator": {
+        "help": "Oprávnění pro delegace role podle práv na definice delegací."
+      },
+      "core-delegation-def-by-delegator-and-delegate-evaluator": {
+        "help": "Umožňuje vytvářet definice delegací, pokud má přihlášený uživatel oprávnění IdentityBasePermission.DELEGATOR na delegujícího and IdentityBasePermission.DELEGATE na delegáta."
+      },
+      "core-self-delegation-definition-by-delegator-evaluator": {
+        "help": "Oprávnění pro definice delegace role kde přihlášený uživatel je delegující."
+      },
+      "core-self-delegation-definition-by-delegate-evaluator": {
+        "help": "Oprávnění pro definice delegace role kde přihlášený uživatel je delegující."
+      },
+      "core-delegation-definition-by-delegator-contract-evaluator": {
+        "help": "Oprávnění pro definice delegace role podle práv na kontrakt delegujícího."
+      },
+      "core-delegation-definition-by-delegate-evaluator": {
+        "help": "Oprávnění pro definice delegace role podle práv na delegáta."
+      },
+      "core-delegation-definition-by-delegator-evaluator": {
+        "help": "Oprávnění pro definice delegace role podle práv na delegující."
+      },
+      "core-form-attribute-by-definition-evaluator": {
+        "help": "Oprávnění pro atributy formuláře podle práv na definici formuláře."
+      },
+      "core-form-attribute-by-code-list-evaluator": {
+        "help": "Oprávnění pro atributy formuláře podle práv na číselník."
+      },
+      "core-contract-guarantee-by-identity-contract-evaluator": {
+        "help": "Oprávnění pro vedoucí kontraktu podle práv na kontrakt."
+      },
+      "core-role-guarantee-by-role-evaluator": {
+        "help": "Oprávnění pro garanta role podle práv na roli."
+      },
+      "core-role-guarantee-role-by-role-evaluator": {
+        "help": "Oprávnění pro garanta role rolí podle práv na roli."
+      },
+      "core-role-catalogue-role-by-role-evaluator": {
+        "help": "Oprávnění pro katalog rolí podle práv na roli."
+      },
+      "core-configuration-evaluator": {
+        "help": "Oprávnění pro konfiguraci aplikace.",
+        "attributes": {
+          "secured": {
+            "label": "Zobrazit zabezpečené položky",
+            "help": "Zobrazit i položky označené jako 'secure' (true/false)"
+          }
+        }
+      },
+      "core-self-long-running-task-evaluator": {
+        "help": "Oprávnění pro dlouhotrvající úlohy vlastněné přihlášeným uživatelem."
+      },
+      "core-authorization-policy-by-role-evaluator": {
+        "help": "Oprávnění pro politiky oprávnění podle práv na roli."
+      },
+      "core-subordinate-contract-evaluator": {
+        "help": "Oprávnění pro kontrakty podřízených uživatelů."
+      },
+      "core-self-identity-role-evaluator": {
+        "help": "Oprávnění pro přiřazené role aktuálně přihlášeného uživatele."
+      },
+      "core-identity-role-by-contract-evaluator": {
+        "help": "Oprávnění pro přiřazené role podle práv na kontrakty."
+      },
+      "core-identity-role-by-identity-evaluator": {
+        "help": "Oprávnění pro přiřazené role podle práv na uživatele."
+      },
+      "core-self-profile-evaluator": {
+        "help": "Oprávnění pro profil aktuálně přihlášeného uživatele."
+      },
+      "core-role-can-be-requested-evaluator": {
+        "help": "Oprávnění pro role, které mají nastaveno, že o ně lze žádat."
+      },
+      "core-role-by-guarantee-evaluator": {
+        "help": "Oprávnění pro role, kde je uživatel garantem."
+      },
+      "core-self-identity-evaluator": {
+        "help": "Oprávnění pro identitu aktuálně přihlášeného uživatele."
+      },
+      "core-subordinates-identity-evaluator": {
+        "help": "Oprávnění pro podřízené identity."
+      },
+      "core-identity-by-contract-evaluator": {
+        "help": "Oprávnění pro identity podle práv na kontrakt."
+      },
+      "core-automatic-role-request-by-wf-involved-identity-evaluator": {
+        "help": "Oprávnění pro žádosti o automatické role, v nichž uživatel vystupuje."
+      },
+      "core-automatic-role-rule-request-by-request-evaluator": {
+        "help": "Oprávnění pro pravidla žádostí o automatické role, v nichž uživatel vystupuje."
+      },
       "identity-form-value-evaluator": {
         "help": "Oprávnění pro hodnoty rozšiřujících atributů uživatele (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
         "attributes": {
@@ -6941,7 +7106,7 @@
             "help": "Nastaví oprávnění pouze pro atributy aktuálně přihlášeného uživatele. Přihlášený uživatel nedostane oprávnění na atributy jiných uživatelů."
           },
           "owner-update": {
-            "label": "Dle oprávnění editovatovat uživatele",
+            "label": "Dle oprávnění editovat uživatele",
             "help": "Nastaví oprávnění pro atributy uživatelů, které aktuálně přihlášený uživatel může editovat (například pokud může editovat uživatele, může editovat i vyjmenované atributy)."
           },
           "owner-read": {
@@ -6950,8 +7115,8 @@
           }
         }
       },
-      "core-identity-contract-form-value-evaluator": {
-        "help": "Oprávnění pro hodnoty rozšiřujících atributů kontraktu (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+      "code-list-item-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů položky číselníku (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
         "attributes": {
           "form-definition": {
             "label": "Definice formuláře",
@@ -6964,7 +7129,145 @@
             "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
           },
           "owner-update": {
-            "label": "Dle oprávnění editovatovat kontrakt",
+            "label": "Dle oprávnění editovat položku číselníku",
+            "help": "Nastaví oprávnění pro atributy položek číselníku, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst položku číselníku",
+            "help": "Nastaví oprávnění pro atributy položek číselníku, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      },
+      "concept-role-request-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů žádosti o roli (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat žádost o roli",
+            "help": "Nastaví oprávnění pro atributy žádostí o roli, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst žádost o roli",
+            "help": "Nastaví oprávnění pro atributy žádostí o roli, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      },
+      "contract-slice-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů časového řezu (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat časový řez",
+            "help": "Nastaví oprávnění pro atributy časových řezů, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst časový řez",
+            "help": "Nastaví oprávnění pro atributy časových řezů, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      },
+      "identity-role-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů přidělené role (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat přidělenou roli",
+            "help": "Nastaví oprávnění pro atributy přidělených rolí, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst přidělenou roli",
+            "help": "Nastaví oprávnění pro atributy přidělených rolí, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      },
+      "role-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů role (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat roli",
+            "help": "Nastaví oprávnění pro atributy rolí, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst roli",
+            "help": "Nastaví oprávnění pro atributy rolí, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      },
+      "tree-node-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů organizační struktury (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat organizační strukturu",
+            "help": "Nastaví oprávnění pro atributy organizačních struktur, které aktuálně přihlášený uživatel může editovat."
+          },
+          "owner-read": {
+            "label": "Dle oprávnění číst organizační strukturu",
+            "help": "Nastaví oprávnění pro atributy organizačních struktur, které aktuálně přihlášený uživatel může číst."
+          }
+        }
+      },
+      "core-identity-contract-form-value-evaluator": {
+        "help": "Oprávnění pro hodnoty rozšiřujících atributů pracovněprávních vztahů (eav). Oprávnění je možné přidat pouze pro vybranou definici (hlavní je použita jako výchozí) a vybrané atributy (všechny atributy jsou použity jako výchozí).",
+        "attributes": {
+          "form-definition": {
+            "label": "Definice formuláře",
+            "help": "Vyberte definici, která obsahuje atributy, kterým bude nastaveno oprávnění. Hlavní definice bude použita jako výchozí.",
+            "placeholder": "Hlavní definice pro identity nebo vyberte ..."
+          },
+          "attributes": {
+            "label": "Atributy definice",
+            "help": "Atributy, kterým bude nastaveno oprávnění. Pokud ponecháte atributy prázdné, bude oprávnění nastaveno pro všechny atributy dané definice.",
+            "placeholder": "Všechny atributy dané definice nebo zadejte kódy atributů oddělené čárkou"
+          },
+          "owner-update": {
+            "label": "Dle oprávnění editovat kontrakt",
             "help": "Nastaví oprávnění pro atributy kontraktů, které aktuálně přihlášený uživatel může editovat (například pokud může editovat kontrakt, může editovat i vyjmenované atributy)."
           },
           "owner-read": {
@@ -8862,11 +9165,11 @@
     },
     "MANUAL_TASK_DELEGATION_DELEGATOR_MISSING": {
       "title": "Není specifikováno od koho se úkoly mají delegovat!",
-      "message": "Pro specifikování delegátora můžete použít filtr (Přiřazeno) nad agendou všech úkolů a nebo vyberte delegátora níže. Delegování úkolu proběhne pouze, pokud jedním z řešitelů je vybraný delegátor."
+      "message": "Pro specifikování delegujícího můžete použít filtr (Přiřazeno) nad agendou všech úkolů a nebo vyberte delegujícího níže. Delegování úkolu proběhne pouze, pokud jedním z řešitelů je vybraný delegující."
     },
     "MANUAL_TASK_DELEGATION_DELEGATOR_IS_NOT_CANDIDATE": {
-      "title": "Delegátor není schvalovatelem úkolu!",
-      "message": "Delegátor [{{delegator}}] není schvalovatelem úkolu [{{task}}]."
+      "title": "Delegující není schvalovatelem úkolu!",
+      "message": "Delegující [{{delegator}}] není schvalovatelem úkolu [{{task}}]."
     },
     "WF_TASK_FILTER_INVOLVED_ONLY": {
       "title": "Úkoly používají špatný filtr!",

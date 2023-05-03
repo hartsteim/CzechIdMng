@@ -79,16 +79,21 @@ public class DefaultRequestRoleConceptAdapter<C extends AbstractConceptRoleReque
         // Add to all identity roles form instance. For identity role can exist only
         // one form instance.
         roleAssignments.forEach(assignment -> {
+            LOG.debug(MessageFormat.format("Loading form instance for role assignment [{0}].", assignment.getId()));
             IdmFormInstanceDto formInstance = roleAssignmentService.getRoleAttributeValues(assignment);
             if (formInstance != null) {
                 assignment.setEavs(Lists.newArrayList(formInstance));
             }
+            LOG.debug(MessageFormat.format("Form instance for role assignment [{0}] was loaded.", assignment.getId()));
         });
         final List<C> collectedData = data.collect(Collectors.toList());
         // Find potential duplicated concepts (only ADD and not in terminated state)
         List<AbstractConceptRoleRequestDto> conceptsForMarkDuplicates = collectedData.stream() //
                 .filter(concept -> ADD == concept.getOperation()) //
                 .filter(concept -> !concept.getState().isTerminatedState()) //
+                .peek(concept -> {
+                    LOG.debug(MessageFormat.format("Concept [{0}] will be processed by markDuplicates.", concept.getId()));
+                })
                 .collect(Collectors.toList()); //
         roleRequestService.markDuplicates(conceptsForMarkDuplicates, new ArrayList<>(roleAssignments));
         // End mark duplicates

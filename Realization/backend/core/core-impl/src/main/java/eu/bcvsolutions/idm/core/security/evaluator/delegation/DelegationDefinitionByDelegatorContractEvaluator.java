@@ -1,5 +1,8 @@
 package eu.bcvsolutions.idm.core.security.evaluator.delegation;
 
+import java.util.Set;
+import java.util.UUID;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -20,8 +23,6 @@ import eu.bcvsolutions.idm.core.security.api.domain.IdmBasePermission;
 import eu.bcvsolutions.idm.core.security.api.service.AuthorizationManager;
 import eu.bcvsolutions.idm.core.security.api.service.SecurityService;
 import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Permissions to delegation definition by delegator's contract.
@@ -29,14 +30,21 @@ import java.util.UUID;
  * @author Vít Švanda
  *
  */
-@Component
+@Component(DelegationDefinitionByDelegatorContractEvaluator.EVALUATOR_NAME)
 @Description("Permissions to delegation definition by delegator's contract.")
 public class DelegationDefinitionByDelegatorContractEvaluator extends AbstractTransitiveEvaluator<IdmDelegationDefinition> {
+
+	public static final String EVALUATOR_NAME = "core-delegation-definition-by-delegator-contract-evaluator";
 
 	@Autowired
 	private AuthorizationManager authorizationManager;
 	@Autowired
 	private SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 
 	@Override
 	protected Identifiable getOwner(IdmDelegationDefinition entity) {

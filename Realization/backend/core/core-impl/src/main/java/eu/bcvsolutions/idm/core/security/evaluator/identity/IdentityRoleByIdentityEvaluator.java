@@ -31,13 +31,20 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(IdentityRoleByIdentityEvaluator.EVALUATOR_NAME)
 @Description("Permissions to assigned roles by identity.")
 public class IdentityRoleByIdentityEvaluator extends AbstractTransitiveEvaluator<IdmIdentityRole> {
 
+	public static final String EVALUATOR_NAME = "core-identity-role-by-identity-evaluator";
+
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
 	@Override
 	protected Identifiable getOwner(IdmIdentityRole entity) {
 		return entity.getIdentityContract().getIdentity();

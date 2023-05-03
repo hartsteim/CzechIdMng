@@ -1,5 +1,9 @@
 package eu.bcvsolutions.idm.core.scheduler.api.dto;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.quartz.CronTrigger;
@@ -15,6 +19,7 @@ public class CronTaskTrigger extends AbstractTaskTrigger {
 	
 	@NotNull
 	private String cron;
+	private List<ZonedDateTime> nextFireTimes;
 	
 	public CronTaskTrigger() {
 	}
@@ -27,7 +32,8 @@ public class CronTaskTrigger extends AbstractTaskTrigger {
 	 */
 	public CronTaskTrigger(String taskId, CronTrigger trigger, TaskTriggerState state) {
 		super(taskId, trigger, state);
-		
+		this.nextFireTimes = new ArrayList<>();
+		this.nextFireTimes.add(this.getNextFireTime());
 		cron = trigger.getCronExpression();
 	}
 	
@@ -37,5 +43,18 @@ public class CronTaskTrigger extends AbstractTaskTrigger {
 	
 	public void setCron(String cron) {
 		this.cron = cron;
+	}
+
+	public List<ZonedDateTime> getNextFireTimes() {
+		return nextFireTimes;
+	}
+
+	public void setNextFireTimes(List<ZonedDateTime> nextFireTimes) {
+		this.nextFireTimes = nextFireTimes;
+	}
+
+	@Override
+	public void accept(TaskTriggerVisitor visitor) {
+		visitor.visit(this);
 	}
 }

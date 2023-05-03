@@ -1,12 +1,12 @@
 package eu.bcvsolutions.idm.core.scheduler.api.dto;
 
 import java.io.Serializable;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import java.time.ZonedDateTime;
-import java.time.ZoneId;
 
 import org.quartz.Trigger;
 
@@ -30,7 +30,7 @@ import eu.bcvsolutions.idm.core.api.dto.BaseDto;
 	@JsonSubTypes.Type(value = CronTaskTrigger.class),
 	@JsonSubTypes.Type(value = DependentTaskTrigger.class)
 })
-public abstract class AbstractTaskTrigger implements BaseDto {
+public abstract class AbstractTaskTrigger implements BaseDto, TaskTriggerVisitee {
 
 	private static final long serialVersionUID = 1L;
 	//

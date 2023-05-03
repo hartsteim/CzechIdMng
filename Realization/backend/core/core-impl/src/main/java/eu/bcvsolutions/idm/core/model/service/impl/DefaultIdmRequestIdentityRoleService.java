@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,19 +55,15 @@ public class DefaultIdmRequestIdentityRoleService extends
 	@Autowired
 	private ModelMapper modelMapper;
 	@Autowired
-	private WorkflowProcessInstanceService workflowProcessInstanceService;
-	@Autowired
-	private LookupService lookupService;
-	@Autowired
-	private IdmRoleService roleService;
-	@Autowired(required = false)
-	@SuppressWarnings(value = "rawtypes")
-	private IdmRoleSystemService roleSystemService;
-
-	@Autowired
 	IdmRoleAssignmentManager roleAssignmentManager;
 	@Autowired
 	IdmConceptRoleRequestManager conceptRoleRequestManager;
+
+
+	@Override
+	public IdmRequestIdentityRoleDto get(Serializable id, BasePermission... permission) {
+		return conceptRoleRequestManager.get(id, permission);
+	}
 
 	/**
 	 * This method returns both {@link eu.bcvsolutions.idm.core.api.dto.AbstractConceptRoleRequestDto} and {@link AbstractRoleAssignmentDto} paged and filtered
@@ -111,6 +108,7 @@ public class DefaultIdmRequestIdentityRoleService extends
 		}
 		builder.setModelMapper(modelMapper);
 
+		LOG.debug(MessageFormat.format("Find idm-request-identity-roles by multiresource [{0}] ", builder));
 		return builder.build().find(copyFilter, pageable, permission);
 	}
 

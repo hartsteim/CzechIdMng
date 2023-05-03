@@ -1,8 +1,23 @@
 package eu.bcvsolutions.idm.acc.service.impl;
 
+import java.io.Serializable;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import eu.bcvsolutions.idm.acc.domain.AccResultCode;
 import eu.bcvsolutions.idm.acc.domain.AttributeMapping;
 import eu.bcvsolutions.idm.acc.domain.AttributeMappingStrategyType;
@@ -90,18 +105,6 @@ import eu.bcvsolutions.idm.ic.filter.impl.IcFilterBuilder;
 import eu.bcvsolutions.idm.ic.impl.IcAttributeImpl;
 import eu.bcvsolutions.idm.ic.impl.IcConnectorConfigurationImpl;
 import eu.bcvsolutions.idm.ic.impl.IcObjectClassImpl;
-import java.io.Serializable;
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 /**
  * Synchronization of roles.
@@ -693,7 +696,8 @@ public class RoleSynchronizationExecutor extends AbstractSynchronizationExecutor
 		IdmRoleRequestDto mockRoleRequest = new IdmRoleRequestDto();
 		mockRoleRequest.setId(roleRequestId);
 		// Create a concept for remove  an assigned role.
-		roleRequestService.createConcept(mockRoleRequest, identityContractDto, redundantIdentityRole.getId(), roleDto.getId(), ConceptRoleRequestOperation.REMOVE);
+		roleRequestService.createConcept(mockRoleRequest, identityContractDto, redundantIdentityRole.getId(),
+				roleDto.getId(), ConceptRoleRequestOperation.REMOVE);
 	}
 
 	/**
@@ -781,7 +785,8 @@ public class RoleSynchronizationExecutor extends AbstractSynchronizationExecutor
 		IdmRoleRequestDto mockRoleRequest = new IdmRoleRequestDto();
 		mockRoleRequest.setId(roleRequestId);
 		// Create a concept for assign a role to primary contract.
-		roleRequestService.createConcept(mockRoleRequest, primeContract, null, roleDto.getId(), ConceptRoleRequestOperation.ADD);
+		roleRequestService.createConceptWithoutValidity(mockRoleRequest, primeContract, null, roleDto.getId(),
+				ConceptRoleRequestOperation.ADD);
 	}
 
 	/**

@@ -9,9 +9,12 @@ import * as Advanced from '../../../components/advanced';
 import DecisionButtons from '../DecisionButtons';
 import DynamicTaskDetail from '../DynamicTaskDetail';
 import RoleConceptDetail from '../../requestrole/RoleConceptDetail';
-import { ConceptRoleRequestManager } from '../../../redux';
+import ComponentService from "../../../services/ComponentService";
+import RequestIdentityRoleManager from "../../../redux/data/RequestIdentityRoleManager";
 
-const conceptRoleRequestManager = new ConceptRoleRequestManager();
+const componentService = new ComponentService();
+const requestIdentityRoleManager = new RequestIdentityRoleManager();
+
 
 /**
  * Custom task detail designed for use with RoleConceptDetail.
@@ -48,7 +51,12 @@ class DynamicTaskRoleConceptDetail extends DynamicTaskDetail {
     const { task} = props;
     const _entityId = task && task.variables && task.variables.conceptRole ? task.variables.conceptRole.id : null;
     if (_entityId) {
-      this.context.store.dispatch(conceptRoleRequestManager.fetchEntity(_entityId, null, (entity, error) => {
+      let params = requestIdentityRoleManager.getSearchParameters(null)
+      params = params.setFilter("id", _entityId)
+      params = params.setFilter("identityId", task?.variables?.conceptRole?._embedded?.identityContract?.identity)
+      params = params.setFilter("accountId", task?.variables?.conceptRole?.account)
+      params = params.setFilter("ownerType", task?.variables?.conceptRole?.ownerType)
+      this.context.store.dispatch(requestIdentityRoleManager.fetchEntities(params, null, (entity, error) => {
         if (error) {
           this.setState({
             errorOccurred: true
@@ -93,7 +101,8 @@ class DynamicTaskRoleConceptDetail extends DynamicTaskDetail {
       log: data.log,
       _eav: [formInstance]
     };
-    this.context.store.dispatch(conceptRoleRequestManager.updateEntity(concept, null, (updatedEntity, error) => {
+    const manager = componentService.getManagerForConceptByOwnerType(data?.ownerType)
+    this.context.store.dispatch(manager.updateEntity(concept, null, (updatedEntity, error) => {
       if (!error) {
         this._initComponent(this.props);
         this.setState({showLoading: false});
@@ -157,6 +166,8 @@ class DynamicTaskRoleConceptDetail extends DynamicTaskDetail {
       entity.role = _entity._embedded.role;
     }
     const decisionReasonText = task.completeTaskMessage;
+    const isAccount = entity?.ownerType === 'eu.bcvsolutions.idm.acc.dto.AccAccountDto';
+    const accountId = entity?.account
 
     return (
       <div>
@@ -196,6 +207,10 @@ class DynamicTaskRoleConceptDetail extends DynamicTaskDetail {
             entity={entity}
             isEdit={canExecute}
             multiAdd={false}
+            isAccount={false}
+            accountId={accountId}
+            showEnvironment={false}
+            requestId={entity?.roleRequest}
           />
           <Basic.PanelFooter>
             <Basic.Button
@@ -235,7 +250,7 @@ DynamicTaskRoleConceptDetail.defaultProps = {
 function select(state, component) {
   const task = component.task;
   const _entityId = task && task.variables && task.variables.conceptRole ? task.variables.conceptRole.id : null;
-  const entity = conceptRoleRequestManager.getEntity(state, _entityId);
+  const entity = requestIdentityRoleManager.getEntity(state, _entityId);
   if (task && entity) {
     return {
       _showLoading: false,

@@ -2,6 +2,7 @@ package eu.bcvsolutions.idm.core.api.service;
 
 import java.util.List;
 
+import eu.bcvsolutions.idm.core.api.CoreModule;
 import eu.bcvsolutions.idm.core.api.config.cache.domain.ValueWrapper;
 import eu.bcvsolutions.idm.core.api.dto.IdmCacheDto;
 
@@ -65,5 +66,9 @@ public interface IdmCacheManager {
      * @throws IllegalArgumentException if cacheName or key arguments are null
      */
     void evictValue(String cacheName, Object key);
+
+    public static String getCacheName(String moduleId, String cacheName) {
+        return String.format("%s_%s", moduleId, cacheName);
+    }
 
 }

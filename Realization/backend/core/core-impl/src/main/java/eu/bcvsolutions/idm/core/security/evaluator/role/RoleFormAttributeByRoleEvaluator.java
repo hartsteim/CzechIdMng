@@ -38,7 +38,12 @@ public class RoleFormAttributeByRoleEvaluator extends AbstractTransitiveEvaluato
 	
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
 	@Override
 	protected Identifiable getOwner(IdmRoleFormAttribute entity) {
 		return entity.getRole();

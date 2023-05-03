@@ -202,7 +202,7 @@ public class DefaultSysProvisioningArchiveService
 					if ((changedValue == null && currentValue == null)
 							|| (changedValue != null && changedValue.equals(currentValue))
 							|| (currentValue != null && currentValue.equals(changedValue))) {
-
+						vsAttribute.setChanged(false);
 						vsAttribute.setValue(new SysAttributeDifferenceValueDto(changedValue, currentValue, null));
 					} else {
 						vsAttribute.setValue(

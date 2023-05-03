@@ -899,8 +899,7 @@ public class DefaultSysSystemAttributeMappingService
 			if (attributeHandling.isConfidentialAttribute()) {
 				// If is attribute isConfidential, then we will find value in
 				// secured storage
-				idmValue = confidentialStorage.getGuardedString(entity.getId(), entity.getClass(),
-						attributeHandling.getIdmPropertyName());
+				idmValue = confidentialStorage.getGuardedString(entity.getId(), entity.getClass(), attributeHandling.getIdmPropertyName());
 			} else {
 				try {
 					// We will search value directly in entity by property name

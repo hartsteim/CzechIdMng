@@ -9,6 +9,7 @@ import eu.bcvsolutions.idm.acc.dto.AccUniformPasswordDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmPasswordPolicyDto;
 import eu.bcvsolutions.idm.core.api.exception.ResultCodeException;
 import eu.bcvsolutions.idm.core.api.script.ScriptEnabled;
+import eu.bcvsolutions.idm.core.api.service.IdmCacheManager;
 import eu.bcvsolutions.idm.core.security.api.domain.GuardedString;
 
 /**
@@ -30,7 +31,7 @@ public interface PasswordFilterManager extends ScriptEnabled {
 	// Parameter for processors that contains system id and all accounts that is for the given system must be skipped
 	String EXCLUDED_SYSTEM = "excludedSystem";
 	
-	String ECHO_CACHE_NAME = String.format("%s:password-filter-echo-cache", AccModuleDescriptor.MODULE_ID);
+	String ECHO_CACHE_NAME = IdmCacheManager.getCacheName(AccModuleDescriptor.MODULE_ID, "password-filter-echo-cache");
 
 	/**
 	 * Process validation trough password policies stored in IdM.

@@ -45,6 +45,8 @@ public class IdmRoleRequestFilter extends DataFilter {
 	 */
 	private Boolean executed;
 
+	private String applicantType;
+
 	public IdmRoleRequestFilter() {
 		this(new LinkedMultiValueMap<>());
 	}
@@ -154,5 +156,13 @@ public class IdmRoleRequestFilter extends DataFilter {
 
 	public void setIncludeApprovers(boolean includeApprovers) {
 		this.includeApprovers = includeApprovers;
+	}
+
+	public String getApplicantType() {
+		return this.applicantType;
+	}
+
+	public void setApplicantType(String applicantType) {
+		this.applicantType = applicantType;
 	}
 }

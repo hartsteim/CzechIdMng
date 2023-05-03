@@ -1,5 +1,7 @@
 package eu.bcvsolutions.idm.core.model.service.impl;
 
+import eu.bcvsolutions.idm.core.CoreModuleDescriptor;
+import eu.bcvsolutions.idm.core.api.service.IdmCacheManager;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -17,11 +19,11 @@ import eu.bcvsolutions.idm.test.api.AbstractIntegrationTest;
  */
 public class DefaultIdmCacheManagerIntegrationTest extends AbstractIntegrationTest {
 
-    public static final String CACHE_NAME_1 = "core:TEST_CACHE1";
-    public static final String CACHE_NAME_2 = "core:TEST_CACHE2";
-    public static final String CACHE_NAME_3 = "core:TEST_CACHE3";
-    public static final String CACHE_NAME_4 = "core:TEST_CACHE4";
-    public static final String CACHE_NAME_5 = "core:TEST_CACHE5";
+    public static final String CACHE_NAME_1 = IdmCacheManager.getCacheName(CoreModuleDescriptor.MODULE_ID, "TEST_CACHE1");
+    public static final String CACHE_NAME_2 = IdmCacheManager.getCacheName(CoreModuleDescriptor.MODULE_ID, "TEST_CACHE2");
+    public static final String CACHE_NAME_3 = IdmCacheManager.getCacheName(CoreModuleDescriptor.MODULE_ID, "TEST_CACHE3");
+    public static final String CACHE_NAME_4 = IdmCacheManager.getCacheName(CoreModuleDescriptor.MODULE_ID, "TEST_CACHE4");
+    public static final String CACHE_NAME_5 = IdmCacheManager.getCacheName(CoreModuleDescriptor.MODULE_ID, "TEST_CACHE5");
 
     @Autowired private DefaultIdmCacheManager cacheManager;
     

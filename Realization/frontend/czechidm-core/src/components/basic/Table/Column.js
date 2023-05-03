@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import AbstractComponent from '../AbstractComponent/AbstractComponent';
+import React from 'react'
+import PropTypes from 'prop-types'
+import AbstractComponent from '../AbstractComponent/AbstractComponent'
 
 /**
  * Component that defines the attributes of table column.
@@ -9,14 +9,14 @@ import AbstractComponent from '../AbstractComponent/AbstractComponent';
  */
 class Column extends AbstractComponent {
 
-  render() {
-    const { rendered } = this.props;
+  render () {
+    const {rendered} = this.props
     if (!rendered) {
-      return null;
+      return null
     }
     return (
       <span>Column never render himself</span>
-    );
+    )
   }
 }
 
@@ -89,11 +89,16 @@ Column.propTypes = {
   /**
    * css
    */
-  className: PropTypes.string
-};
+  className: PropTypes.string,
+
+  forceWrap: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.oneOf(['anywhere', 'break-word'])
+  ])
+}
 Column.defaultProps = {
   rendered: true
-};
-Column.__TableColumn__ = true;
+}
+Column.__TableColumn__ = true
 
-export default Column;
+export default Column

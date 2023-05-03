@@ -5,8 +5,10 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 
 import com.google.common.collect.Sets;
 
@@ -20,15 +22,22 @@ import eu.bcvsolutions.idm.core.api.dto.ApplicantImplDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmConceptRoleRequestDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmIdentityContractDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmIdentityDto;
+import eu.bcvsolutions.idm.core.api.dto.IdmRoleDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmRoleRequestDto;
 import eu.bcvsolutions.idm.core.api.dto.IdmRoleTreeNodeDto;
+import eu.bcvsolutions.idm.core.api.dto.IdmTreeNodeDto;
+import eu.bcvsolutions.idm.core.api.service.ConfigurationService;
 import eu.bcvsolutions.idm.core.api.service.IdmConceptRoleRequestService;
+import eu.bcvsolutions.idm.core.api.service.IdmIdentityRoleService;
 import eu.bcvsolutions.idm.core.api.service.IdmRoleRequestService;
 import eu.bcvsolutions.idm.core.api.utils.AutowireHelper;
 import eu.bcvsolutions.idm.core.eav.api.dto.IdmFormInstanceDto;
 import eu.bcvsolutions.idm.core.eav.api.dto.IdmFormValueDto;
 import eu.bcvsolutions.idm.core.scheduler.api.dto.IdmLongRunningTaskDto;
+import eu.bcvsolutions.idm.core.scheduler.api.dto.Task;
+import eu.bcvsolutions.idm.core.scheduler.api.service.IdmLongRunningTaskService;
 import eu.bcvsolutions.idm.core.scheduler.api.service.LongRunningTaskManager;
+import eu.bcvsolutions.idm.core.scheduler.service.impl.DefaultSchedulerManager;
 import eu.bcvsolutions.idm.core.security.api.domain.GuardedString;
 import eu.bcvsolutions.idm.test.api.AbstractIntegrationTest;
 
@@ -45,7 +54,11 @@ public class ProcessAutomaticRoleByTreeTaskExecutorIntegrationTest extends Abstr
 	@Autowired private IdmRoleRequestService roleRequestService;
 	@Autowired private IdmConceptRoleRequestService conceptRoleRequestService;
 	@Autowired private LongRunningTaskManager longRunningTaskManager;
-	
+	@Autowired private ApplicationContext context;
+	@Autowired private IdmIdentityRoleService identityRoleService;
+	@Autowired private IdmLongRunningTaskService longRunningTaskService;
+	@Autowired private ConfigurationService configurationService;
+
 	@Test
 	public void testPreventEndIfNotProcessed() throws InterruptedException, ExecutionException {
 		// concept request
@@ -116,5 +129,36 @@ public class ProcessAutomaticRoleByTreeTaskExecutorIntegrationTest extends Abstr
 							&& v.getEmbedded().get(IdmFormValueDto.PROPERTY_UUID_VALUE) != null)
 				);
 	}
-	
+
+	@Test
+	@DisplayName("Bug #3219 - Dry run removes all automatic roles")
+	public void testAutomaticRolesNotDeletedIfDryRun() {
+		IdmIdentityDto identity = getHelper().createIdentity(getHelper().createName());
+		IdmRoleDto role = getHelper().createRole(getHelper().createName());
+		IdmTreeNodeDto organisation = getHelper().createTreeNode(getHelper().createName(), null);
+		IdmIdentityContractDto contract = getHelper().createContract(identity, organisation);
+		//
+		Assert.assertEquals(0, identityRoleService.findAllByIdentity(identity.getId()).size());
+		IdmRoleTreeNodeDto automaticRole = getHelper().createAutomaticRole(role, organisation);
+		Assert.assertEquals(1, identityRoleService.findAllByIdentity(identity.getId()).size());
+		// Task and DefaultSchedulerManager need to be used for dry run
+		Task task = new Task();
+		task.setInstanceId(configurationService.getInstanceId());
+		task.setTaskType(ProcessAutomaticRoleByTreeTaskExecutor.class);
+		task.setDescription("test");
+		task.getParameters().put(AbstractAutomaticRoleTaskExecutor.PARAMETER_ROLE_TREE_NODE, String.valueOf(automaticRole.getId()));
+		DefaultSchedulerManager manager = context.getAutowireCapableBeanFactory().createBean(DefaultSchedulerManager.class);
+		Task scheduledTask = manager.createTask(task);
+		manager.runTask(scheduledTask.getId(), true);
+		//
+		Assert.assertEquals(1, identityRoleService.findAllByIdentity(identity.getId()).size());
+		// the waiting is necessary to reproduce the bug
+		// bug -> roles are deleted after the task is executed
+		// waiting for a constant time is not ideal, but it works good enough
+		// continue function would be too complicated
+		getHelper().waitForResult(null, 100, 14);
+		// if this assertion fails then the bug is still in place
+		Assert.assertEquals(1, identityRoleService.findAllByIdentity(identity.getId()).size());
+	}
+
 }

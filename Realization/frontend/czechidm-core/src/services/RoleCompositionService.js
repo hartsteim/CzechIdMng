@@ -40,6 +40,10 @@ export default class RoleCompositionService extends AbstractRequestService {
     return 'ROLECOMPOSITION';
   }
 
+  supportsBulkAction() {
+    return true;
+  }
+
   /**
    * Returns default searchParameters for current entity type
    *

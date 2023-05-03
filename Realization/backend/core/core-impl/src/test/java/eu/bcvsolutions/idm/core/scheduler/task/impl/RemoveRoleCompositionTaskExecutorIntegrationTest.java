@@ -146,6 +146,18 @@ public class RemoveRoleCompositionTaskExecutorIntegrationTest extends AbstractIn
 		Assert.assertTrue(assignedRoles.stream().anyMatch(ir -> ir.getRole().equals(superior.getId())));
 		Assert.assertTrue(assignedRoles.stream().anyMatch(ir -> ir.getRole().equals(subOne.getId())));
 	}
+
+	@Test
+	public void testRemovingUnassignedRoleComposition() {
+		IdmRoleDto superior = getHelper().createRole();
+		IdmRoleDto subOne = getHelper().createRole();
+		IdmRoleCompositionDto roleComposition = getHelper().createRoleComposition(superior, subOne);
+		//
+		roleCompositionService.delete(roleComposition);
+		//
+		IdmRoleCompositionDto deletedRoleComposition = roleCompositionService.get(roleComposition.getId());
+		Assert.assertNull(deletedRoleComposition);
+	}
 	
 	private class AssignedRolesAnswer implements Answer<Page<IdmIdentityRoleDto>> {
 		

@@ -50,16 +50,6 @@ public abstract class AbstractAdaptableMultiService<
     }
 
     @Override
-    public D get(Serializable id, BasePermission... permission) {
-        throw new UnsupportedOperationException("General services do not support get by uuid");
-    }
-
-    @Override
-    public D get(Serializable id, F context, BasePermission... permission) {
-        throw new UnsupportedOperationException("General services do not support get by uuid");
-    }
-
-    @Override
     public Page<D> find(Pageable pageable, BasePermission... permission) {
         return find(null, pageable, permission);
     }
@@ -120,5 +110,13 @@ public abstract class AbstractAdaptableMultiService<
         return dto == null ? Collections.emptySet() : getPermissions(dto.getId());
     }
 
+    @Override
+    public D get(Serializable id, BasePermission... permission) {
+        throw new UnsupportedOperationException("Aggregate services do not support getting by id");
+    }
 
+    @Override
+    public D get(Serializable id, F context, BasePermission... permission) {
+        throw new UnsupportedOperationException("Aggregate services do not support getting by id");
+    }
 }

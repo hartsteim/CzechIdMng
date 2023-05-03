@@ -26,12 +26,19 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author Kučera
  *
  */
-@Component
+@Component(RoleAccountByRoleEvaluator.EVALUATOR_NAME)
 @Description("Permissions to role accounts by role")
 public class RoleAccountByRoleEvaluator extends AbstractTransitiveEvaluator<AccRoleAccount> {
 
+	public static final String EVALUATOR_NAME = "acc-role-account-by-role-evaluator";
+
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	
 	@Override
 	protected Identifiable getOwner(AccRoleAccount entity) {

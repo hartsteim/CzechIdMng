@@ -26,11 +26,18 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  *
  */
 
-@Component
+@Component(SelfLongRunningTaskEvaluator.EVALUATOR_NAME)
 @Description("Evaluator for currently logged user and his task.")
 public class SelfLongRunningTaskEvaluator extends AbstractAuthorizationEvaluator<IdmLongRunningTask> {
 
+	public static final String EVALUATOR_NAME = "core-self-long-running-task-evaluator";
+
 	private final SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	
 	@Autowired
 	public SelfLongRunningTaskEvaluator(SecurityService securityService) {

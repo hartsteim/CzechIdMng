@@ -1,35 +1,35 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { useSelector, useDispatch } from "react-redux";
-import { useHistory } from "react-router";
-import { Link } from "react-router-dom";
-import clsx from "clsx";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
+import clsx from 'clsx';
 //
-import AppBar from "@material-ui/core/AppBar";
-import Divider from "@material-ui/core/Divider";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import Brightness4Icon from "@material-ui/icons/Brightness4";
-import Brightness7Icon from "@material-ui/icons/Brightness7";
-import InvertColors from "@material-ui/icons/InvertColors";
-import Toolbar from "@material-ui/core/Toolbar";
-import { makeStyles } from "@material-ui/core/styles";
+import AppBar from '@material-ui/core/AppBar';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import Brightness4Icon from '@material-ui/icons/Brightness4';
+import Brightness7Icon from '@material-ui/icons/Brightness7';
+import InvertColors from '@material-ui/icons/InvertColors';
+import Toolbar from '@material-ui/core/Toolbar';
+import { makeStyles } from '@material-ui/core/styles';
 //
 import {
   IdentityManager,
   SecurityManager,
   ConfigurationManager,
-} from "../../../redux";
-import { collapseNavigation } from "../../../redux/config/actions";
-import { i18n } from "../../../services/LocalizationService";
-import NavigationSearch from "./NavigationSearch";
-import NavigationMonitoring from "./NavigationMonitoring";
-import NavigationLanguage from "./NavigationLanguage";
-import NavigationIdentity from "./NavigationIdentity";
-import NavigationEnvironment from "./NavigationEnvironment";
+} from '../../../redux';
+import { collapseNavigation } from '../../../redux/config/actions';
+import { i18n } from '../../../services/LocalizationService';
+import NavigationSearch from './NavigationSearch';
+import NavigationMonitoring from './NavigationMonitoring';
+import NavigationLanguage from './NavigationLanguage';
+import NavigationIdentity from './NavigationIdentity';
+import NavigationEnvironment from './NavigationEnvironment';
 //
 const identityManager = new IdentityManager();
 const configurationManager = new ConfigurationManager();
@@ -46,48 +46,49 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   root: {
-    display: "flex",
+    display: 'flex',
+    overflow: 'hidden'
   },
   appBarRoot: {
     backgroundColor:
-      theme.palette.type === "dark" ? "#333" : theme.palette.primary.main, // TODO: hardcoded #333 => from theme
+      theme.palette.type === 'dark' ? '#333' : theme.palette.primary.main, // TODO: hardcoded #333 => from theme
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    [theme.breakpoints.up("md")]: {
+    [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
   appBarClose: {
     zIndex: theme.zIndex.drawer + 1,
-    [theme.breakpoints.up("md")]: {
+    [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${theme.spacing(7) + 1}px)`,
       marginLeft: theme.spacing(7) + 1,
     },
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
   appBarShift: {
-    [theme.breakpoints.up("md")]: {
+    [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up("md")]: {
-      display: "none",
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
     },
   },
   // necessary for content to be below app bar
@@ -98,49 +99,50 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerOpen: {
     width: drawerWidth,
-    transition: theme.transitions.create("width", {
+    transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
   drawerClose: {
-    transition: theme.transitions.create("width", {
+    transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    overflowX: "hidden",
+    overflowX: 'hidden',
     width: theme.spacing(7) + 1,
-    "& .application-logo.collapsed": {
-      display: "none",
+    '& .application-logo.collapsed': {
+      display: 'none',
     },
   },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
     marginLeft: -35, // FIXME: where is gutter?
-    [theme.breakpoints.up("sm")]: {
+    overflow: 'hidden',
+    [theme.breakpoints.up('sm')]: {
       marginLeft: -50, // FIXME: where is gutter?
     },
   },
   sidebar: {
-    backgroundColor: theme.palette.type === "dark" ? "#333" : "transparent", // TODO: hardcoded #333 => from theme
-    "& .nav li": {
-      "&:hover": {
+    backgroundColor: theme.palette.type === 'dark' ? '#333' : 'transparent', // TODO: hardcoded #333 => from theme
+    '& .nav li': {
+      '&:hover': {
         color: theme.palette.text.primary,
         backgroundColor: theme.palette.action.hover,
       },
-      "& a": {
+      '& a': {
         color: theme.palette.text.secondary,
-        "&:hover": {
+        '&:hover': {
           color: theme.palette.text.primary,
         },
-        "&:focus": {
+        '&:focus': {
           color: theme.palette.text.primary,
         },
-        "&:visited": {
+        '&:visited': {
           color: theme.palette.text.secondary,
         },
-        "&.active": {
+        '&.active': {
           color: theme.palette.text.primary,
           backgroundColor: theme.palette.action.selected,
           borderLeftColor: theme.palette.secondary.main,
@@ -152,12 +154,12 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(4),
   },
   hide: {
-    display: "none",
+    display: 'none',
   },
 }));
 
 function NavigationMaterial(props) {
-  const { userContext, systemItems, sidebarItems, location, children } = props;
+  const {userContext, systemItems, sidebarItems, location, children} = props;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -166,11 +168,9 @@ function NavigationMaterial(props) {
     (state) => ConfigurationManager.getApplicationTheme(state).palette.type
   );
   const isDevelopment = useSelector(
-    (state) => ConfigurationManager.getEnvironmentStage(state) === "development"
+    (state) => ConfigurationManager.getEnvironmentStage(state) === 'development'
   );
-  const applicationLogo = useSelector((state) =>
-    ConfigurationManager.getApplicationLogo(state)
-  );
+  const applicationLogo = useSelector((state) => ConfigurationManager.getApplicationLogo(state));
   const history = useHistory();
   //
   const handleDrawerToggle = () => {
@@ -209,12 +209,12 @@ function NavigationMaterial(props) {
         onClick={() => {
           dispatch(
             configurationManager.fetchApplicationTheme(
-              themeType === "light" ? "dark" : "light"
+              themeType === 'light' ? 'dark' : 'light'
             )
           );
         }}
       >
-        {themeType === "light" ? <Brightness4Icon /> : <Brightness7Icon />}
+        {themeType === 'light' ? <Brightness4Icon/> : <Brightness7Icon/>}
       </IconButton>
     );
   }
@@ -228,20 +228,20 @@ function NavigationMaterial(props) {
               {applicationLogo ? (
                 <Link to="/" className="application-logo light">
                   {/* lookout: alt is not defined => alr is rendered before image is fully inited otherwise */}
-                  <img src={applicationLogo} alt="" />
+                  <img src={applicationLogo} alt=""/>
                 </Link>
               ) : (
                 <Link to="/" className="application-logo home light">
-                  {" "}
+                  {' '}
                 </Link>
               )}
-              <div className={classes.grow} />
-              <NavigationEnvironment />
-              <NavigationLanguage />
+              <div className={classes.grow}/>
+              <NavigationEnvironment/>
+              <NavigationLanguage/>
               {toogleDarkButton}
             </Toolbar>
           </AppBar>
-          <Toolbar />
+          <Toolbar/>
         </div>
         {children}
       </div>
@@ -257,33 +257,33 @@ function NavigationMaterial(props) {
     >
       <div
         className={classes.toolbar}
-        style={{ display: "flex", alignItems: "center" }}
+        style={{display: 'flex', alignItems: 'center'}}
       >
         {applicationLogo ? (
           <Link
             to="/"
             className={
               !navigationCollapsed
-                ? "application-logo"
-                : "application-logo collapsed"
+                ? 'application-logo'
+                : 'application-logo collapsed'
             }
           >
             {/* lookout: alt is not defined => alr is rendered before image is fully inited otherwise */}
-            <img src={applicationLogo} alt="" />
+            <img src={applicationLogo} alt=""/>
           </Link>
         ) : (
           <Link
             to="/"
             className={
               !navigationCollapsed
-                ? "application-logo home"
-                : "application-logo home collapsed"
+                ? 'application-logo home'
+                : 'application-logo home collapsed'
             }
           >
-            {" "}
+            {' '}
           </Link>
         )}
-        <div className={!navigationCollapsed ? classes.grow : "hidden"} />
+        <div className={!navigationCollapsed ? classes.grow : 'hidden'}/>
         <Hidden smDown>
           <IconButton
             color="inherit"
@@ -292,13 +292,13 @@ function NavigationMaterial(props) {
             onClick={
               !navigationCollapsed ? handleDrawerClose : handleDrawerOpen
             }
-            style={!navigationCollapsed ? {} : { marginLeft: 5 }}
+            style={!navigationCollapsed ? {} : {marginLeft: 5}}
           >
-            {!navigationCollapsed ? <ChevronLeftIcon /> : <MenuIcon />}
+            {!navigationCollapsed ? <ChevronLeftIcon/> : <MenuIcon/>}
           </IconButton>
         </Hidden>
       </div>
-      <Divider />
+      <Divider/>
       {sidebarItems}
     </div>
   );
@@ -320,37 +320,37 @@ function NavigationMaterial(props) {
             onClick={handleDrawerToggle}
             className={classes.menuButton}
           >
-            <MenuIcon />
+            <MenuIcon/>
           </IconButton>
 
-          <NavigationSearch userContext={userContext} />
+          <NavigationSearch userContext={userContext}/>
 
-          <div className={classes.grow} />
+          <div className={classes.grow}/>
 
-          <NavigationEnvironment />
+          <NavigationEnvironment/>
 
-          <NavigationLanguage userContext={userContext} />
+          <NavigationLanguage userContext={userContext}/>
 
-          <NavigationIdentity userContext={userContext} />
+          <NavigationIdentity userContext={userContext}/>
 
-          {!SecurityManager.hasAuthority("MONITORINGRESULT_READ") || (
-            <NavigationMonitoring location={location} />
+          {!SecurityManager.hasAuthority('MONITORINGRESULT_READ') || (
+            <NavigationMonitoring location={location}/>
           )}
           {toogleDarkButton}
-          {!SecurityManager.hasAuthority("CONFIGURATION_ADMIN") ||
+          {!SecurityManager.hasAuthority('CONFIGURATION_ADMIN') ||
             !isDevelopment || (
-              <IconButton
-                color="inherit"
-                title={i18n(
-                  "content.configuration-theme.action.edit.link.title"
-                )}
-                onClick={() => {
-                  history.push("/configurations/theme");
-                }}
-              >
-                <InvertColors />
-              </IconButton>
-            )}
+            <IconButton
+              color="inherit"
+              title={i18n(
+                'content.configuration-theme.action.edit.link.title'
+              )}
+              onClick={() => {
+                history.push('/configurations/theme');
+              }}
+            >
+              <InvertColors/>
+            </IconButton>
+          )}
           {userContext.isExpired || systemItems}
         </Toolbar>
       </AppBar>
@@ -370,9 +370,9 @@ function NavigationMaterial(props) {
             }}
             SlideProps={{
               style: {
-                position: "fixed",
-                overflow: "auto",
-                height: "100vh",
+                position: 'fixed',
+                overflow: 'auto',
+                height: '100vh',
               },
             }}
           >
@@ -383,9 +383,9 @@ function NavigationMaterial(props) {
           <Drawer
             PaperProps={{
               style: {
-                position: "relative",
-                overflowY: "hidden",
-                height: "100%",
+                position: 'relative',
+                overflowY: 'hidden',
+                height: '100%',
               },
             }}
             variant="permanent"
@@ -405,9 +405,9 @@ function NavigationMaterial(props) {
           </Drawer>
         </Hidden>
       </nav>
-      <Toolbar />
+      <Toolbar/>
       <main className={classes.content}>
-        <div className={classes.toolbar} />
+        <div className={classes.toolbar}/>
         {children}
       </main>
     </div>

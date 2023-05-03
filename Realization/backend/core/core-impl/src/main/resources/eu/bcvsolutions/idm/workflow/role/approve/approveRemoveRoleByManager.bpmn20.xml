@@ -22,7 +22,7 @@ Input variables:
 - applicantDescription</documentation>
     <startEvent id="startevent1" name="Start"></startEvent>
     <endEvent id="endevent2" name="End"></endEvent>
-    <serviceTask id="servicetask5" name="Create name of process" activiti:expression="Approve role &quot;{{${roleService.get(conceptRole.role, null).name}}}&quot; remove by manager for &quot;{{${identityService.getNiceLabel(identityService.get(applicantIdentifier, null))}}}&quot;" activiti:resultVariableName="processInstanceName"></serviceTask>
+    <serviceTask id="servicetask5" name="Create name of process" activiti:expression="Approve role &quot;{{${roleService.get(conceptRole.role, null).name}}}&quot; remove by manager for &quot;{{${roleRequestService.getApplicantLabel(applicantInfo)}}}&quot;" activiti:resultVariableName="processInstanceName"></serviceTask>
     <userTask id="approveByManager" name="Approve by manager" activiti:candidateUsers="#{candidatesApproveByManager}" activiti:formKey="dynamicTaskRoleConceptDetail" activiti:skipExpression="#{skipApproveByManager}">
       <documentation>${processInstanceName}</documentation>
       <extensionElements>

@@ -29,9 +29,11 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  * @since 9.3.0
  *
  */
-@Component
+@Component(SelfIdentityRoleEvaluator.EVALUATOR_NAME)
 @Description("Currently logged user manipulate over self roles.")
 public class SelfIdentityRoleEvaluator extends AbstractAuthorizationEvaluator<IdmIdentityRole> {
+
+	public static final String EVALUATOR_NAME = "core-self-identity-role-evaluator";
 
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(SelfIdentityRoleEvaluator.class);
 
@@ -39,6 +41,11 @@ public class SelfIdentityRoleEvaluator extends AbstractAuthorizationEvaluator<Id
 	private SecurityService securityService;
 	@Autowired
 	private IdmIdentityContractService identityContractService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 
 	@Override
 	public Predicate getPredicate(Root<IdmIdentityRole> root, CriteriaQuery<?> query, CriteriaBuilder builder,

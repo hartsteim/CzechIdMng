@@ -41,7 +41,7 @@ import groovy.lang.Script;
 public class DefaultGroovyScriptService implements GroovyScriptService {
 
 
-	public static final String CACHE_NAME = CoreModuleDescriptor.MODULE_ID + ":default-groovy-script-service-script-cache";
+	public static final String CACHE_NAME = IdmCacheManager.getCacheName(CoreModuleDescriptor.MODULE_ID, "default-groovy-script-service-script-cache");
 
 	@Autowired
 	IdmCacheManager cacheManager;

@@ -69,7 +69,15 @@ public class FormableConfiguration {
 	@Bean
 	public AbstractFormValueService<IdmRole, IdmRoleFormValue> roleFormValueService(
 			AbstractFormValueRepository<IdmRole, IdmRoleFormValue> repository) {
-		return new AbstractFormValueService<IdmRole, IdmRoleFormValue>(repository) {};
+		return new AbstractFormValueService<IdmRole, IdmRoleFormValue>(repository) {
+			/**
+			 * Supports authorization policies.
+			 */
+			@Override
+			public AuthorizableType getAuthorizableType() {
+				return new AuthorizableType(CoreGroupPermission.FORMVALUE, getEntityClass());
+			}
+		};
 	}
 	
 	/**
@@ -82,7 +90,15 @@ public class FormableConfiguration {
 	@Bean
 	public AbstractFormValueService<IdmTreeNode, IdmTreeNodeFormValue> treeNodeFormValueService(
 			AbstractFormValueRepository<IdmTreeNode, IdmTreeNodeFormValue> repository) {
-		return new AbstractFormValueService<IdmTreeNode, IdmTreeNodeFormValue>(repository) {};
+		return new AbstractFormValueService<IdmTreeNode, IdmTreeNodeFormValue>(repository) {
+			/**
+			 * Supports authorization policies.
+			 */
+			@Override
+			public AuthorizableType getAuthorizableType() {
+				return new AuthorizableType(CoreGroupPermission.FORMVALUE, getEntityClass());
+			}
+		};
 	}
 	
 	/**
@@ -117,7 +133,15 @@ public class FormableConfiguration {
 	@Bean
 	public AbstractFormValueService<IdmContractSlice, IdmContractSliceFormValue> contractSliceFormValueService(
 			AbstractFormValueRepository<IdmContractSlice, IdmContractSliceFormValue> repository) {
-		return new AbstractFormValueService<IdmContractSlice, IdmContractSliceFormValue>(repository) {};
+		return new AbstractFormValueService<IdmContractSlice, IdmContractSliceFormValue>(repository) {
+			/**
+			 * Supports authorization policies.
+			 */
+			@Override
+			public AuthorizableType getAuthorizableType() {
+				return new AuthorizableType(CoreGroupPermission.FORMVALUE, getEntityClass());
+			}
+		};
 	}
 	
 	/**
@@ -131,7 +155,8 @@ public class FormableConfiguration {
 	@Bean
 	public AbstractFormValueService<IdmForm, IdmFormValue> formValueService(
 			AbstractFormValueRepository<IdmForm, IdmFormValue> repository) {
-		return new AbstractFormValueService<IdmForm, IdmFormValue>(repository) {};
+		return new AbstractFormValueService<IdmForm, IdmFormValue>(repository) {
+		};
 	}
 	
 	/**
@@ -144,7 +169,15 @@ public class FormableConfiguration {
 	@Bean
 	public AbstractFormValueService<IdmCodeListItem, IdmCodeListItemValue> codeListItemValueService(
 			AbstractFormValueRepository<IdmCodeListItem, IdmCodeListItemValue> repository) {
-		return new AbstractFormValueService<IdmCodeListItem, IdmCodeListItemValue>(repository) {};
+		return new AbstractFormValueService<IdmCodeListItem, IdmCodeListItemValue>(repository) {
+			/**
+			 * Supports authorization policies.
+			 */
+			@Override
+			public AuthorizableType getAuthorizableType() {
+				return new AuthorizableType(CoreGroupPermission.FORMVALUE, getEntityClass());
+			}
+		};
 	}
 	
 	/**
@@ -158,7 +191,15 @@ public class FormableConfiguration {
 	public AbstractFormValueService<IdmIdentityRole, IdmIdentityRoleFormValue> identityRoleFormValueService(
 			AbstractFormValueRepository<IdmIdentityRole, IdmIdentityRoleFormValue> repository) {
 		
-		return new AbstractFormValueService<IdmIdentityRole, IdmIdentityRoleFormValue>(repository) {};
+		return new AbstractFormValueService<IdmIdentityRole, IdmIdentityRoleFormValue>(repository) {
+			/**
+			 * Supports authorization policies.
+			 */
+			@Override
+			public AuthorizableType getAuthorizableType() {
+				return new AuthorizableType(CoreGroupPermission.FORMVALUE, getEntityClass());
+			}
+		};
 	}
 	
 	/**
@@ -171,6 +212,14 @@ public class FormableConfiguration {
 	@Bean
 	public AbstractFormValueService<IdmConceptRoleRequest, IdmConceptRoleRequestFormValue> conceptRoleRequestFormValueService(
 			AbstractFormValueRepository<IdmConceptRoleRequest, IdmConceptRoleRequestFormValue> repository) {
-		return new AbstractFormValueService<IdmConceptRoleRequest, IdmConceptRoleRequestFormValue>(repository) {};
+		return new AbstractFormValueService<IdmConceptRoleRequest, IdmConceptRoleRequestFormValue>(repository) {
+			/**
+			 * Supports authorization policies.
+			 */
+			@Override
+			public AuthorizableType getAuthorizableType() {
+				return new AuthorizableType(CoreGroupPermission.FORMVALUE, getEntityClass());
+			}
+		};
 	}
 }

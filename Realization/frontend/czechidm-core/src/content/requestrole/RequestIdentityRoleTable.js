@@ -497,27 +497,7 @@ export class RequestIdentityRoleTable extends Advanced.AbstractTableContent {
     } = this.state;
 
     const identityUsername = request && request.applicantInfo.id;
-    let forceSearchParameters = new SearchParameters();
-    if (request) {
-      forceSearchParameters = forceSearchParameters.setFilter('roleRequestId', request.id);
-    }
-    if (requestId) {
-      forceSearchParameters = forceSearchParameters.setFilter('roleRequestId', requestId);
-    }
-    if (identityId && !isAccount) {
-      forceSearchParameters = forceSearchParameters.setFilter('identityId', identityId);
-      forceSearchParameters = forceSearchParameters.setFilter('accountId', null);
-      forceSearchParameters = forceSearchParameters.setFilter('loadAssignments', null);
-    }
-    if (isAccount && accountId) {
-      forceSearchParameters = forceSearchParameters.setFilter('identityId', null);
-      forceSearchParameters = forceSearchParameters.setFilter('accountId', accountId);
-      forceSearchParameters = forceSearchParameters.setFilter('ownerType', 'eu.bcvsolutions.idm.acc.dto.AccAccountDto');
-      forceSearchParameters = forceSearchParameters.setFilter('loadAssignments', true);
-    }
-    forceSearchParameters = forceSearchParameters.setFilter('onlyChanges', showChangesOnly);
-    forceSearchParameters = forceSearchParameters.setFilter('includeCandidates', true);
-    forceSearchParameters = forceSearchParameters.setFilter('includeCrossDomainsSystemsCount', true);
+    let forceSearchParameters = this.getSearchParameters(request, requestId, identityId, isAccount, accountId, showChangesOnly);
     //
     const showLoading = this.props.showLoading || this.state.showLoading;
     const contractForceSearchParameters = new SearchParameters().setFilter('identity', identityUsername);
@@ -838,6 +818,38 @@ export class RequestIdentityRoleTable extends Advanced.AbstractTableContent {
   }
 
 
+  getSearchParameters(request, requestId, identityId, isAccount, accountId, showChangesOnly) {
+    let forceSearchParameters = new SearchParameters();
+    if (request) {
+      forceSearchParameters = forceSearchParameters.setFilter('roleRequestId', request.id);
+    }
+    if (requestId) {
+      forceSearchParameters = forceSearchParameters.setFilter('roleRequestId', requestId);
+    }
+    if (identityId && !isAccount) {
+      forceSearchParameters = forceSearchParameters.setFilter('identityId', identityId);
+      forceSearchParameters = forceSearchParameters.setFilter('accountId', null);
+      forceSearchParameters = forceSearchParameters.setFilter('loadAssignments', null);
+    }
+    if (isAccount && accountId) {
+      forceSearchParameters = forceSearchParameters.setFilter('identityId', null);
+      forceSearchParameters = forceSearchParameters.setFilter('accountId', accountId);
+      forceSearchParameters = forceSearchParameters.setFilter('ownerType', 'eu.bcvsolutions.idm.acc.dto.AccAccountDto');
+      forceSearchParameters = forceSearchParameters.setFilter('loadAssignments', true);
+    }
+    // when opening role request, we do not have any info passed from top component or GET param, so we need to rely on
+    // applicantInfo to correctly set params. Otherwise, this could cause sending identityId search param with account identifier
+    // for technical accounts
+    const isTechAccount = request?.applicantInfo?.applicantType === 'eu.bcvsolutions.idm.tech.model.dto.TechnicalAccountDto'
+    if (isTechAccount) {
+      forceSearchParameters = forceSearchParameters.setFilter('identityId', null);
+      forceSearchParameters = forceSearchParameters.setFilter('technicalAccountId', identityId);
+    }
+
+    forceSearchParameters = forceSearchParameters.setFilter('onlyChanges', showChangesOnly);
+    forceSearchParameters = forceSearchParameters.setFilter('includeCandidates', true);
+    return forceSearchParameters.setFilter('includeCrossDomainsSystemsCount', true);
+  }
 }
 
 RequestIdentityRoleTable.propTypes = {

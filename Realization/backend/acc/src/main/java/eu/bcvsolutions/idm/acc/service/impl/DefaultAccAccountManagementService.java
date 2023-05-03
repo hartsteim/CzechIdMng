@@ -429,6 +429,10 @@ public class DefaultAccAccountManagementService implements AccAccountManagementS
 	private void scheduleAllAccountsWithSameOwnerToDelayedAcm(EntityEvent<AbstractRoleAssignmentDto> event, AbstractRoleAssignmentDto roleAssignment, SysRoleSystemDto roleSystem) {
 		final var serviceForAssignment = roleAssignmentManager.getServiceForAssignment(roleAssignment);
 		final IdmIdentityDto relatedIdentity = serviceForAssignment.getRelatedIdentity(roleAssignment);
+		if (relatedIdentity == null) {
+			// other type of assignment needs to be processed in other way
+			return;
+		}
 		//
 		AccIdentityAccountFilter identityAccountFilter = new AccIdentityAccountFilter();
 		identityAccountFilter.setSystemId(roleSystem.getSystem());

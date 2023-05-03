@@ -33,7 +33,7 @@ import eu.bcvsolutions.idm.core.config.flyway.CoreFlywayConfig;
 public class RestTemplateConfig {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(RestTemplateConfig.class);
-	private static final String PROXY_KEY = ConfigurationService.IDM_PRIVATE_PROPERTY_PREFIX + "core.http.proxy";
+	public static final String PROXY_KEY = ConfigurationService.IDM_PRIVATE_PROPERTY_PREFIX + "core.http.proxy";
 	
 	@Autowired private ConfigurationService configuration;
 	
@@ -52,6 +52,34 @@ public class RestTemplateConfig {
     	// - change configuration key - without idm. prefix and edit doc
     	// - try to construct proxy dynamically (request scope)
     	String proxyConfig = configuration.getValue(PROXY_KEY, null);
+		return parseProxy(proxyConfig);
+    }
+
+    @Bean
+    public ClientHttpRequestFactory httpRequestFactory(HttpClient httpClient) {
+		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+
+		Proxy proxy = getHttpProxy();
+		if (proxy != null) {
+			requestFactory.setProxy(proxy);
+		}
+
+		return requestFactory;
+    }
+
+    @Bean
+    public HttpClient httpClient() {
+        return HttpClientBuilder.create().build();
+    }
+
+    /**
+     * Parse given string to {@link Proxy} object. Method check if given string contains doubledot. Then parse
+     * string to host and port. Port must be integer! 
+     *
+     * @param proxyConfig
+     * @return
+     */
+    public static Proxy parseProxy(String proxyConfig) {
     	if (!StringUtils.hasText(proxyConfig)) {
     		return null;
     	}
@@ -72,22 +100,5 @@ public class RestTemplateConfig {
 		}
 
 		return new Proxy(Type.HTTP, new InetSocketAddress(host, port));
-    }
-
-    @Bean
-    public ClientHttpRequestFactory httpRequestFactory(HttpClient httpClient) {
-		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-
-		Proxy proxy = getHttpProxy();
-		if (proxy != null) {
-			requestFactory.setProxy(proxy);
-		}
-
-		return requestFactory;
-    }
-
-    @Bean
-    public HttpClient httpClient() {
-        return HttpClientBuilder.create().build();
     }
 }

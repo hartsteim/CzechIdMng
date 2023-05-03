@@ -32,13 +32,19 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractAuthorizationEvaluato
  * @author Radek Tomiška
  * @since 9.4.0
  */
-@Component
+@Component(FormAttributteByCodeListEvaluator.EVALUATOR_NAME)
 @Description("Permissions to form attributes by code list definition.")
 public class FormAttributteByCodeListEvaluator extends AbstractAuthorizationEvaluator<IdmFormAttribute> {
 
+	public static final String EVALUATOR_NAME = "core-form-attribute-by-code-list-evaluator";
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
 	@Autowired private LookupService lookupService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	
 	@Override
 	public Predicate getPredicate(Root<IdmFormAttribute> root, CriteriaQuery<?> query, CriteriaBuilder builder, AuthorizationPolicy policy, BasePermission... permission) {

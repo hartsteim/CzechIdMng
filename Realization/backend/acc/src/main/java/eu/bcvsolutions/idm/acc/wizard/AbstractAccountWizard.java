@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -79,10 +80,23 @@ public abstract class AbstractAccountWizard implements AccountWizardsService {
 
 	protected IdmFormDefinitionDto getFormDefinition(Map<String, String> metadata) {
 		String systemId = metadata.getOrDefault("system", null);
+		final UUID objectClassId = Optional.ofNullable(metadata.getOrDefault("systemMapping", null))
+				.map(UUID::fromString)
+				.map(systemMappingService::get)
+				.map(SysSystemMappingDto::getObjectClass).orElse(null);
 
 		IdmFormDefinitionFilter formDefinitionFilter = new IdmFormDefinitionFilter();
 		formDefinitionFilter.setType(AccAccount.class.getName());
-		formDefinitionFilter.setText(systemId);
+		final StringBuilder formDefinitionSearchStringBuilder = new StringBuilder();
+		formDefinitionSearchStringBuilder.append("systemId=");
+		formDefinitionSearchStringBuilder.append(systemId);
+
+		if (objectClassId != null) {
+			formDefinitionSearchStringBuilder.append(":object-classId=");
+			formDefinitionSearchStringBuilder.append(objectClassId);
+		}
+
+		formDefinitionFilter.setText(formDefinitionSearchStringBuilder.toString());
 		List<UUID> formDefinitionIds = formDefinitionService.findIds(formDefinitionFilter, null).getContent();
 		if (formDefinitionIds.isEmpty()){
 			return null;

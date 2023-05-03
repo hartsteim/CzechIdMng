@@ -14,10 +14,16 @@ import eu.bcvsolutions.idm.core.api.entity.AbstractEntity;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(UuidEvaluator.EVALUATOR_NAME)
 @Description("Share entity by uuid.")
 public class UuidEvaluator extends AbstractUuidEvaluator<Identifiable> {
-	
+
+	public static final String EVALUATOR_NAME = "core-uuid-evaluator";
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 	@Override
 	public boolean supports(Class<?> authorizableType) {
 		Assert.notNull(authorizableType, "Authorizable type is required.");

@@ -20,10 +20,17 @@ import eu.bcvsolutions.idm.core.security.api.domain.BasePermission;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(BasePermissionEvaluator.EVALUATOR_NAME)
 @Description("Simple permission evaluator - evaluates selected permissions on selected entity type")
 public class BasePermissionEvaluator extends AbstractAuthorizationEvaluator<Identifiable> {
-	
+
+	public static final String EVALUATOR_NAME = "core-base-permission-evaluator";
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
 	@Override
 	public Predicate getPredicate(Root<Identifiable> root, CriteriaQuery<?> query, CriteriaBuilder builder, AuthorizationPolicy policy, BasePermission... permission) {
 		if (hasPermission(policy, permission)) {

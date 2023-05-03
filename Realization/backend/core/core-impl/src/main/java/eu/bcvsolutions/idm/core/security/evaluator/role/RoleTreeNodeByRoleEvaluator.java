@@ -30,13 +30,20 @@ import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
  * @author Radek Tomiška
  *
  */
-@Component
+@Component(RoleTreeNodeByRoleEvaluator.EVALUATOR_NAME)
 @Description("Permissions to automatic roles by role")
 public class RoleTreeNodeByRoleEvaluator extends AbstractTransitiveEvaluator<IdmRoleTreeNode> {
 
+	public static final String EVALUATOR_NAME = "core-role-tree-node-by-role-evaluator";
+
 	@Autowired private AuthorizationManager authorizationManager;
 	@Autowired private SecurityService securityService;
-	
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
 	@Override
 	protected Identifiable getOwner(IdmRoleTreeNode entity) {
 		return entity.getRole();

@@ -1,6 +1,9 @@
 package eu.bcvsolutions.idm.core.security.evaluator.delegation;
 
 
+import java.util.Set;
+import java.util.UUID;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -12,17 +15,15 @@ import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
 import eu.bcvsolutions.idm.core.api.domain.Identifiable;
-import eu.bcvsolutions.idm.core.model.entity.IdmIdentity;
 import eu.bcvsolutions.idm.core.model.entity.IdmDelegationDefinition;
 import eu.bcvsolutions.idm.core.model.entity.IdmDelegationDefinition_;
+import eu.bcvsolutions.idm.core.model.entity.IdmIdentity;
 import eu.bcvsolutions.idm.core.security.api.domain.AuthorizationPolicy;
 import eu.bcvsolutions.idm.core.security.api.domain.BasePermission;
 import eu.bcvsolutions.idm.core.security.api.domain.IdmBasePermission;
 import eu.bcvsolutions.idm.core.security.api.service.AuthorizationManager;
 import eu.bcvsolutions.idm.core.security.api.service.SecurityService;
 import eu.bcvsolutions.idm.core.security.evaluator.AbstractTransitiveEvaluator;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Permissions to delegation definition by delegate.
@@ -30,14 +31,21 @@ import java.util.UUID;
  * @author Vít Švanda
  *
  */
-@Component
+@Component(DelegationDefinitionByDelegateEvaluator.EVALUATOR_NAME)
 @Description("Permissions to delegation definition by delegate.")
 public class DelegationDefinitionByDelegateEvaluator extends AbstractTransitiveEvaluator<IdmDelegationDefinition> {
+
+	public static final String EVALUATOR_NAME = "core-delegation-definition-by-delegate-evaluator";
 
 	@Autowired
 	private AuthorizationManager authorizationManager;
 	@Autowired
 	private SecurityService securityService;
+
+	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
 
 	@Override
 	protected Identifiable getOwner(IdmDelegationDefinition entity) {

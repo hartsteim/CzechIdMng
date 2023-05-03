@@ -20,6 +20,8 @@ import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -76,6 +78,8 @@ import eu.bcvsolutions.idm.core.security.api.domain.BasePermission;
  */
 public abstract class AbstractRoleAssignmentService<D extends AbstractRoleAssignmentDto, E extends AbstractRoleAssignment, F extends BaseRoleAssignmentFilter>
         extends AbstractFormableService<D, E, F> implements IdmRoleAssignmentService<D, F>, ApplicationContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractRoleAssignmentService.class);
 
     private final IdmRoleService roleService;
     private final IdmAutomaticRoleRepository automaticRoleRepository;
@@ -301,22 +305,26 @@ public abstract class AbstractRoleAssignmentService<D extends AbstractRoleAssign
     }
 
     public D getDuplicated(D one, D two, Boolean skipSubdefinition) {
+        LOG.debug("Deduplicating role assignments [{}] and [{}]", one, two);
         List<Pair<AbstractRoleAssignmentDto, Boolean>> duplicates = new ArrayList<>();
         if (deduplicators == null) {
+            LOG.debug("No deduplicators found. Not possible to deduplicate role assignments [{}] and [{}].", one, two);
             return null;
         }
         for (PluggableRoleAssignmentDeduplicator deduplicator : deduplicators) {
+            LOG.debug("Deduplicating role assignments [{}] and [{}] by [{}]", one, two, deduplicator);
             AbstractRoleAssignmentDto duplicated = deduplicator.getDuplicated(one, two, skipSubdefinition);
             if (duplicated == null) {
-                // according to this duplicator, this role assignment is not duplicated
+                LOG.debug("Deduplicating role assignments [{}] and [{}] by [{}] - not duplicated", one, two, deduplicator);
                 return null;
+            } else {
+                Pair<AbstractRoleAssignmentDto, Boolean> duplicate = new Pair<>(duplicated, deduplicator.considerOrder());
+                duplicates.add(duplicate);
+                LOG.debug("Deduplicating role assignments [{}] and [{}] by [{}] - duplicated", one, two, deduplicator);
             }
-
-            Pair<AbstractRoleAssignmentDto, Boolean> duplicate = new Pair<>(duplicated, deduplicator.considerOrder());
-            duplicates.add(duplicate);
         }
-
         if (duplicates.isEmpty()) {
+            LOG.debug("No duplicates found.");
             return null;
         }
 
@@ -326,18 +334,18 @@ public abstract class AbstractRoleAssignmentService<D extends AbstractRoleAssign
             if (result == null) {
                 result = duplicate;
             } else {
-                if (result.getFirst() != duplicate.getFirst()) {
-                    if (!result.getSecond() && duplicate.getSecond()) {
+                if (result.getFirst() != duplicate.getFirst() && (!result.getSecond() && duplicate.getSecond())) {
                         result = duplicate;
-                    }
                 }
             }
         }
 
         if (result == null) {
+            LOG.debug("No duplicates found.");
             return null;
         }
 
+        LOG.debug("Deduplicated role assignments [{}] and [{}] with result [{}]", one, two, result.getFirst());
         return (D) result.getFirst();
     }
 

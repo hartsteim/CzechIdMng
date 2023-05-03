@@ -42,6 +42,11 @@ public class SystemOwnerAssignedByIdentityEvaluator extends AbstractTransitiveEv
 	private SecurityService securityService;
 
 	@Override
+	public String getName() {
+		return EVALUATOR_NAME;
+	}
+
+	@Override
 	protected Identifiable getOwner(SysSystemOwner entity) {
 		return entity.getSystem();
 	}

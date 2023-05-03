@@ -9,7 +9,7 @@ public enum IdmBasePermission implements BasePermission {
 	CREATE, // CREATE
 	UPDATE, // UPDATE
 	DELETE, // DELETE ONLY
-	EXECUTE; // RUN, START
+	EXECUTE, METRICS; // RUN, START
 	
 	@Override
 	public String getName() {
